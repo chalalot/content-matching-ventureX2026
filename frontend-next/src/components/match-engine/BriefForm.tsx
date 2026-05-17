@@ -108,7 +108,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
           {/* Industry */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium">Industry</label>
-            <Select value={industry} onValueChange={setIndustry}>
+            <Select value={industry} onValueChange={v => setIndustry(v ?? '')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select industry" />
               </SelectTrigger>
@@ -123,7 +123,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
           {/* Campaign Type */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium">Campaign Type</label>
-            <Select value={campaignType} onValueChange={setCampaignType}>
+            <Select value={campaignType} onValueChange={v => setCampaignType(v ?? '')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select campaign type" />
               </SelectTrigger>
@@ -138,7 +138,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
           {/* Tone */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium">Tone</label>
-            <Select value={tone} onValueChange={setTone}>
+            <Select value={tone} onValueChange={v => setTone(v ?? '')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select tone" />
               </SelectTrigger>
@@ -169,7 +169,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
               min={1000}
               max={250000}
               step={1000}
-              onValueChange={([v]) => setBudgetUsd(v)}
+              onValueChange={v => setBudgetUsd(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>$1K</span>
@@ -187,7 +187,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
               min={2}
               max={12}
               step={1}
-              onValueChange={([v]) => setTimelineWeeks(v)}
+              onValueChange={v => setTimelineWeeks(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>2 weeks</span>
@@ -221,7 +221,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
               min={3}
               max={10}
               step={1}
-              onValueChange={([v]) => setTopN(v)}
+              onValueChange={v => setTopN(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>3</span>

@@ -36,7 +36,7 @@ export default function FilterBar({ filters, values, onChange, onReset }: Filter
           <label className="text-xs text-muted-foreground">{filter.label}</label>
           <Select
             value={values[filter.key] ?? 'all'}
-            onValueChange={val => onChange(filter.key, val)}
+            onValueChange={val => onChange(filter.key, val ?? 'all')}
           >
             <SelectTrigger className="h-8 text-xs">
               <SelectValue />
