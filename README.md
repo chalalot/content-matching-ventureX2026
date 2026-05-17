@@ -78,7 +78,7 @@ Xem chi tiết tại [`docs/TASKS.md`](docs/TASKS.md)
 | Mạnh | Backend Dev | Layer 1 — Semantic Retrieval |
 | Đồng Đức | Backend Dev | Layer 2 — Scoring + API Routes |
 | Duy | Frontend Dev | Dashboard UI |
-| Sơn | Researcher | Mockup data + Test briefs |
+| Sơn Lê | Researcher | Mockup data + Test briefs |
 | Thành | Marketing | Docs + Demo script |
 
 ## Team
