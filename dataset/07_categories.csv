@@ -1,0 +1,23 @@
+category_id,name,type
+6e0819d8-35d9-4394-aded-3a5d73e3b292,TVC,GENRE
+8e47413d-d605-4917-a9e3-c6fab2b5aa12,Music Video,GENRE
+9656b6a1-075d-4772-b4d9-ce3c84e19e65,Documentary,GENRE
+266b5f6f-24bf-4f8e-9cc8-b1ca84f51b7f,Brand Film,GENRE
+046d2a05-8bda-4965-9fe3-d65726764e48,Event Film,GENRE
+f769464f-0000-46ed-bd35-193dedbb5364,Short Film,GENRE
+a03c94c2-51c3-49cf-9728-d95b668b9adb,FMCG,INDUSTRY
+ace04fd8-9b9c-4a85-ba48-3a182126c223,Technology,INDUSTRY
+f4a6b24b-f405-46c0-81ec-7ad5109e5f31,Fashion,INDUSTRY
+47624640-2ed5-450c-8ff3-0082a496cbaf,F&B,INDUSTRY
+0e5498aa-aecd-414c-a1a4-458f8d588375,Real Estate,INDUSTRY
+da3ac098-0cb0-4c0f-b8e6-db0064a60db7,Automotive,INDUSTRY
+d11b1e67-a288-4566-8fbd-64a3bdd7f1ba,Healthcare,INDUSTRY
+104bdfde-0fb6-49aa-86eb-a16aa25cfa12,Education,INDUSTRY
+1c6758c5-1160-4d76-8d59-4ea69410e307,Cinematography,SKILL
+6c633c0f-7aae-4fa8-954d-5736852147f2,Color Grading,SKILL
+55478df0-0133-4b4f-96ab-f3b1ba475741,VFX,SKILL
+4b6422e5-9222-44c4-9615-b1ca0542d1ca,Motion Graphics,SKILL
+83106139-7db2-4587-bc5e-99e9198ffb54,Drone Filming,SKILL
+2122b2ca-16dd-4f00-960e-8e2783d0f917,Live Streaming,SKILL
+9bdf1a84-1e77-45fe-a7ff-7dda4a727023,Social Media Content,SKILL
+fc45ee87-0734-42c8-942b-1573323061ac,Product Photography,SKILL
