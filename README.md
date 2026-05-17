@@ -1,4 +1,4 @@
-# AI Matching Engine — POC
+# AI Matching Engine — POC 2026
 
 > Nhập brief → engine trả shortlist ứng viên phù hợp nhất (Director hoặc KOL) kèm điểm số và lý do.
 
