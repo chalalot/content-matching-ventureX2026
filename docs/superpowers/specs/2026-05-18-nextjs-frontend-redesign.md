@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-18  
 **Status:** Approved  
-**Replaces:** Streamlit analytics dashboard (`app.py` + `pages/`) + vanilla JS AI Matching frontend (`frontend/`)
+**Replaces:** retired Streamlit analytics dashboard and retired vanilla JS AI Matching frontend.
 
 ---
 
@@ -40,13 +40,13 @@ Single Next.js App Router application that:
 
 | Route | Replaces | Content |
 |---|---|---|
-| `/` | `app.py` | Platform KPI cards + users by role |
+| `/` | Next.js app | Platform KPI cards + users by role |
 | `/overview` | `1_📊_Overview.py` | User growth, distributions, geo, health table |
 | `/projects` | `2_🎬_Projects.py` | Filters, budget charts, Gantt, table |
 | `/talent` | `3_🌟_Talent_Pool.py` | Directors tab + KOLs tab |
 | `/matching` | `4_🔗_Matching.py` | Funnel, source comparison, score charts, table |
 | `/roi` | `5_💰_ROI_Analysis.py` | ROI charts, cost efficiency, top/bottom 10, warnings |
-| `/match-engine` | `frontend/index.html` | Brief form → shortlist cards |
+| `/match-engine` | Next.js app | Brief form → shortlist cards |
 
 ---
 
@@ -274,9 +274,8 @@ All GET routes accept optional `?page=&size=` params (ignored for CSV, used when
 
 ## Migration
 
-1. New Next.js app lives in `frontend-next/` at repo root
-2. Old `frontend/` (vanilla JS) and `app.py` / `pages/` remain until new app is verified
-3. After verification: delete `frontend/`, `app.py`, `pages/`, `utils/` (Streamlit utils)
+1. Next.js app lives in `frontend/` at repo root.
+2. The old Streamlit and vanilla JS frontends have been removed.
 4. `dataset/` stays at root — API routes reference `process.cwd() + '/dataset'`
 
 ---

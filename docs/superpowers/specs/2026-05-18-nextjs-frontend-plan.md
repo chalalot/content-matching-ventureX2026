@@ -1,8 +1,8 @@
 # Implementation Plan — Next.js Frontend
 
 **Spec:** `2026-05-18-nextjs-frontend-redesign.md`  
-**Output:** `frontend-next/` at repo root  
-**Delete when done:** `frontend/`, `app.py`, `pages/`, `utils/` (Streamlit utils)
+**Output:** `frontend/` at repo root  
+**Delete when done:** old Streamlit and vanilla JS frontend code
 
 ---
 
@@ -11,10 +11,10 @@
 ### 1.1 Scaffold Next.js app
 
 ```bash
-npx create-next-app@latest frontend-next \
+npx create-next-app@latest frontend \
   --typescript --tailwind --app --src-dir \
   --no-eslint --import-alias "@/*"
-cd frontend-next
+cd frontend
 ```
 
 ### 1.2 Install shadcn/ui + dependencies
@@ -74,7 +74,7 @@ mkdir -p src/app/api/{analytics/{users,projects,matches,directors,kols,social-me
 ### 1.5 Symlink dataset
 
 ```bash
-# From frontend-next/
+# From frontend/
 ln -s ../dataset dataset
 ```
 
@@ -401,12 +401,12 @@ Layout:
 ### 6.1 Verify
 
 ```bash
-cd frontend-next && npm run dev
+cd frontend && npm run dev
 ```
 
 Checklist:
 - [ ] All 7 pages load without error
-- [ ] Home KPI numbers match `streamlit run app.py`
+- [ ] Home KPI numbers match dataset-derived source values
 - [ ] Projects filters work (type/status/location)
 - [ ] Talent tabs switch correctly
 - [ ] ROI warnings appear when negative ROI rows exist
@@ -416,7 +416,7 @@ Checklist:
 
 ### 6.2 Env file
 
-Create `frontend-next/.env.local`:
+Create `frontend/.env.local`:
 ```
 BACKEND_URL=http://localhost:8000
 ```
@@ -427,9 +427,7 @@ Once verified:
 ```bash
 # From repo root
 rm -rf frontend/          # vanilla JS frontend
-rm app.py                  # Streamlit home
-rm -rf pages/              # Streamlit pages
-rm -rf utils/              # Streamlit utils
+Remove retired Streamlit files and old vanilla frontend files.
 ```
 
 ### 6.4 Update README
@@ -437,7 +435,7 @@ rm -rf utils/              # Streamlit utils
 Update `Setup & Chạy` section:
 ```bash
 # Frontend (analytics + matching UI)
-cd frontend-next && npm install && npm run dev
+cd frontend && npm install && npm run dev
 # → http://localhost:3000
 
 # Backend (AI matching API — needed for /match-engine page)
@@ -452,7 +450,7 @@ cd backend && uvicorn main:app --reload
 
 | Variable | Where | Value |
 |---|---|---|
-| `BACKEND_URL` | `frontend-next/.env.local` | `http://localhost:8000` (local) or Railway URL (prod) |
+| `BACKEND_URL` | `frontend/.env.local` | `http://localhost:8000` (local) or Railway URL (prod) |
 
 ---
 
