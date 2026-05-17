@@ -3,7 +3,8 @@ Owner: Đức — Layer 1
 Input:  BriefRequest
 Output: list of dicts (director metadata from ChromaDB), top 20
 """
-from models import BriefRequest
+
+from .models import BriefRequest
 
 
 def retrieve_candidates(brief: BriefRequest, top_k: int = 20) -> list[dict]:

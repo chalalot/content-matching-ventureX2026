@@ -4,21 +4,30 @@ Input:  one ranked candidate + BriefRequest
 Output: 2–3 sentence explanation string in Vietnamese
 Uses OpenAI gpt-4o-mini. Requires OPENAI_API_KEY in .env
 """
-import openai
-from models import BriefRequest
-from config import settings
 
-client = openai.OpenAI(api_key=settings.openai_api_key)
+from deepagents import create_deep_agent
+from langchain_core.messages import HumanMessage
 
-PROMPT = """\
-You are a casting advisor at a Vietnamese production company.
+from .llm import llm
+from .models import BriefRequest
+from .tools import search_web
 
+SYSTEM_PROMPT = """
+You are a casting advisor at a Vietnamese media production company.
+Given the campaign brief and director profile, use the tools you have to research if the director is a good fit for the campaign.
+Produce a detail and concise report explaining why the director is a good fit for the campaign.
+Be specific - reference their actual experience, style, their past track record and your research results.
+Reference your own research (if any) and the director's actual experience.
+"""
+
+
+USER_PROMPT = """
 Campaign Brief:
 - Brand: {brand}
 - Industry: {industry}
 - Type: {campaign_type}
 - Tone: {tone}
-- Budget: ${budget_usd:,}
+- Budget: ${budget_usd}
 - Description: {description}
 
 Director Profile:
@@ -29,15 +38,15 @@ Director Profile:
 - Notable brands: {notable_brands}
 - Score breakdown: {score_breakdown}
 - Notes: {notes}
-
-Write 2–3 concise sentences explaining why this director is recommended for this campaign.
-Be specific — reference their actual experience and style. Write in Vietnamese.\
 """
+
+
+agent = create_deep_agent(model=llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
 
 
 def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
     meta = candidate["metadata"]
-    prompt = PROMPT.format(
+    prompt = USER_PROMPT.format(
         brand=brief.brand,
         industry=brief.industry,
         campaign_type=brief.campaign_type,
@@ -52,9 +61,9 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
         score_breakdown=candidate.get("score_breakdown", {}),
         notes=meta.get("bio", ""),
     )
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        max_tokens=200,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return response.choices[0].message.content
+
+    response = agent.invoke({"messages": HumanMessage(content=prompt)})
+
+    if isinstance(response.content, list):
+        return response.content[0].text
+    return response.content
