@@ -1,7 +1,7 @@
 import requests
 from langchain.tools import tool
 
-from .settings import settings
+from config import settings
 
 
 @tool(description="Search the web for information on query.")

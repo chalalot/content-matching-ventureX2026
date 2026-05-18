@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     max_retries: int = 2
 
     websearch_url: str = "https://api.search.brave.com/res/v1/web/search"
-    webseach_api_key: str
+    websearch_api_key: str
 
     class Config:
         env_file = ".env"

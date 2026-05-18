@@ -47,8 +47,23 @@ def flatten_metadata(p: dict) -> dict:
 
 
 def main():
-    # TODO (Đức): implement this
-    raise NotImplementedError
+    data_path = Path(settings.data_path)
+    directors = json.loads(data_path.read_text(encoding="utf-8"))
+
+    model = SentenceTransformer(MODEL_NAME)
+    texts = [build_text(p) for p in directors]
+    embeddings = model.encode(texts).tolist()
+
+    client = chromadb.PersistentClient(path=settings.chroma_persist_dir)
+    collection = client.get_or_create_collection(settings.collection_name)
+
+    collection.upsert(
+        ids=[p["id"] for p in directors],
+        embeddings=embeddings,
+        metadatas=[flatten_metadata(p) for p in directors],
+        documents=texts,
+    )
+    print(f"Ingested {len(directors)} directors into '{settings.collection_name}'")
 
 
 if __name__ == "__main__":

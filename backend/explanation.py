@@ -8,9 +8,9 @@ Uses OpenAI gpt-4o-mini. Requires OPENAI_API_KEY in .env
 from deepagents import create_deep_agent
 from langchain_core.messages import HumanMessage
 
-from .llm import llm
-from .models import BriefRequest
-from .tools import search_web
+from llm import llm
+from models import BriefRequest
+from tools import search_web
 
 SYSTEM_PROMPT = """
 You are a casting advisor at a Vietnamese media production company.
@@ -41,6 +41,8 @@ Director Profile:
 """
 
 
+import concurrent.futures
+
 agent = create_deep_agent(model=llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
 
 
@@ -62,8 +64,15 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
         notes=meta.get("bio", ""),
     )
 
-    response = agent.invoke({"messages": HumanMessage(content=prompt)})
+    def _invoke():
+        response = agent.invoke({"messages": HumanMessage(content=prompt)})
+        if isinstance(response.content, list):
+            return response.content[0].text
+        return response.content
 
-    if isinstance(response.content, list):
-        return response.content[0].text
-    return response.content
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_invoke)
+        try:
+            return future.result(timeout=10)
+        except concurrent.futures.TimeoutError:
+            return f"[timeout] Agent did not finish in 10s for {meta['name']}"
