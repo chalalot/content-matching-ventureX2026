@@ -27,7 +27,21 @@ def generate_explanation(scored: ScoredCandidate) -> str:
     """
     Returns a 2–3 sentence explanation string in Vietnamese.
     """
-    # TODO (Trung): Implement template selection
-    # Hint: sort feature_breakdown by value desc, pick top 2 signals,
-    #       format using TEMPLATES, join into a paragraph.
-    raise NotImplementedError
+    c = scored.candidate
+    top_signals = sorted(scored.feature_breakdown.items(), key=lambda x: x[1], reverse=True)[:2]
+
+    sentences = []
+    for signal, value in top_signals:
+        if signal == "genre_match":
+            sentences.append(TEMPLATES["genre_match"].format(genres=", ".join(c["genres"])))
+        elif signal == "style_match":
+            sentences.append(TEMPLATES["style_match"].format(styles=", ".join(c["style_tags"])))
+        elif signal == "experience_score":
+            sentences.append(TEMPLATES["experience_score"].format(years=c["experience_years"]))
+        elif signal == "availability_bonus" and value > 0:
+            sentences.append(TEMPLATES["availability_bonus"])
+        elif signal == "outcome_score":
+            pct = round(value * 100)
+            sentences.append(TEMPLATES["outcome_score"].format(pct=pct))
+
+    return " ".join(sentences)

@@ -33,24 +33,34 @@ class CandidateRetriever:
 
     def build_index(self):
         """Load profiles, encode bios, build FAISS index."""
-        # TODO (Mạnh): Implement this
-        # Hint:
-        #   model = SentenceTransformer(MODEL_NAME)
-        #   texts = [f"{p['bio']} {' '.join(p['style_tags'])} {' '.join(p['genres'])}" for p in candidates]
-        #   embeddings = model.encode(texts, normalize_embeddings=True)
-        #   index = faiss.IndexFlatIP(embeddings.shape[1])   # inner product = cosine on normalized vecs
-        #   index.add(embeddings)
-        raise NotImplementedError
+        with open(DATA_PATH) as f:
+            self.candidates = json.load(f)
+
+        self.model = SentenceTransformer(MODEL_NAME)
+        texts = [
+            f"{p['bio']} {' '.join(p['style_tags'])} {' '.join(p['genres'])}"
+            for p in self.candidates
+        ]
+        embeddings = self.model.encode(texts, normalize_embeddings=True)
+        embeddings = np.array(embeddings, dtype="float32")
+
+        self.index = faiss.IndexFlatIP(embeddings.shape[1])
+        self.index.add(embeddings)
 
     def search(self, brief: str) -> list[dict]:
         """
         Args:
             brief: free-text project brief
         Returns:
-            List of {candidate, score} dicts, sorted by relevance desc
+            List of candidate dicts, sorted by relevance desc
         """
-        # TODO (Mạnh): Encode brief → search index → return results
-        raise NotImplementedError
+        query = self.model.encode([brief], normalize_embeddings=True)
+        query = np.array(query, dtype="float32")
+
+        k = min(self.top_k, len(self.candidates))
+        _, indices = self.index.search(query, k)
+
+        return [self.candidates[i] for i in indices[0]]
 
 
 # Singleton — built once on import

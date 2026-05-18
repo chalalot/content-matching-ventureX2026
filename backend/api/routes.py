@@ -46,9 +46,18 @@ def match(req: BriefRequest):
     """
     Full pipeline: brief → Layer 1 retrieval → Layer 2 scoring → Layer 3 explanation
     """
-    # TODO (Đồng Đức): Wire the three layers together
-    # Step 1: retriever.search(req.brief_text)  → candidates (list of dicts)
-    # Step 2: score_candidates(candidates, req.genres, req.style_tags, req.top_n)  → scored
-    # Step 3: for each scored: generate_explanation(s)  → add to result
-    # Return MatchResponse
-    raise NotImplementedError
+    candidates = retriever.search(req.brief_text)
+    scored = score_candidates(candidates, req.genres, req.style_tags, req.top_n)
+
+    shortlist = [
+        CandidateResult(
+            id=s.candidate["id"],
+            name=s.candidate["name"],
+            score=s.score,
+            explanation=generate_explanation(s),
+            feature_breakdown=s.feature_breakdown,
+        )
+        for s in scored
+    ]
+
+    return MatchResponse(shortlist=shortlist, total_candidates_considered=len(candidates))

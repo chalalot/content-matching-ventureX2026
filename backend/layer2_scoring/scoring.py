@@ -49,12 +49,26 @@ def score_candidates(
     Returns:
         Sorted list of ScoredCandidate, highest score first
     """
-    # TODO (Đồng Đức): Implement scoring logic using WEIGHTS above
-    # Hint for genre_match:
-    #   overlap = len(set(c['genres']) & set(brief_genres))
-    #   genre_match = min(overlap / max(len(brief_genres), 1), 1.0)
-    #
-    # Hint for outcome_score:
-    #   positives = sum(1 for p in c['past_projects'] if p['outcome'] in POSITIVE_OUTCOMES)
-    #   outcome_score = positives / max(len(c['past_projects']), 1)
-    raise NotImplementedError
+    scored = []
+    max_experience = max((c["experience_years"] for c in candidates), default=1)
+
+    for c in candidates:
+        genre_match = min(len(set(c["genres"]) & set(brief_genres)) / max(len(brief_genres), 1), 1.0)
+        style_match = min(len(set(c["style_tags"]) & set(brief_styles)) / max(len(brief_styles), 1), 1.0)
+        experience_score = c["experience_years"] / max_experience
+        availability_bonus = 0.1 if c.get("availability") else 0.0
+        positives = sum(1 for p in c["past_projects"] if p["outcome"] in POSITIVE_OUTCOMES)
+        outcome_score = positives / max(len(c["past_projects"]), 1)
+
+        features = {
+            "genre_match": genre_match,
+            "style_match": style_match,
+            "experience_score": experience_score,
+            "availability_bonus": availability_bonus,
+            "outcome_score": outcome_score,
+        }
+        raw = sum(WEIGHTS[k] * v for k, v in features.items())
+        scored.append(ScoredCandidate(candidate=c, score=round(raw * 100, 1), feature_breakdown=features))
+
+    scored.sort(key=lambda x: x.score, reverse=True)
+    return scored[:top_n]
