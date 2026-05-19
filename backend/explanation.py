@@ -34,12 +34,34 @@ Reference your own research (if any) and the director's actual experience.
 
 USER_PROMPT = """
 Today's date: {today}
+from tools import search_web
+
+SYSTEM_PROMPT = """
+You are a casting advisor at a Vietnamese media production company.
+Given the campaign brief and director profile, use the websearch tool you have to research if the director is a good fit for the campaign.
+Use a diverse set of queries for websearch to gather a broad range of information.
+Ex:
+- "Scandals involve {director_name}"
+- "Netizens boycott product involve with {director_name}"
+- "{director_name} work on similar projects"
+- "{director_name} content genre"
+Do also pay attention to the current date and the date of the websearch results, as they may provide additional context.
+Ex: A scandal too long ago may not be relevant to the current campaign.
+Produce a detail and concise report explaining why the director is a good fit for the campaign.
+Be specific - reference their actual experience, style, their past track record and your research results.
+Reference your own research (if any) and the director's actual experience.
+"""
+
+
+USER_PROMPT = """
+Today's date: {today}
 
 Campaign Brief:
 - Brand: {brand}
 - Industry: {industry}
 - Type: {campaign_type}
 - Tone: {tone}
+- Budget: ${budget_usd}
 - Budget: ${budget_usd}
 - Description: {description}
 
@@ -57,8 +79,13 @@ Director Profile:
 agent = create_deep_agent(model=llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
 
 
+agent = create_deep_agent(model=llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
+
+
 def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
     meta = candidate["metadata"]
+    prompt = USER_PROMPT.format(
+        today=date.today(),
     prompt = USER_PROMPT.format(
         today=date.today(),
         brand=brief.brand,
