@@ -2,6 +2,13 @@
 .env
 **/__pycache__/
 *.pyc
+
+# ChromaDB local vector store (rebuild via `python ingest.py`)
+chroma_db/
+**/chroma_db/
+
+# pytest
+.pytest_cache/
 # Python
 __pycache__/
 *.py[cod]
@@ -48,3 +55,5 @@ Thumbs.db
 
 # claude
 .claude/
+
+uv.lock
