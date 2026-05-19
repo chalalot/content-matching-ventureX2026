@@ -1,4 +1,4 @@
-# AI Matching Engine — POC
+# AI Matching Engine — POC 2026
 
 > Nhập brief → engine trả shortlist ứng viên phù hợp nhất (Director hoặc KOL) kèm điểm số và lý do.
 
@@ -41,7 +41,7 @@ matching-engine/
 │   ├── layer3_explanation/ # Explanation generator — Trung
 │   ├── api/                # FastAPI routes — Đồng Đức
 │   └── main.py             # App entry point
-├── frontend/               # Dashboard UI — Duy
+├── frontend/               # Next.js dashboard UI — Duy
 ├── notebooks/              # Data exploration — Sơn
 └── docs/                   # TASKS, USER_GUIDE, DEMO_SCRIPT — Thành
 ```
@@ -64,8 +64,9 @@ uvicorn backend.main:app --reload
 # → API available at http://localhost:8000
 # → Docs at http://localhost:8000/docs
 
-# 5. Mở frontend
-open frontend/index.html
+# 5. Chạy frontend
+cd frontend && npm install && npm run dev
+# → Frontend available at http://localhost:3000
 ```
 
 ## Task Assignments
@@ -78,7 +79,7 @@ Xem chi tiết tại [`docs/TASKS.md`](docs/TASKS.md)
 | Mạnh | Backend Dev | Layer 1 — Semantic Retrieval |
 | Đồng Đức | Backend Dev | Layer 2 — Scoring + API Routes |
 | Duy | Frontend Dev | Dashboard UI |
-| Sơn | Researcher | Mockup data + Test briefs |
+| Sơn Lê | Researcher | Mockup data + Test briefs |
 | Thành | Marketing | Docs + Demo script |
 
 ## Team

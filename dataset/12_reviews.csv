@@ -1,0 +1,8 @@
+review_id,project_id,reviewer_id,reviewee_id,rating,feedback,punctuality_score,creativity_score
+2d7c9cf7-3fdd-4cf4-8962-f971f69b194a,30d823cd-4c29-4f2e-80b6-a8a3f6fab74b,ed41bc1e-4407-405a-9053-8f53d7e9b4c3,f651c11c-c5bb-460d-a987-8c9836713d28,5,Sáng tạo tốt nhưng cần cải thiện giao tiếp.,5,4
+9bcb7497-7f63-4750-a2f5-8c4795f53fe3,30d823cd-4c29-4f2e-80b6-a8a3f6fab74b,ed41bc1e-4407-405a-9053-8f53d7e9b4c3,60066034-b655-47a1-817a-f6f2d3ff2fb4,3,"Chất lượng video xuất sắc, vượt mong đợi.",4,4
+45377051-ce7e-4a67-b30e-5115e812997c,6beb0647-951e-487b-8532-0c4396d535b7,73b4563b-d293-4887-96ea-d53654fd158e,6af20bfb-f2e3-42ef-9e85-eed7dfcf6256,4,"Chất lượng video xuất sắc, vượt mong đợi.",2,4
+6ac4a3df-b2c7-4dde-9108-b2a305abf285,da5a58d8-f370-497e-ba5d-8ae41e03fa14,d0dcd863-ce8b-4261-95cb-03a557cf3376,cd4abdf5-22f2-4f9e-9998-f52dc8ce0213,4,"Rất hài lòng, sẽ hợp tác lại.",4,4
+e7c5f98d-104b-4170-98bb-ddeae27ee9d7,da5a58d8-f370-497e-ba5d-8ae41e03fa14,d0dcd863-ce8b-4261-95cb-03a557cf3376,88fb1e35-fc3f-4985-ab50-d178ac000e87,3,"Chất lượng video xuất sắc, vượt mong đợi.",2,3
+13e2fa42-4429-481e-8fe1-22d4e4789877,b4e27c4b-b708-4312-bc4f-a90b437ccbc9,3b5de7f0-c942-44b1-9654-e38710833852,0516d582-0010-467d-874d-312bcd301677,3,"Làm việc chuyên nghiệp, đúng deadline.",5,3
+00a462e1-acde-4c56-bd2f-e21c1d6cf99d,b1d477c8-5e8a-4b7d-a27b-5ea8781b8c6f,62275e2b-8f68-4072-ad98-4856f86b6701,88fb1e35-fc3f-4985-ab50-d178ac000e87,1,"Không hoàn thành công việc, thiếu trách nhiệm, giao sản phẩm trễ 3 tuần và chất lượng kém.",1,1
