@@ -81,17 +81,16 @@ curl -X POST http://localhost:8000/api/match \
 
 | Task | File | Ghi chú |
 |------|------|---------|
-| Verify `runMatch()` hoạt động end-to-end khi backend lên | `frontend/app.js` | Test với backend local |
-| Thêm filter UI: lọc theo genre, sort theo score | `frontend/index.html` + `frontend/app.js` | Chỉ cần client-side filter |
-| Improve candidate card: thêm genre tags, availability badge | `frontend/app.js` | Dùng data từ `feature_breakdown` |
-| Responsive check trên mobile | `frontend/styles.css` | |
+| Verify match engine hoạt động end-to-end khi backend lên | `frontend/src/app/match-engine/page.tsx` | Test với backend local |
+| Thêm filter UI: lọc theo genre, sort theo score | `frontend/src/components/match-engine/` | Client-side controls |
+| Improve candidate card: thêm genre tags, availability badge | `frontend/src/components/match-engine/CandidateCard.tsx` | Dùng data từ `feature_breakdown` |
+| Responsive check trên mobile | `frontend/src/app/` | |
 
 **Hướng dẫn chạy frontend:**
 ```bash
-# Không cần build tool — mở thẳng file:
-open frontend/index.html
-
-# Hoặc dùng live server (VS Code extension) để auto-reload
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
