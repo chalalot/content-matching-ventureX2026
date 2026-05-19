@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     timeout: Optional[int] = None
     max_retries: int = 2
 
-    websearch_url: str = "https://api.search.brave.com/res/v1/web/search"
+    websearch_url: str = "https://api.exa.ai/search"
     websearch_api_key: str
 
     class Config:

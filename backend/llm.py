@@ -9,4 +9,5 @@ llm = ChatGoogleGenerativeAI(
     max_tokens=settings.max_tokens,
     timeout=settings.timeout,
     max_retries=settings.max_retries,
+    api_key=settings.google_api_key,
 )
