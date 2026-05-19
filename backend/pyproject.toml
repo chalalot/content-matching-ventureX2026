@@ -10,4 +10,18 @@ dependencies = [
     "langchain-google-genai>=4.2.2",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "requests>=2.32.0",
+    "sentence-transformers>=3.0.0",
+    "chromadb>=0.5.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
