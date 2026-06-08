@@ -1,0 +1,31 @@
+director_id,user_id,full_name,bio,years_of_experience,base_day_rate,primary_location,availability_status
+dir-0001,usr-0016,Marcus Chen,Specialist in TikTok Shop product showcases and LIVE event direction,8,"$1,500.00","Los Angeles, CA",TRUE
+dir-0002,usr-0017,Ashley Rivera,Beauty & lifestyle content director with strong social commerce focus,6,"$1,200.00","New York, NY",TRUE
+dir-0003,usr-0018,Jordan Smith,Tech unboxing & review content specialist for TikTok and YouTube,5,$950.00,"San Jose, CA",FALSE
+dir-0004,usr-0019,Taylor Brooks,Fashion lookbook & lifestyle director specializing in short-form video,7,"$1,350.00","Miami, FL",TRUE
+dir-0005,usr-0020,Morgan Lee,E-commerce content specialist with TikTok LIVE production expertise,4,$800.00,"Austin, TX",TRUE
+dir-0006,usr-0021,Noah Harris,Director specializing in food & wellness UGC for TikTok Shop campaigns,6,"$1,100.00","Chicago, IL",TRUE
+dir-0007,usr-0022,Zoe Thompson,Fitness & activewear content director with TikTok affiliate expertise,5,$900.00,"Nashville, TN",TRUE
+dir-0008,usr-0046,Ethan Rivera,High-energy TikTok LIVE host and product launch director,9,"$1,750.00","Los Angeles, CA",TRUE
+dir-0009,usr-0047,Chloe Wang,Skincare and beauty content director; runs 3M-reach TikTok affiliate network,7,"$1,400.00","San Francisco, CA",TRUE
+dir-0010,usr-0048,Dylan Scott,Pet & family content director with strong TikTok commerce track record,4,$750.00,"Dallas, TX",TRUE
+dir-0011,usr-0049,Isabelle Cruz,Home & lifestyle content director focused on aesthetic short-form video,6,"$1,050.00","Portland, OR",FALSE
+dir-0012,usr-0050,Marcus Webb,Tech accessories & gadget content director for TikTok Shop campaigns,8,"$1,600.00","Seattle, WA",TRUE
+dir-0013,usr-0051,Priya Sharma,Wellness and supplement campaign director; TikTok Shop certified creator,5,$850.00,"Atlanta, GA",TRUE
+dir-0014,usr-0052,Tyler Ross,Fashion & streetwear content director; strong Gen Z TikTok audience,3,$700.00,"New York, NY",TRUE
+dir-0015,usr-0053,Mia Patel,Mom & baby content director with organic reach on TikTok Shop,4,$780.00,"Houston, TX",TRUE
+dir-0016,usr-0054,Jonah Brooks,Gaming and tech lifestyle director; TikTok Shop gadget affiliate,6,"$1,250.00","Austin, TX",FALSE
+dir-0017,usr-0055,Sara Kim,Food & kitchen product content director with recipe-first approach,5,"$1,000.00","Boston, MA",TRUE
+dir-0018,usr-0056,Owen Martinez,"Multi-platform director: TikTok, Reels, YouTube Shorts specialist",7,"$1,300.00","Miami, FL",TRUE
+dir-0019,usr-0057,Lily Chen,Clean beauty and skincare director; TikTok LIVE event host,3,$680.00,"Los Angeles, CA",TRUE
+dir-0020,usr-0058,Ravi Anand,Tech review and unboxing director with proven TikTok Shop GMV record,9,"$1,850.00","San Jose, CA",TRUE
+dir-0021,usr-0059,Tiffany Moore,Lifestyle & home décor director; known for high-conversion TikTok hauls,5,$950.00,"Phoenix, AZ",TRUE
+dir-0022,usr-0060,Derek Hall,Sports & fitness content director with TikTok LIVE hosting experience,6,"$1,100.00","Denver, CO",FALSE
+dir-0023,usr-0061,Natalie Park,Baby & kids product content director; safe-for-family TikTok campaigns,4,$820.00,"Charlotte, NC",TRUE
+dir-0024,usr-0062,Austin Cole,Pet care and animal content director; TikTok Shop top affiliate,5,$880.00,"Tampa, FL",TRUE
+dir-0025,usr-0063,Jasmine Lin,Travel and tech accessories director; TikTok Shop travel category specialist,7,"$1,450.00","Seattle, WA",TRUE
+dir-0026,usr-0064,Marcus Diaz,Fashion & apparel content director with 5 years TikTok Shop production,5,"$1,000.00","Chicago, IL",TRUE
+dir-0027,usr-0065,Sophia Grant,Workwear & professional style director; corporate TikTok campaign specialist,6,"$1,150.00","New York, NY",TRUE
+dir-0028,usr-0066,Chris Yun,Gaming peripheral & tech director; viral unboxing specialist on TikTok,4,$760.00,"Minneapolis, MN",TRUE
+dir-0029,usr-0067,Amanda Foster,Food delivery & grocery product director for TikTok Shop campaigns,3,$700.00,"Las Vegas, NV",FALSE
+dir-0030,usr-0068,James Okafor,Health & supplement product director; TikTok LIVE sales specialist,8,"$1,550.00","Atlanta, GA",TRUE

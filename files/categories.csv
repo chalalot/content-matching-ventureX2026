@@ -1,0 +1,31 @@
+category_id,name,type
+cat-0001,Beauty & Cosmetics,INDUSTRY
+cat-0002,Skincare,GENRE
+cat-0003,Consumer Electronics,INDUSTRY
+cat-0004,Health & Wellness,INDUSTRY
+cat-0005,Fashion & Apparel,INDUSTRY
+cat-0006,Home & Living,INDUSTRY
+cat-0007,Food & Grocery,GENRE
+cat-0008,Fitness & Sports,INDUSTRY
+cat-0009,Pet Care,INDUSTRY
+cat-0010,Baby & Kids,INDUSTRY
+cat-0011,Gaming & Peripherals,INDUSTRY
+cat-0012,Mobile Accessories,GENRE
+cat-0013,Hair Care,GENRE
+cat-0014,Supplements & Nutrition,GENRE
+cat-0015,Workwear & Office Fashion,GENRE
+cat-0016,Smart Home & Tech,GENRE
+cat-0017,Travel Accessories,GENRE
+cat-0018,Dorm & College Lifestyle,GENRE
+cat-0019,Clean Beauty,GENRE
+cat-0020,Kitchen Gadgets,GENRE
+cat-0021,TikTok LIVE Production,SKILL
+cat-0022,Short-Form Video Content,SKILL
+cat-0023,Product Review & UGC,SKILL
+cat-0024,KOL Campaign Management,SKILL
+cat-0025,Affiliate Marketing,SKILL
+cat-0026,Social Commerce Strategy,SKILL
+cat-0027,Hashtag Challenge Design,SKILL
+cat-0028,TikTok Shop Storefront Mgmt,SKILL
+cat-0029,Branded Effect Creation,SKILL
+cat-0030,Live Shopping Co-Hosting,SKILL

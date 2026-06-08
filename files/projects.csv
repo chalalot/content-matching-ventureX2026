@@ -1,0 +1,31 @@
+project_id,company_id,title,description,project_type,budget_min,budget_max,shooting_location,timeline_start,timeline_end,status
+prj-0001,cmp-0001,Summer Glow Haul,Affiliate campaign for new SPF & hydration skincare line on TikTok Shop,KOL_CAMPAIGN,"$5,000","$15,000","Los Angeles, CA",2025-07-01,2025-07-31,OPEN
+prj-0002,cmp-0002,Back-to-School Tech Launch,TikTok product showcase for new tablet accessories — back-to-school,COMMERCIAL,"$8,000","$20,000","San Jose, CA",2025-07-15,2025-08-15,OPEN
+prj-0003,cmp-0003,Wellness Journey Series,4-part TikTok series featuring supplements & morning wellness routines,KOL_CAMPAIGN,"$3,500","$10,000","New York, NY",2025-06-20,2025-07-20,IN_PROGRESS
+prj-0004,cmp-0001,Holiday Beauty Blitz,Major TikTok LIVE event with top beauty KOLs for Q4 holiday push,EVENT,"$20,000","$50,000","Los Angeles, CA",2025-11-01,2025-12-31,DRAFT
+prj-0005,cmp-0004,StyleForward Spring Edit,Fashion lookbook campaign with 3 mid-tier TikTok Shop KOLs,KOL_CAMPAIGN,"$6,000","$18,000","Miami, FL",2025-08-01,2025-09-01,OPEN
+prj-0006,cmp-0006,Home Haven Holiday Decor,Short-form video series for home décor product launch — Q4,COMMERCIAL,"$4,000","$12,000","Austin, TX",2025-10-01,2025-10-31,DRAFT
+prj-0007,cmp-0005,FreshFit New Year Campaign,New Year fitness KOL campaign for supplement bundle on TikTok Shop,KOL_CAMPAIGN,"$7,000","$22,000","Chicago, IL",2025-12-26,2026-01-15,DRAFT
+prj-0008,cmp-0006,Starface Back-to-School,TikTok Shop acne patch campaign targeting Gen Z back-to-school season,KOL_CAMPAIGN,"$4,500","$14,000","New York, NY",2025-07-20,2025-08-20,OPEN
+prj-0009,cmp-0009,AquaGlow Spring Hydration,Product-launch TikTok campaign for new hyaluronic serum line,COMMERCIAL,"$5,500","$16,000","San Francisco, CA",2025-06-15,2025-07-15,IN_PROGRESS
+prj-0010,cmp-0010,GlamSnap Glitter Drop,Viral TikTok challenge campaign for new glitter eyeshadow palette,KOL_CAMPAIGN,"$8,000","$25,000","Los Angeles, CA",2025-08-10,2025-09-10,OPEN
+prj-0011,cmp-0002,TechNest Holiday Gift Guide,TikTok Shop gift guide video series for consumer electronics Q4,KOL_CAMPAIGN,"$12,000","$35,000","San Jose, CA",2025-11-15,2025-12-20,DRAFT
+prj-0012,cmp-0011,VitaBoost Summer Cut,Fitness supplement TikTok LIVE event with top fitness KOLs,EVENT,"$10,000","$30,000","Los Angeles, CA",2025-07-04,2025-07-07,OPEN
+prj-0013,cmp-0003,Bloom Reset Challenge,#BloomReset 30-day TikTok challenge — wellness product integration,KOL_CAMPAIGN,"$9,000","$28,000","New York, NY",2025-09-01,2025-09-30,OPEN
+prj-0014,cmp-0013,ByteBox Student Tech Bundle,College student tech essentials TikTok Shop bundle campaign,KOL_CAMPAIGN,"$6,000","$18,000",Various,2025-08-01,2025-08-31,OPEN
+prj-0015,cmp-0008,ClearDerm Winter Skin Series,3-part winter skincare TikTok education + affiliate campaign,KOL_CAMPAIGN,"$4,000","$12,000","New York, NY",2025-11-01,2025-11-30,DRAFT
+prj-0016,cmp-0015,ActiveEdge Flash Sale LIVE,TikTok LIVE shopping event for 48-hour activewear flash sale,EVENT,"$5,000","$15,000","Atlanta, GA",2025-07-18,2025-07-20,OPEN
+prj-0017,cmp-0004,TrendHaus Fall Drop,Fall fashion collection TikTok Shop reveal with KOL try-on hauls,KOL_CAMPAIGN,"$8,000","$24,000","New York, NY",2025-09-15,2025-10-15,DRAFT
+prj-0018,cmp-0016,SmartHome Starter Kit,Smart home starter kit awareness campaign on TikTok for new movers,COMMERCIAL,"$5,000","$16,000","Seattle, WA",2025-08-15,2025-09-15,OPEN
+prj-0019,cmp-0010,GlamSnap Valentine Drop,Valentine's Day makeup TikTok campaign with gifting KOL activations,KOL_CAMPAIGN,"$7,000","$21,000","Los Angeles, CA",2026-01-15,2026-02-14,DRAFT
+prj-0020,cmp-0021,CozyNest Fall Refresh,Fall home refresh TikTok campaign with aesthetic home décor creators,KOL_CAMPAIGN,"$3,500","$10,000","Nashville, TN",2025-09-20,2025-10-20,OPEN
+prj-0021,cmp-0024,PureFuel Spring Clean,Spring detox & cleanse TikTok Shop affiliate campaign,KOL_CAMPAIGN,"$4,000","$12,000","Denver, CO",2025-04-01,2025-04-30,COMPLETED
+prj-0022,cmp-0001,GlowUp Loyalty LIVE,VIP customer TikTok LIVE shopping event for GlowUp Beauty Club members,EVENT,"$6,000","$18,000","Los Angeles, CA",2025-06-01,2025-06-01,COMPLETED
+prj-0023,cmp-0006,StyleBox Monthly Reveal,Monthly TikTok Shop subscription box reveal with fashion KOLs,KOL_CAMPAIGN,"$3,000","$9,000","Miami, FL",2025-05-01,2025-05-31,COMPLETED
+prj-0024,cmp-0003,Bloom Father's Day Gifts,Father's Day wellness gift guide TikTok campaign,KOL_CAMPAIGN,"$3,000","$8,000","New York, NY",2025-06-08,2025-06-15,IN_PROGRESS
+prj-0025,cmp-0002,TechNest Prime Day Prep,Pre-Prime Day TikTok Shop deals countdown campaign for electronics,KOL_CAMPAIGN,"$10,000","$30,000","San Jose, CA",2025-07-10,2025-07-14,OPEN
+prj-0026,cmp-0019,NovaTech Back-to-School,School year tech setup TikTok campaign for budget gadget shoppers,KOL_CAMPAIGN,"$5,000","$15,000",Various,2025-07-25,2025-08-25,OPEN
+prj-0027,cmp-0009,AquaGlow Holiday Glow,Holiday gifting campaign for skincare bundles on TikTok Shop,KOL_CAMPAIGN,"$6,000","$18,000","Los Angeles, CA",2025-11-20,2025-12-10,DRAFT
+prj-0028,cmp-0025,DeviceDen Gaming Launch,Gaming phone accessory TikTok Shop launch with gaming KOLs,COMMERCIAL,"$7,500","$22,000","Las Vegas, NV",2025-08-20,2025-09-20,OPEN
+prj-0029,cmp-0022,Nourish Kitchen Summer,Healthy summer recipe TikTok campaign with kitchen gadget integration,KOL_CAMPAIGN,"$4,000","$12,000","Boston, MA",2025-06-15,2025-07-15,IN_PROGRESS
+prj-0030,cmp-0023,BrightLife Beauty Awards,TikTok-first beauty awards show with KOL co-hosts and live shopping,EVENT,"$15,000","$40,000","Los Angeles, CA",2025-10-15,2025-10-15,DRAFT
