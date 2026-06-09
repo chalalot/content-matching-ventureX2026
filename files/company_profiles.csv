@@ -1,0 +1,31 @@
+company_id,user_id,company_name,industry,website,contact_name,contact_phone
+cmp-0001,usr-0001,GlowUp Beauty Co.,Beauty & Skincare,glowupbeauty.com,Sarah Johnson,+1-310-555-0192
+cmp-0002,usr-0002,TechNest USA,Consumer Electronics,technestusa.com,Mike Chen,+1-408-555-0143
+cmp-0003,usr-0003,Bloom Wellness,Health & Wellness,bloomwellness.co,Emily Davis,+1-212-555-0187
+cmp-0004,usr-0004,StyleForward,Fashion & Apparel,styleforward.com,Lena Torres,+1-786-555-0211
+cmp-0005,usr-0005,FreshFit Nutrition,Vitamins & Supplements,freshfitnutrition.com,James Walker,+1-646-555-0234
+cmp-0006,usr-0006,Starface US,Beauty & Skincare,starface.world,Madison Scott,+1-323-555-0178
+cmp-0007,usr-0007,AquaGlow Skincare,Skincare & Wellness,aquaglowskin.com,Carlos Hernandez,+1-737-555-0145
+cmp-0008,usr-0008,Purity Beauty,Clean Beauty,puritybeauty.com,Olivia Martin,+1-510-555-0199
+cmp-0009,usr-0009,LumiSkin Labs,Skincare Technology,lumiskinlabs.com,Ryan Nguyen,+1-415-555-0162
+cmp-0010,usr-0010,GlamSnap Cosmetics,Makeup & Cosmetics,glamsnap.com,Amber Collins,+1-213-555-0117
+cmp-0011,usr-0011,Viral Agency Inc.,Marketing & Media,viralagency.com,Alex Kim,+1-213-555-0134
+cmp-0012,usr-0012,ContentCo US,Digital Marketing,contentco.us,Priya Patel,+1-312-555-0165
+cmp-0013,usr-0013,ShopBoost Media,E-commerce Marketing,shopboostmedia.com,Dan Wright,+1-305-555-0143
+cmp-0014,usr-0014,KOL Connect US,Influencer Marketing,kolconnect.us,Jessica Moore,+1-917-555-0177
+cmp-0015,usr-0015,Creator Hub Inc.,Content & Creator Mgmt,creatorhub.io,Leo Castillo,+1-512-555-0189
+cmp-0016,usr-0031,ByteBox Electronics,Consumer Electronics,bytebox.io,Chris Park,+1-408-555-0221
+cmp-0017,usr-0032,Zen Living Co.,Home & Lifestyle,zenliving.co,Amy Lin,+1-415-555-0235
+cmp-0018,usr-0033,CleanBeauty Club,Clean Beauty,cleanbeautyclub.com,Rachel Green,+1-310-555-0248
+cmp-0019,usr-0034,TrendHaus Fashion,Fashion & Apparel,trendhausfashion.com,Max Weber,+1-646-555-0261
+cmp-0020,usr-0035,VitaBoost Health,Vitamins & Supplements,vitaboost.us,Lisa Chen,+1-415-555-0274
+cmp-0021,usr-0036,SmartHome Hub,Smart Home Tech,smarthomehub.io,Tom Bradley,+1-206-555-0287
+cmp-0022,usr-0037,ClearDerm Co.,Skincare & Dermatology,cleardermskin.com,Hannah White,+1-713-555-0300
+cmp-0023,usr-0038,ActiveEdge Sports,Fitness & Activewear,activeedgesports.com,Marcus Johnson,+1-404-555-0313
+cmp-0024,usr-0039,Nourish Kitchen,Food & Grocery,nourishkitchen.co,Sofia Martinez,+1-617-555-0326
+cmp-0025,usr-0040,DeviceDen Tech,Mobile Accessories,devicedentech.io,Kevin Zhao,+1-650-555-0339
+cmp-0026,usr-0041,CozyNest Home,Home Décor,cozynesthome.com,Claire Adams,+1-615-555-0352
+cmp-0027,usr-0042,PureFuel Wellness,Nutrition & Wellness,purefuelwellness.co,Derek Ross,+1-480-555-0365
+cmp-0028,usr-0043,StyleBox Apparel,Fashion & Subscription,styleboxapparel.com,Nina Foster,+1-818-555-0378
+cmp-0029,usr-0044,BrightLife Beauty,Premium Beauty,brightlifebeauty.com,Owen Parker,+1-214-555-0391
+cmp-0030,usr-0045,NovaTech Gadgets,Tech Gadgets & Accessories,novatech.io,Iris Chang,+1-503-555-0404

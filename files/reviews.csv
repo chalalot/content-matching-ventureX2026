@@ -1,0 +1,31 @@
+review_id,project_id,reviewer_id,reviewee_id,rating,feedback,punctuality_score,creativity_score
+rev-0001,prj-0002,usr-0002,usr-0025,5,Outstanding TikTok content; surpassed GMV targets by 40% in week 1.,5,5
+rev-0002,prj-0002,usr-0002,usr-0016,5,Marcus directed a seamless product video. Extremely professional on-set.,5,4
+rev-0003,prj-0003,usr-0003,usr-0027,4,Great content quality. Minor delay on one deliverable but overall excellent.,3,5
+rev-0004,prj-0001,usr-0001,usr-0023,5,"Sarah's posts drove 3,200+ TikTok Shop orders in the first 48 hours.",5,5
+rev-0005,prj-0001,usr-0001,usr-0024,4,Strong engagement and great product knowledge. All deliveries on time.,4,4
+rev-0006,prj-0006,usr-0004,usr-0029,4,Good aesthetic but needed more product-focused captions per the brief.,4,3
+rev-0007,prj-0007,usr-0003,usr-0027,5,Jess authentically integrated the product. Audience loved the routine content.,5,5
+rev-0008,prj-0008,usr-0006,usr-0026,4,Nina's skincare content was excellent; would love slightly more CTA focus.,4,4
+rev-0009,prj-0009,usr-0007,usr-0024,5,Alex's TikTok LIVE drove $28K in GMV. Phenomenal audience engagement.,5,5
+rev-0010,prj-0009,usr-0007,usr-0018,5,Jordan delivered stunning visuals. The product direction was flawless.,5,5
+rev-0011,prj-0021,usr-0042,usr-0027,5,Jess exceeded expectations; health claims were accurate and well-researched.,5,4
+rev-0012,prj-0022,usr-0001,usr-0023,5,Best LIVE event we've ever hosted. Sarah's energy was incredible.,5,5
+rev-0013,prj-0023,usr-0006,usr-0029,3,Tyler's content was good but felt off-brand in two posts. Needed more revision.,3,3
+rev-0014,prj-0013,usr-0003,usr-0026,5,Nina's wellness content resonated perfectly with our target demographic.,4,5
+rev-0015,prj-0014,usr-0014,usr-0025,5,"Mike's tech review drove 1,800 TikTok Shop clicks within 24 hours.",5,4
+rev-0016,prj-0011,usr-0002,usr-0023,4,Sarah brought massive reach; content was on-brand and high quality.,4,5
+rev-0017,prj-0010,usr-0010,usr-0024,5,Alex's eyeshadow demo went viral — 4.2M views and 12K product saves.,5,5
+rev-0018,prj-0015,usr-0008,usr-0026,4,Nina's skincare tutorial was well-executed. Would book again.,4,4
+rev-0019,prj-0003,usr-0003,usr-0026,5,Exceptional engagement rate; Nina's audience perfectly matched our brand.,5,5
+rev-0020,prj-0005,usr-0004,usr-0024,4,"Alex delivered beautiful fashion content, slight delay on final edits.",3,5
+rev-0021,prj-0019,usr-0010,usr-0023,5,Sarah's Valentine's Day content was perfect — creative and conversion-focused.,5,5
+rev-0022,prj-0020,usr-0041,usr-0028,4,Kate's home content matched the fall aesthetic well. Solid performance.,4,3
+rev-0023,prj-0025,usr-0002,usr-0025,4,Tech review was thorough and credible. Good GMV performance.,4,4
+rev-0024,prj-0016,usr-0038,usr-0020,3,Morgan was a bit slow to communicate but final video quality was good.,2,4
+rev-0025,prj-0029,usr-0022,usr-0069,4,Dan's kitchen content was engaging and drove strong affiliate clicks.,4,4
+rev-0026,prj-0008,usr-0006,usr-0017,5,Ashley's direction elevated the brand imagery significantly.,5,5
+rev-0027,prj-0012,usr-0002,usr-0023,5,Sarah's TikTok LIVE was our highest-revenue event to date — $52K GMV.,5,5
+rev-0028,prj-0013,usr-0003,usr-0027,4,Jess's wellness integration was authentic and drove solid supplement sales.,4,4
+rev-0029,prj-0028,usr-0025,usr-0087,4,Gus's gaming gadget content was enthusiastic and very brand-aligned.,4,5
+rev-0030,prj-0030,usr-0023,usr-0016,5,Marcus co-hosted the awards show brilliantly. Production value was world-class.,5,5
