@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import ScoreBreakdown from './ScoreBreakdown'
+import { isAvailableStatus } from '@/lib/data/status'
 
 interface CandidateCardProps {
   candidate: CandidateResult
@@ -82,7 +83,7 @@ function renderMarkdown(content: string) {
 }
 
 export default function CandidateCard({ candidate }: CandidateCardProps) {
-  const isAvailable = candidate.availability_status === 'available'
+  const isAvailable = isAvailableStatus(candidate.availability_status)
 
   return (
     <Card className="border border-border">
@@ -130,4 +131,3 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
     </Card>
   )
 }
-

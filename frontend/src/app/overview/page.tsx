@@ -9,6 +9,7 @@ import type { Column } from '@/components/shared/DataTable'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getStatusColor } from '@/lib/utils/chart-colors'
 import { buildMonthlyRoleGrowthData } from '@/lib/data/user-growth'
+import { isAvailableStatus, isStatus } from '@/lib/data/status'
 
 export default function OverviewPage() {
   const users = readCsv<User>('01_users.csv')
@@ -57,15 +58,16 @@ export default function OverviewPage() {
     active: number
     pct: string
   }
-  const totalActiveUsers = users.filter(u => u.status === 'active').length
-  const openProjects = projects.filter(p => p.status === 'open').length
-  const pendingMatches = matches.filter(m => m.status === 'pending').length
+  const totalActiveUsers = users.filter(u => isStatus(u.status, 'active')).length
+  const openProjects = projects.filter(p => isStatus(p.status, 'open')).length
+  const pendingMatches = matches.filter(m => isStatus(m.status, 'pending')).length
+  const availableDirectors = directors.filter(d => isAvailableStatus(d.availability_status)).length
   const healthData: HealthRow[] = [
     { entity: 'Users', total: users.length, active: totalActiveUsers, pct: `${((totalActiveUsers / users.length) * 100).toFixed(1)}%` },
     { entity: 'Projects', total: projects.length, active: openProjects, pct: `${((openProjects / projects.length) * 100).toFixed(1)}%` },
     { entity: 'Matches', total: matches.length, active: pendingMatches, pct: `${((pendingMatches / matches.length) * 100).toFixed(1)}%` },
     { entity: 'Reviews', total: reviews.length, active: reviews.length, pct: '100%' },
-    { entity: 'Directors', total: directors.length, active: directors.filter(d => d.availability_status === 'available').length, pct: `${((directors.filter(d => d.availability_status === 'available').length / directors.length) * 100).toFixed(1)}%` },
+    { entity: 'Directors', total: directors.length, active: availableDirectors, pct: `${((availableDirectors / directors.length) * 100).toFixed(1)}%` },
     { entity: 'KOLs', total: kols.length, active: kols.length, pct: '100%' },
   ]
   const healthColumns: Column<HealthRow>[] = [

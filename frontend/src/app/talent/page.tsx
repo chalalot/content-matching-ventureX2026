@@ -14,6 +14,7 @@ import { ChartSkeleton, TableSkeleton } from '@/components/shared/PageSkeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatUSD, formatNumber, formatPct } from '@/lib/utils/formatters'
+import { isAvailableStatus } from '@/lib/data/status'
 
 export default function TalentPage() {
   const [directors, setDirectors] = useState<DirectorProfile[]>([])
@@ -44,10 +45,10 @@ export default function TalentPage() {
   const avgRate = directors.length > 0
     ? directors.reduce((s, d) => s + (d.base_day_rate ?? 0), 0) / directors.length
     : 0
-  const availableCount = directors.filter(d => d.availability_status === 'available').length
+  const availableCount = directors.filter(d => isAvailableStatus(d.availability_status)).length
   const availabilityPct = directors.length > 0 ? (availableCount / directors.length) * 100 : 0
 
-  const portfolioCountByUser: Record<number, number> = {}
+  const portfolioCountByUser: Record<string, number> = {}
   for (const p of portfolios) {
     portfolioCountByUser[p.user_id] = (portfolioCountByUser[p.user_id] ?? 0) + 1
   }
@@ -85,7 +86,7 @@ export default function TalentPage() {
     : 0
 
   // Aggregate metrics per KOL
-  const metricsByKol: Record<number, { followers: number; engagement: number }> = {}
+  const metricsByKol: Record<string, { followers: number; engagement: number }> = {}
   for (const m of metrics) {
     if (!metricsByKol[m.kol_id]) metricsByKol[m.kol_id] = { followers: 0, engagement: 0 }
     metricsByKol[m.kol_id].followers += m.follower_count ?? 0
