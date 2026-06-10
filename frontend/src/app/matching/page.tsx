@@ -16,6 +16,7 @@ import { ChartSkeleton, TableSkeleton } from '@/components/shared/PageSkeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatUSD, formatPct } from '@/lib/utils/formatters'
 import { getStatusColor } from '@/lib/utils/chart-colors'
+import { isStatus } from '@/lib/data/status'
 
 interface MatchRow extends Match {
   talent_name: string
@@ -106,10 +107,7 @@ export default function MatchingPage() {
   })
 
   const totalMatches = filtered.length
-  const hiredCount = filtered.filter(m => {
-    const status = String(m.status ?? '').toLowerCase()
-    return status === 'hired' || status === 'completed'
-  }).length
+  const hiredCount = filtered.filter(m => isStatus(m.status, 'hired') || isStatus(m.status, 'completed')).length
   const hireRate = totalMatches > 0 ? (hiredCount / totalMatches) * 100 : 0
   const avgScore =
     filtered.length > 0

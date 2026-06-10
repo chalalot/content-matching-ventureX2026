@@ -3,7 +3,7 @@
 // ============================================================
 
 export interface User {
-  user_id: number
+  user_id: string
   email: string
   password_hash: string
   role: string
@@ -13,8 +13,8 @@ export interface User {
 }
 
 export interface CompanyProfile {
-  company_id: number
-  user_id: number
+  company_id: string
+  user_id: string
   company_name: string
   industry: string
   website: string
@@ -23,8 +23,8 @@ export interface CompanyProfile {
 }
 
 export interface DirectorProfile {
-  director_id: number
-  user_id: number
+  director_id: string
+  user_id: string
   full_name: string
   bio: string
   years_of_experience: number
@@ -34,8 +34,8 @@ export interface DirectorProfile {
 }
 
 export interface KolProfile {
-  kol_id: number
-  user_id: number
+  kol_id: string
+  user_id: string
   stage_name: string
   bio: string
   main_niche: string
@@ -44,8 +44,8 @@ export interface KolProfile {
 }
 
 export interface SocialMetric {
-  metric_id: number
-  kol_id: number
+  metric_id: string
+  kol_id: string
   platform: string
   follower_count: number
   avg_engagement_rate: number
@@ -53,8 +53,8 @@ export interface SocialMetric {
 }
 
 export interface Portfolio {
-  portfolio_id: number
-  user_id: number
+  portfolio_id: string
+  user_id: string
   project_title: string
   video_url: string
   role_played: string
@@ -62,19 +62,19 @@ export interface Portfolio {
 }
 
 export interface Category {
-  category_id: number
+  category_id: string
   name: string
   type: string
 }
 
 export interface UserCategory {
-  user_id: number
-  category_id: number
+  user_id: string
+  category_id: string
 }
 
 export interface Project {
-  project_id: number
-  company_id: number
+  project_id: string
+  company_id: string
   title: string
   description: string
   project_type: string
@@ -92,17 +92,17 @@ export interface ProjectWithCompany extends Project {
 }
 
 export interface ProjectRequirement {
-  requirement_id: number
-  project_id: number
+  requirement_id: string
+  project_id: string
   talent_type: string
-  required_category_id: number
+  required_category_id: string
   min_followers: number
 }
 
 export interface Match {
-  match_id: number
-  project_id: number
-  talent_user_id: number
+  match_id: string
+  project_id: string
+  talent_user_id: string
   initiated_by: string
   status: string
   proposed_fee: number
@@ -111,10 +111,10 @@ export interface Match {
 }
 
 export interface Review {
-  review_id: number
-  project_id: number
-  reviewer_id: number
-  reviewee_id: number
+  review_id: string
+  project_id: string
+  reviewer_id: string
+  reviewee_id: string
   rating: number
   feedback: string
   punctuality_score: number
@@ -122,9 +122,9 @@ export interface Review {
 }
 
 export interface RoiRow {
-  match_id: number
-  project_id: number
-  talent_user_id: number
+  match_id: string
+  project_id: string
+  talent_user_id: string
   talent_name: string
   talent_type: string
   company_name: string

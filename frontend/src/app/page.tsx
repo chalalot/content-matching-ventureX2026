@@ -4,6 +4,7 @@ import MetricCard from '@/components/shared/MetricCard'
 import PageHeader from '@/components/layout/PageHeader'
 import { Separator } from '@/components/ui/separator'
 import { formatPct } from '@/lib/utils/formatters'
+import { isStatus } from '@/lib/data/status'
 
 export default function HomePage() {
   const users = readCsv<User>('01_users.csv')
@@ -12,7 +13,7 @@ export default function HomePage() {
 
   const totalUsers = users.length
   const activeProjects = projects.filter(
-    p => p.status === 'open' || p.status === 'in_progress'
+    p => isStatus(p.status, 'open') || isStatus(p.status, 'in_progress')
   ).length
   const totalMatches = matches.length
   const avgScore =
@@ -20,7 +21,7 @@ export default function HomePage() {
       ? matches.reduce((s, m) => s + (m.match_score ?? 0), 0) / matches.length
       : 0
   const hiredCount = matches.filter(
-    m => m.status === 'hired' || m.status === 'completed'
+    m => isStatus(m.status, 'hired') || isStatus(m.status, 'completed')
   ).length
   const hireRate = totalMatches > 0 ? (hiredCount / totalMatches) * 100 : 0
 

@@ -13,6 +13,7 @@ import type { FilterConfig } from '@/components/shared/FilterBar'
 import { ChartSkeleton, TableSkeleton } from '@/components/shared/PageSkeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatUSD } from '@/lib/utils/formatters'
+import { isStatus } from '@/lib/data/status'
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<ProjectWithCompany[]>([])
@@ -58,8 +59,8 @@ export default function ProjectsPage() {
   const totalProjects = filtered.length
   const avgBudgetMin = filtered.length > 0 ? filtered.reduce((s, p) => s + (p.budget_min ?? 0), 0) / filtered.length : 0
   const avgBudgetMax = filtered.length > 0 ? filtered.reduce((s, p) => s + (p.budget_max ?? 0), 0) / filtered.length : 0
-  const openCount = filtered.filter(p => p.status === 'open').length
-  const inProgressCount = filtered.filter(p => p.status === 'in_progress').length
+  const openCount = filtered.filter(p => isStatus(p.status, 'open')).length
+  const inProgressCount = filtered.filter(p => isStatus(p.status, 'in_progress')).length
 
   // Budget by type
   const budgetByType: Record<string, { min_total: number; max_total: number; count: number }> = {}
