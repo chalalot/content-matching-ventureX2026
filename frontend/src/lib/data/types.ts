@@ -152,6 +152,8 @@ export interface RoiRow {
 // Match Engine Types — mirrors backend/models.py
 // ============================================================
 
+// Director engine
+
 export interface BriefRequest {
   brand: string
   industry: string
@@ -190,6 +192,54 @@ export interface CandidateResult {
 export interface MatchResponse {
   brief_summary: string
   shortlist: CandidateResult[]
+  total_candidates_considered: number
+  response_time_ms: number
+}
+
+// KOL engine
+
+export interface KolBriefRequest {
+  brand: string
+  industry: string
+  target_niche: string
+  preferred_platform: string
+  target_age_group: string
+  content_format: string
+  budget_usd: number
+  timeline_weeks: number
+  description: string
+  top_n: number
+  provider: string
+}
+
+export interface KolScoreBreakdown {
+  niche_match: number
+  platform_match: number
+  audience_fit: number
+  engagement: number
+  reach: number
+  budget_fit: number
+  availability: number
+}
+
+export interface KolCandidateResult {
+  rank: number
+  kol_id: string
+  name: string
+  score: number
+  score_breakdown: KolScoreBreakdown
+  explanation: string
+  main_niche: string
+  primary_platform: string
+  platforms: string[]
+  total_followers: number
+  avg_engagement_rate: number
+  booking_fee: number
+}
+
+export interface KolMatchResponse {
+  brief_summary: string
+  shortlist: KolCandidateResult[]
   total_candidates_considered: number
   response_time_ms: number
 }

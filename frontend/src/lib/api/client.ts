@@ -10,6 +10,8 @@ import type {
   RoiRow,
   BriefRequest,
   MatchResponse,
+  KolBriefRequest,
+  KolMatchResponse,
 } from '@/lib/data/types'
 
 const base = '/api/analytics'
@@ -41,4 +43,17 @@ export async function matchDirectors(brief: BriefRequest): Promise<MatchResponse
     throw new Error(err?.error ?? `API error: ${res.status}`)
   }
   return res.json() as Promise<MatchResponse>
+}
+
+export async function matchKols(brief: KolBriefRequest): Promise<KolMatchResponse> {
+  const res = await fetch('/api/match-kol', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(brief),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+    throw new Error(err?.error ?? `API error: ${res.status}`)
+  }
+  return res.json() as Promise<KolMatchResponse>
 }

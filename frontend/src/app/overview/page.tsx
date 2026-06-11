@@ -36,20 +36,13 @@ export default function OverviewPage() {
   }
   const roleBarData = Object.entries(roleCounts).map(([role, count]) => ({ role, count }))
 
-  // Geo distribution
-  const geoMap: Record<string, { director: number; kol: number }> = {}
+  // Director geo distribution
+  const locationCounts: Record<string, number> = {}
   for (const d of directors) {
     const loc = d.primary_location ?? 'Unknown'
-    if (!geoMap[loc]) geoMap[loc] = { director: 0, kol: 0 }
-    geoMap[loc].director++
+    locationCounts[loc] = (locationCounts[loc] ?? 0) + 1
   }
-  for (const k of kols) {
-    // KOLs don't have location in profile; use 'Unknown'
-    const loc = 'Unknown'
-    if (!geoMap[loc]) geoMap[loc] = { director: 0, kol: 0 }
-    geoMap[loc].kol++
-  }
-  const geoData = Object.entries(geoMap).map(([location, v]) => ({ location, ...v }))
+  const geoData = Object.entries(locationCounts).map(([location, count]) => ({ location, count }))
 
   // Health summary table
   interface HealthRow {
@@ -125,17 +118,14 @@ export default function OverviewPage() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-sm">Talent Geographic Distribution</CardTitle>
+          <CardTitle className="text-sm">Directors by Location</CardTitle>
         </CardHeader>
         <CardContent>
           <BarChart
             data={geoData as Record<string, unknown>[]}
             xKey="location"
-            bars={[
-              { key: 'director', label: 'Directors' },
-              { key: 'kol', label: 'KOLs' },
-            ]}
-            stacked
+            bars={[{ key: 'count', label: 'Directors' }]}
+            horizontal
           />
         </CardContent>
       </Card>

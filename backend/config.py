@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     chroma_persist_dir: str = "./chroma_db"
     data_path: str = "../data/directors_mockup.json"
     collection_name: str = "directors"
+    kol_data_path: str = "../data/kols_mockup.json"
+    kol_collection_name: str = "kols"
 
     model: str = "gemini-3.1-pro-preview"
     temperature: float = 0.7

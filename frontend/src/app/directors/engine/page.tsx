@@ -10,12 +10,11 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-export default function MatchEnginePage() {
+export default function DirectorEnginePage() {
   const [result, setResult] = useState<MatchResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [activeIdx, setActiveIdx] = useState(0)
 
-  // Load result from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('match_engine_result')
     if (saved) {
@@ -37,20 +36,15 @@ export default function MatchEnginePage() {
   return (
     <div className="max-w-6xl">
       <PageHeader
-        title="Match Engine"
+        title="Director Match Engine"
         description="AI-powered director matching — fill in your campaign brief to get a shortlist of best-fit directors."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Form */}
         <div className="lg:col-span-5">
-          <BriefForm
-            onResult={handleResult}
-            onLoading={setLoading}
-          />
+          <BriefForm onResult={handleResult} onLoading={setLoading} />
         </div>
 
-        {/* Results */}
         <div className="lg:col-span-7">
           {loading && <MatchResultsSkeleton />}
 
@@ -73,7 +67,6 @@ export default function MatchEnginePage() {
 
               <Separator />
 
-              {/* Slider / Carousel Container */}
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="text-sm font-medium">
@@ -101,12 +94,10 @@ export default function MatchEnginePage() {
                   </div>
                 </div>
 
-                {/* Active Candidate Card with Transition */}
                 <div key={activeIdx} className="transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-right-4">
                   <CandidateCard candidate={result.shortlist[activeIdx]} />
                 </div>
 
-                {/* Dots Pagination Indicator */}
                 <div className="flex justify-center gap-1.5 mt-2">
                   {result.shortlist.map((_, idx) => (
                     <button

@@ -1,0 +1,779 @@
+[
+  {
+    "id": "e9e2386b-12df-40e1-bf15-b223c2f20dcf",
+    "stage_name": "Linh Chi",
+    "bio": "Linh Chi - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Beauty",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 190900000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "YOUTUBE",
+      "INSTAGRAM"
+    ],
+    "total_followers": 64302784,
+    "avg_engagement_rate": 0.59
+  },
+  {
+    "id": "d8da0b21-400a-4d94-880b-55e58475fcda",
+    "stage_name": "Đức Phúc",
+    "bio": "Đức Phúc - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Music",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 184100000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "INSTAGRAM",
+      "TIKTOK"
+    ],
+    "total_followers": 16790011,
+    "avg_engagement_rate": 3.1
+  },
+  {
+    "id": "2871ad29-3c28-445d-a0d7-6a14b1382708",
+    "stage_name": "Hà My",
+    "bio": "Hà My - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Lifestyle",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 68200000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "FACEBOOK",
+      "TIKTOK",
+      "YOUTUBE",
+      "INSTAGRAM"
+    ],
+    "total_followers": 29598941,
+    "avg_engagement_rate": 6.1475
+  },
+  {
+    "id": "1c77e819-af92-4328-aa42-c5ae089c7cbf",
+    "stage_name": "Quang Đại",
+    "bio": "Quang Đại - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Fashion",
+    "target_demographic_age": "13-17",
+    "booking_fee_estimate": 26800000.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 14070626,
+    "avg_engagement_rate": 3.88
+  },
+  {
+    "id": "a436b31b-6a24-4016-a393-22de443ff46e",
+    "stage_name": "Thanh Thanh",
+    "bio": "Thanh Thanh - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Food",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 176400000.0,
+    "primary_platform": "YOUTUBE",
+    "platforms": [
+      "FACEBOOK",
+      "TIKTOK",
+      "YOUTUBE",
+      "INSTAGRAM"
+    ],
+    "total_followers": 31279876,
+    "avg_engagement_rate": 7.56
+  },
+  {
+    "id": "0122cff2-9f99-4c9b-a4b7-83daa69adf10",
+    "stage_name": "Minh Tú",
+    "bio": "Minh Tú - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Fitness",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 51700000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "TIKTOK",
+      "FACEBOOK"
+    ],
+    "total_followers": 6396321,
+    "avg_engagement_rate": 7.805
+  },
+  {
+    "id": "d995cb73-c2f7-4e31-9449-61d94d859a50",
+    "stage_name": "Tuấn Hưng",
+    "bio": "Tuấn Hưng - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Travel",
+    "target_demographic_age": "13-17",
+    "booking_fee_estimate": 176200000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "YOUTUBE",
+      "FACEBOOK"
+    ],
+    "total_followers": 13210682,
+    "avg_engagement_rate": 10.68
+  },
+  {
+    "id": "1c821bfb-6922-4602-bcbb-87724fdc4dd2",
+    "stage_name": "Ngọc Trinh",
+    "bio": "Ngọc Trinh - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Education",
+    "target_demographic_age": "13-17",
+    "booking_fee_estimate": 21700000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "FACEBOOK",
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 27273910,
+    "avg_engagement_rate": 5.3567
+  },
+  {
+    "id": "34d39f44-0c51-41f6-91cf-a469a322064d",
+    "stage_name": "Sơn Tùng",
+    "bio": "Sơn Tùng - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Gaming",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 164100000.0,
+    "primary_platform": "YOUTUBE",
+    "platforms": [
+      "FACEBOOK",
+      "INSTAGRAM",
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 39105013,
+    "avg_engagement_rate": 4.7525
+  },
+  {
+    "id": "4d6c3f3a-843f-4153-871d-92bfdc9d479a",
+    "stage_name": "Phương Ly",
+    "bio": "Phương Ly - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Comedy",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 154300000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM",
+      "FACEBOOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 32069105,
+    "avg_engagement_rate": 8.0625
+  },
+  {
+    "id": "c24f16ba-0abd-4035-87fa-f0ad955be012",
+    "stage_name": "Châu Bùi",
+    "bio": "Châu Bùi - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Beauty",
+    "target_demographic_age": "13-17",
+    "booking_fee_estimate": 133700000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "INSTAGRAM",
+      "YOUTUBE",
+      "FACEBOOK",
+      "TIKTOK"
+    ],
+    "total_followers": 16216426,
+    "avg_engagement_rate": 5.3225
+  },
+  {
+    "id": "11c18232-3db1-4468-a7ff-edffde50c30f",
+    "stage_name": "Ninh Dương Lan Ngọc",
+    "bio": "Ninh Dương Lan Ngọc - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Music",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 37200000.0,
+    "primary_platform": "YOUTUBE",
+    "platforms": [
+      "INSTAGRAM",
+      "YOUTUBE"
+    ],
+    "total_followers": 14469993,
+    "avg_engagement_rate": 4.76
+  },
+  {
+    "id": "03eb7e07-9ea4-420f-b7e7-a1594d493bea",
+    "stage_name": "Huy Trần",
+    "bio": "Huy Trần - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Lifestyle",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 175100000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM",
+      "YOUTUBE",
+      "FACEBOOK"
+    ],
+    "total_followers": 35841189,
+    "avg_engagement_rate": 4.0375
+  },
+  {
+    "id": "cf0fa35b-dedf-4e59-a5ee-ddf53ed83416",
+    "stage_name": "An Phương",
+    "bio": "An Phương - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Fashion",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 193100000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "INSTAGRAM",
+      "FACEBOOK",
+      "YOUTUBE",
+      "TIKTOK"
+    ],
+    "total_followers": 32090160,
+    "avg_engagement_rate": 6.8075
+  },
+  {
+    "id": "83f8aeaa-c860-4091-acee-b2b5db75a4d0",
+    "stage_name": "Khánh Vy",
+    "bio": "Khánh Vy - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Food",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 152300000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "FACEBOOK",
+      "INSTAGRAM",
+      "YOUTUBE",
+      "TIKTOK"
+    ],
+    "total_followers": 23385100,
+    "avg_engagement_rate": 11.914
+  },
+  {
+    "id": "5562b618-05ff-419e-b2df-b7b0c4bbe6a9",
+    "stage_name": "Giang Ơi",
+    "bio": "Giang Ơi - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Fitness",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 44200000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "INSTAGRAM",
+      "YOUTUBE"
+    ],
+    "total_followers": 19379757,
+    "avg_engagement_rate": 7.3
+  },
+  {
+    "id": "1bb44801-ec00-4572-a166-8975fd299cda",
+    "stage_name": "Pew Pew",
+    "bio": "Pew Pew - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Travel",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 82800000.0,
+    "primary_platform": "YOUTUBE",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE",
+      "INSTAGRAM",
+      "FACEBOOK"
+    ],
+    "total_followers": 23603278,
+    "avg_engagement_rate": 6.26
+  },
+  {
+    "id": "4e0c6049-ba91-4435-a23a-f0b9cbd110da",
+    "stage_name": "Độ Mixi",
+    "bio": "Độ Mixi - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Education",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 131700000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "YOUTUBE",
+      "FACEBOOK",
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 35421142,
+    "avg_engagement_rate": 7.1575
+  },
+  {
+    "id": "5149b466-0f81-4066-8e09-d9ae653af00f",
+    "stage_name": "Lê Bống",
+    "bio": "Lê Bống - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Gaming",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 180400000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "YOUTUBE",
+      "FACEBOOK"
+    ],
+    "total_followers": 18501589,
+    "avg_engagement_rate": 3.705
+  },
+  {
+    "id": "df10ae18-81c8-433a-aa5b-b378db5666cb",
+    "stage_name": "Quỳnh Trần",
+    "bio": "Quỳnh Trần - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Comedy",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 28600000.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "FACEBOOK",
+      "INSTAGRAM",
+      "YOUTUBE",
+      "TIKTOK"
+    ],
+    "total_followers": 11412499,
+    "avg_engagement_rate": 7.1
+  },
+  {
+    "id": "3b65390f-08c3-43a4-818b-a440580c60d6",
+    "stage_name": "KOL 20",
+    "bio": "KOL 20 - Nhà sáng tạo nội dung hàng đầu Việt Nam.",
+    "main_niche": "Beauty",
+    "target_demographic_age": "13-17",
+    "booking_fee_estimate": 17500000.0,
+    "primary_platform": "FACEBOOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE",
+      "FACEBOOK"
+    ],
+    "total_followers": 13365633,
+    "avg_engagement_rate": 5.2967
+  },
+  {
+    "id": "1393a6ca-7801-478e-9ccf-767706e6bc2a",
+    "stage_name": "",
+    "bio": " - Vietnamese content creator",
+    "main_niche": "Lifestyle",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 0.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "4958726b-1980-4d36-adfb-c38eca74e19d",
+    "stage_name": "Sơn Tùng M-TP (Premium)",
+    "bio": "Top artist & mega influencer Việt Nam.",
+    "main_niche": "Music",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 2000000000.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [
+      "YOUTUBE",
+      "FACEBOOK",
+      "INSTAGRAM",
+      "TIKTOK"
+    ],
+    "total_followers": 33715096,
+    "avg_engagement_rate": 9.56
+  },
+  {
+    "id": "22eefff1-cc47-51c3-bac3-e00d11e209a3",
+    "stage_name": "@ShopWithSarah",
+    "bio": "Lifestyle & shopping creator; TikTok Shop Top Affiliate 2024. Drives viral hauls.",
+    "main_niche": "Lifestyle",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 3500.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 3730000,
+    "avg_engagement_rate": 6.75
+  },
+  {
+    "id": "80c3c446-a20a-5fa4-b400-e1c3e12b0629",
+    "stage_name": "@BeautyByAlex",
+    "bio": "Beauty & skincare influencer known for honest, viral product reviews on TikTok Shop.",
+    "main_niche": "Beauty",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2800.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 2180000,
+    "avg_engagement_rate": 8.0
+  },
+  {
+    "id": "96bd9808-cdea-5844-ab8d-1c2a20df149e",
+    "stage_name": "@TechMikeReviews",
+    "bio": "Consumer tech reviewer & TikTok Shop gadget affiliate. 1M+ followers.",
+    "main_niche": "Tech",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2200.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 1550000,
+    "avg_engagement_rate": 5.5
+  },
+  {
+    "id": "8a03869b-cec5-5571-8189-a41dc11b9a61",
+    "stage_name": "@GlowGetterNina",
+    "bio": "Skincare-obsessed creator sharing routines and TikTok Shop hauls daily.",
+    "main_niche": "Skincare",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 1800.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 1090000,
+    "avg_engagement_rate": 9.35
+  },
+  {
+    "id": "c3adb816-be61-5a6c-9008-474f56f12e6e",
+    "stage_name": "@FitLifeJess",
+    "bio": "Fitness & wellness creator promoting healthy living and activewear on TikTok Shop.",
+    "main_niche": "Fitness",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 2500.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 2890000,
+    "avg_engagement_rate": 6.65
+  },
+  {
+    "id": "64e154a0-bcfa-5633-9144-eaef37457ebd",
+    "stage_name": "@HomeWithKate",
+    "bio": "Home décor & organization creator; TikTok Shop top affiliate in Home & Living.",
+    "main_niche": "Home Decor",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1600.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 650000,
+    "avg_engagement_rate": 10.1
+  },
+  {
+    "id": "f08d50ed-337d-5747-afa2-43b22a284850",
+    "stage_name": "@FashionFwdTyler",
+    "bio": "Men's fashion creator focused on affordable TikTok Shop style finds.",
+    "main_niche": "Fashion",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2100.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 1740000,
+    "avg_engagement_rate": 6.05
+  },
+  {
+    "id": "21bcbe87-9938-5e26-b28f-cdf744e4a1aa",
+    "stage_name": "@FoodieWithDan",
+    "bio": "Food & cooking creator reviewing kitchen gadgets and grocery hauls on TikTok Shop.",
+    "main_niche": "Food",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1400.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 520000,
+    "avg_engagement_rate": 12.5
+  },
+  {
+    "id": "cc79a107-2c27-5298-b234-9e60145d814a",
+    "stage_name": "@SkincareMia",
+    "bio": "Dermatologist-backed skincare creator; trusted TikTok Shop beauty affiliate.",
+    "main_niche": "Skincare",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 3200.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 3070000,
+    "avg_engagement_rate": 7.25
+  },
+  {
+    "id": "3e99f8d1-2419-5608-ba2c-ec42f7786246",
+    "stage_name": "@GadgetGuruJake",
+    "bio": "Unboxing & tech review creator; known for TikTok Shop gadget hauls.",
+    "main_niche": "Tech",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 1900.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 1500000,
+    "avg_engagement_rate": 5.9
+  },
+  {
+    "id": "8f457b69-d25b-593d-85a6-1ba8558f5d30",
+    "stage_name": "@WellnessWithCora",
+    "bio": "Holistic wellness creator covering supplements, yoga, and healthy living on TikTok.",
+    "main_niche": "Wellness",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 2000.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 730000,
+    "avg_engagement_rate": 9.8
+  },
+  {
+    "id": "a5e59481-e5fb-50b7-8933-cf0fee3e8577",
+    "stage_name": "@StyleQueenRachel",
+    "bio": "Women's fashion & beauty creator; TikTok Shop haul queen with 2M+ followers.",
+    "main_niche": "Fashion",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 4500.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 3500000,
+    "avg_engagement_rate": 7.25
+  },
+  {
+    "id": "17d7c5c8-71dd-5f67-b476-4ae273c47de4",
+    "stage_name": "@TechTalkPriya",
+    "bio": "Female tech creator covering smartphones, tablets, and TikTok Shop electronics.",
+    "main_niche": "Tech",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2600.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 1080000,
+    "avg_engagement_rate": 7.5
+  },
+  {
+    "id": "b0a1ce6e-5dbc-54c1-b212-fec8e004e36e",
+    "stage_name": "@BeautyHaulsEmma",
+    "bio": "Drugstore & premium beauty haul creator; TikTok Shop affiliate since 2023.",
+    "main_niche": "Beauty",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 1700.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 840000,
+    "avg_engagement_rate": 10.6
+  },
+  {
+    "id": "ca63c9ea-4931-5514-9bc3-e99ad6c3964b",
+    "stage_name": "@FitWithMarco",
+    "bio": "Male fitness & nutrition creator; supplements and activewear affiliate on TikTok.",
+    "main_niche": "Fitness",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2300.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "YOUTUBE"
+    ],
+    "total_followers": 1210000,
+    "avg_engagement_rate": 6.1
+  },
+  {
+    "id": "67f03886-779b-5cc4-b5dc-f733872c2b55",
+    "stage_name": "@HomeInspoLily",
+    "bio": "Interior design & home décor creator; TikTok Shop home affiliate with aesthetic feed.",
+    "main_niche": "Home Decor",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1500.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 580000,
+    "avg_engagement_rate": 11.9
+  },
+  {
+    "id": "714ccc7b-ae19-52f7-af8c-8b254462a0fa",
+    "stage_name": "@FashionFindsOscar",
+    "bio": "Budget fashion & thrift finds creator; viral TikTok Shop try-on hauls.",
+    "main_niche": "Fashion",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 1200.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "8d5b697e-0eed-57be-bd2d-3a3295f62ad2",
+    "stage_name": "@CleanEatsTara",
+    "bio": "Healthy eating & food prep creator; TikTok Shop kitchen gadget affiliate.",
+    "main_niche": "Food",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 1600.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "e458ebcd-002c-563b-a089-8435fc4bfd97",
+    "stage_name": "@GlowRoutineAbi",
+    "bio": "Morning and night skincare routine creator; TikTok Shop beauty affiliate.",
+    "main_niche": "Skincare",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 1400.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "295b06f9-28ce-5969-905b-c9a32d95d244",
+    "stage_name": "@BytesByCam",
+    "bio": "Everyday tech & productivity creator; TikTok Shop tech accessories affiliate.",
+    "main_niche": "Tech",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 1800.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "a44bcd16-b525-56b1-9450-d89e2850e266",
+    "stage_name": "@LifestyleByLauren",
+    "bio": "Aspirational lifestyle creator; TikTok Shop beauty, fashion, and home affiliate.",
+    "main_niche": "Lifestyle",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 5500.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK",
+      "INSTAGRAM"
+    ],
+    "total_followers": 5200000,
+    "avg_engagement_rate": 8.45
+  },
+  {
+    "id": "a1b79b4b-ba1e-5712-9990-75e075fbfff2",
+    "stage_name": "@SkincareNerdDev",
+    "bio": "Science-based skincare creator; lab-tested product reviews for TikTok Shop.",
+    "main_niche": "Skincare",
+    "target_demographic_age": "25-34",
+    "booking_fee_estimate": 2900.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 1650000,
+    "avg_engagement_rate": 8.7
+  },
+  {
+    "id": "13440efc-954d-5e28-ac56-2ff03515e74f",
+    "stage_name": "@MomLifeMaggie",
+    "bio": "Mom & family lifestyle creator; TikTok Shop baby, kids, and home affiliate.",
+    "main_niche": "Baby & Kids",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1900.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "362bb92c-6def-5a19-9855-994266fa2026",
+    "stage_name": "@GymRatRyan",
+    "bio": "Weightlifting & fitness creator; TikTok Shop supplements and gym gear affiliate.",
+    "main_niche": "Fitness",
+    "target_demographic_age": "18-34",
+    "booking_fee_estimate": 2200.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "76bdefea-46d1-5e74-805c-1511c1d5fcfe",
+    "stage_name": "@PetMomBella",
+    "bio": "Dog & cat lifestyle creator; TikTok Shop pet care and accessories affiliate.",
+    "main_niche": "Pet",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1300.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "f09bc057-8901-56f0-bc46-e79b3eadb54d",
+    "stage_name": "@GamingGearGus",
+    "bio": "PC gaming & peripherals creator; TikTok Shop gaming accessories affiliate.",
+    "main_niche": "Gaming",
+    "target_demographic_age": "13-24",
+    "booking_fee_estimate": 2400.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "0835259e-c4d9-56c0-bb3a-912ecd01ed34",
+    "stage_name": "@CookingWithChloe",
+    "bio": "Recipe & cooking video creator; TikTok Shop kitchen tools and grocery affiliate.",
+    "main_niche": "Food",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1700.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "720685e3-3071-572f-adf9-273f95b72819",
+    "stage_name": "@TravelTechTom",
+    "bio": "Travel & tech creator; TikTok Shop luggage, gadgets, and travel accessories affiliate.",
+    "main_niche": "Travel Tech",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 2800.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "07ab7146-d4d1-5ba6-9da2-3c40555c2ce2",
+    "stage_name": "@DormDecorDiana",
+    "bio": "College & dorm room décor creator; TikTok Shop home and student lifestyle affiliate.",
+    "main_niche": "Home Decor",
+    "target_demographic_age": "18-24",
+    "booking_fee_estimate": 1100.0,
+    "primary_platform": "INSTAGRAM",
+    "platforms": [],
+    "total_followers": 0,
+    "avg_engagement_rate": 0.0
+  },
+  {
+    "id": "a876626a-789c-5317-a050-26de1a6a11bb",
+    "stage_name": "@WorkwearWendy",
+    "bio": "Corporate & workwear fashion creator; professional style finds on TikTok Shop.",
+    "main_niche": "Workwear",
+    "target_demographic_age": "25-44",
+    "booking_fee_estimate": 1800.0,
+    "primary_platform": "TIKTOK",
+    "platforms": [
+      "TIKTOK"
+    ],
+    "total_followers": 710000,
+    "avg_engagement_rate": 9.2
+  }
+]
