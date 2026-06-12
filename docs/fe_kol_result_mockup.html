@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KOL Match Result — FE Design Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --border: #e5e5e5;
+    --border-strong: #d4d4d4;
+    --radius: 0.5rem;
+
+    /* Proposed semantic accents (xem spec mục Tokens) */
+    --good: #2f7d32;        --good-bg: #eaf3ea;   --good-border:#cfe6cf;
+    --warn: #a3650b;        --warn-bg: #fbf2e3;   --warn-border:#f0e0c0;
+    --risk: #b3261e;        --risk-bg: #fbeaea;   --risk-border:#f0cccc;
+    --info: #1f5fa5;        --info-bg: #e9f1fb;   --info-border:#cfe0f5;
+    --sidebar: #0a0a0a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Inter', system-ui, sans-serif;
+    background: #fafafa; color: var(--foreground);
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  .app { display: flex; min-height: 100vh; }
+  .side { width: 60px; background: var(--sidebar); flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 20px; }
+  .side .logo { width: 30px; height: 30px; border-radius: 8px; background: #fff; color: #000;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .side .ic { color: #8a8a8a; font-size: 18px; } .side .ic.on { color: #fff; }
+  .main { flex: 1; padding: 28px 36px; max-width: 1120px; }
+  .h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  .sub { font-size: 13px; color: var(--muted-foreground); margin: 4px 0 0; }
+  .grid { display: grid; grid-template-columns: 5fr 7fr; gap: 32px; margin-top: 24px; }
+  @media (max-width: 880px){ .grid{ grid-template-columns:1fr; } .side{display:none;} .main{padding:20px;} }
+
+  /* Brief form (rút gọn) */
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--muted-foreground); margin: 0 0 5px; }
+  .field { margin-bottom: 13px; }
+  .inp { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0 10px; font: inherit; font-size: 13px; background: #fff; }
+  .inp[disabled]{ background: var(--muted); color: var(--foreground); }
+  .btn-primary { width: 100%; height: 38px; background: #0a0a0a; color: #fff; border: 0; border-radius: var(--radius);
+    font: inherit; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+  /* Results header */
+  .res-meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted-foreground); }
+  .brief-recap { font-size: 13px; border-left: 2px solid #0a0a0a; padding: 2px 0 2px 12px; color: var(--muted-foreground);
+    font-style: italic; margin: 12px 0; }
+  .navrow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 10px; }
+  .navrow .n { font-size: 13px; font-weight: 600; }
+  .navbtns { display: flex; gap: 8px; }
+  .rbtn { width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--border); background: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; color: #444; }
+  .rbtn:disabled { opacity: .35; cursor: default; }
+  .dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+  .dot { height: 6px; width: 6px; border-radius: 999px; background: #d4d4d4; border:0; cursor: pointer; transition: all .25s; }
+  .dot.on { width: 22px; background: #0a0a0a; }
+
+  /* CARD */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+
+  /* 1. Verdict banner */
+  .verdict { display: flex; gap: 16px; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+  .ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring .num { font-size: 19px; font-weight: 700; line-height: 1; }
+  .ring .den { font-size: 10px; color: var(--muted-foreground); margin-top: 1px; }
+  .verdict .vtext { flex: 1; min-width: 0; }
+  .vlabel { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700;
+    padding: 3px 9px; border-radius: 999px; }
+  .vhead { font-size: 15px; font-weight: 600; margin: 7px 0 0; letter-spacing: -0.01em; }
+  .rankbadge { font-size: 11px; font-weight: 700; color: var(--muted-foreground); margin-bottom: 2px; }
+
+  /* 2. Identity */
+  .ident { display: flex; align-items: center; gap: 12px; padding: 16px 20px 4px; }
+  .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--muted); display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .iname { font-size: 16px; font-weight: 700; margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+  .chip.solid { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
+  .stats { display: flex; gap: 10px; padding: 12px 20px 4px; }
+  .stat { flex: 1; background: var(--muted); border-radius: 8px; padding: 9px 11px; }
+  .stat .k { font-size: 11px; color: var(--muted-foreground); }
+  .stat .v { font-size: 15px; font-weight: 700; margin-top: 1px; }
+
+  /* 3. Why good / not — two columns */
+  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 20px 4px; }
+  @media (max-width: 560px){ .why{ grid-template-columns: 1fr; } }
+  .whybox { border: 1px solid; border-radius: 10px; padding: 12px 13px; }
+  .whybox.good { background: var(--good-bg); border-color: var(--good-border); }
+  .whybox.bad { background: var(--warn-bg); border-color: var(--warn-border); }
+  .whyhd { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .whybox.good .whyhd { color: var(--good); } .whybox.bad .whyhd { color: var(--warn); }
+  .whyli { font-size: 12.5px; line-height: 1.5; padding-left: 17px; position: relative; margin-bottom: 6px; color: #2a2a2a; }
+  .whyli:before { position: absolute; left: 0; top: 0; font-weight: 700; }
+  .whybox.good .whyli:before { content: '✓'; color: var(--good); }
+  .whybox.bad .whyli:before { content: '!'; color: var(--warn); }
+
+  /* 4. Risk row */
+  .risk { margin: 14px 20px 4px; border-radius: 10px; padding: 11px 13px; font-size: 12.5px; display: flex; gap: 8px; align-items: flex-start; }
+  .risk.clean { background: var(--good-bg); color: var(--good); }
+  .risk.flag { background: var(--risk-bg); color: var(--risk); }
+  .risk .rhd { font-weight: 700; }
+
+  /* 5. Recommendation */
+  .reco { margin: 14px 20px 4px; background: var(--info-bg); border: 1px solid var(--info-border); border-radius: 10px; padding: 12px 14px; }
+  .reco .rhd { font-size: 12px; font-weight: 700; color: var(--info); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .reco li { font-size: 12.5px; color: #1f3a52; margin-bottom: 4px; }
+  .reco ul { margin: 0; padding-left: 18px; }
+
+  /* Score breakdown */
+  .scores { padding: 14px 20px 6px; }
+  .scbar { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .scbar .sl { font-size: 11.5px; color: var(--muted-foreground); width: 76px; flex-shrink: 0; }
+  .track { flex: 1; height: 6px; background: var(--muted); border-radius: 999px; overflow: hidden; }
+  .fill { height: 100%; background: #0a0a0a; border-radius: 999px; }
+  .scbar .sv { font-size: 11px; font-variant-numeric: tabular-nums; width: 42px; text-align: right; color: #444; }
+
+  /* Expand */
+  .expand { border-top: 1px solid var(--border); margin-top: 8px; }
+  .exptog { width: 100%; background: none; border: 0; padding: 13px 20px; font: inherit; font-size: 12.5px; font-weight: 600;
+    color: var(--muted-foreground); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .exptog:hover { color: #0a0a0a; }
+  .expbody { display: none; padding: 0 20px 18px; }
+  .expbody.open { display: block; }
+  .secttl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-foreground);
+    margin: 16px 0 7px; }
+  .report { font-size: 13px; line-height: 1.65; color: #2a2a2a; }
+  .report p { margin: 0 0 8px; }
+  .reasoning { background: #0a0a0a; color: #d4d4d4; border-radius: 8px; padding: 12px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px; line-height: 1.7; }
+  .reasoning .q { color: #7dd3a8; } .reasoning .r { color: #9aa0a6; }
+  .sources { display: flex; flex-direction: column; gap: 5px; }
+  .src { font-size: 12px; color: var(--info); text-decoration: none; display: flex; gap: 6px; align-items: center; }
+  .src:hover { text-decoration: underline; }
+  .note { font-size: 11px; color: var(--muted-foreground); text-align: center; margin: 26px 0 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <div class="logo">A</div>
+    <span class="ic">▦</span><span class="ic on">◎</span><span class="ic">♪</span><span class="ic">⎚</span>
+  </nav>
+  <div class="main">
+    <h1 class="h1">KOL Match Engine</h1>
+    <p class="sub">Nhập brief campaign → nhận shortlist KOL phù hợp nhất kèm lý do và mức độ fit.</p>
+
+    <div class="grid">
+      <!-- LEFT: brief form (rút gọn cho mockup) -->
+      <div>
+        <div class="panel">
+          <div class="field"><p class="label">Brand</p><input class="inp" disabled value="Diana" /></div>
+          <div class="field"><p class="label">Target niche</p><input class="inp" disabled value="Feminine care / Beauty" /></div>
+          <div class="field"><p class="label">Platform</p><input class="inp" disabled value="TikTok Shop (US)" /></div>
+          <div class="field"><p class="label">Target age</p><input class="inp" disabled value="18–24 nữ" /></div>
+          <div class="field"><p class="label">Budget</p><input class="inp" disabled value="$50,000" /></div>
+          <div class="field"><p class="label">Mô tả</p><input class="inp" disabled value="Daily intimate care cho nữ trẻ, conversion-first" /></div>
+          <button class="btn-primary">Tìm KOL phù hợp</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div>
+        <div class="res-meta">
+          <span id="meta-count">38 ứng viên được xét</span>
+          <span>4.2s</span>
+        </div>
+        <p class="brief-recap">Feminine care · TikTok Shop US · nữ 18–24 · $50K</p>
+        <div class="navrow">
+          <span class="n" id="nav-n">Ứng viên 1 / 3</span>
+          <div class="navbtns">
+            <button class="rbtn" id="prev" onclick="move(-1)">‹</button>
+            <button class="rbtn" id="next" onclick="move(1)">›</button>
+          </div>
+        </div>
+
+        <div id="card-host"></div>
+
+        <div class="dots" id="dots"></div>
+        <p class="note">Mockup — dữ liệu minh hoạ. Nhấn “Xem full report” để mở phần chi tiết.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAXPTS = { niche_match:25, platform_match:20, audience_fit:20, engagement:15, reach:10, budget_fit:5, availability:5 };
+const SLABEL = { niche_match:'Niche', platform_match:'Platform', audience_fit:'Audience', engagement:'Engagement', reach:'Reach', budget_fit:'Budget', availability:'Available' };
+
+const CANDS = [
+  {
+    rank:1, name:'Lifestyle by Lauren', initials:'LL', niche:'Lifestyle', platforms:['TIKTOK','INSTAGRAM'], primary:'TIKTOK',
+    followers:'5.2M', engagement:'8.45%', fee:'$38K',
+    fit:6.0, label:'Partial fit', tier:'warn',
+    headline:'Fit nền tảng & engagement, nhưng lệch demographic và niche chưa đủ sát.',
+    breakdown:{ niche_match:14, platform_match:20, audience_fit:9, engagement:13, reach:8, budget_fit:5, availability:5 },
+    why_good:['Có mặt trên TikTok + Instagram, format unboxing hợp TikTok','Engagement 8.45% rất cao so với 5.2M followers','Reach lớn, đẩy awareness tốt'],
+    why_bad:['Audience 25–34 trong khi brief cần 18–24','Niche Lifestyle chung, thiếu angle feminine care','Chưa có case brand deal về women hygiene / FMCG'],
+    dramas:[],
+    reco:['Phù hợp 1 video TikTok dạng unboxing + everyday routine cho mục tiêu awareness','Không ưu tiên nếu mục tiêu là conversion nhóm nữ 18–24'],
+    report:'Lifestyle by Lauren là creator lifestyle với thiên hướng wellness, beauty, fashion và shopping tips. Về nền tảng, KOL phủ TikTok và Instagram, format unboxing phù hợp với TikTok Shop. Engagement 8.45% trên 5.2M followers là tín hiệu reach mạnh. Tuy nhiên, tệp audience chính rơi vào 25–34, lệch so với mục tiêu 18–24 của campaign — đặc biệt quan trọng với sản phẩm feminine care cần đúng nhóm nữ trẻ. Nội dung hiện chưa thể hiện angle daily intimate care / women’s care đủ mạnh, và chưa tìm thấy case study brand deal liên quan ngành hàng này.',
+    reasoning:[['Scandals involve Lauren lifestyle creator','12 kết quả — không trùng đúng KOL'],['Lifestyle by Lauren audience demographic','6 kết quả'],['Lifestyle by Lauren brand collaboration','9 kết quả — chủ yếu beauty/fashion affiliate']],
+    sources:[['Social Blade — @LifestyleByLauren','#'],['Creator audience report 2026','#']]
+  },
+  {
+    rank:2, name:'MiMi Beauty', initials:'MB', niche:'Beauty', platforms:['TIKTOK'], primary:'TIKTOK',
+    followers:'1.8M', engagement:'9.20%', fee:'$31K',
+    fit:8.5, label:'Strong fit', tier:'good',
+    headline:'Đúng tệp nữ 18–24, niche beauty/feminine sát sản phẩm, conversion-oriented.',
+    breakdown:{ niche_match:24, platform_match:20, audience_fit:19, engagement:14, reach:6, budget_fit:5, availability:5 },
+    why_good:['Audience 82% nữ 18–24 — khớp chính xác brief','Niche Beauty + nhiều nội dung self-care / daily essentials','Lịch sử affiliate TikTok Shop với tỷ lệ chuyển đổi tốt','Engagement 9.2%, micro-mid tier dễ tạo trust'],
+    why_bad:['Reach nhỏ hơn (1.8M) — cần kết hợp nhiều KOL để scale'],
+    dramas:[],
+    reco:['Ưu tiên cho mục tiêu conversion: combo review + daily routine + affiliate link','Có thể làm anchor KOL, ghép thêm 2–3 micro KOL để mở rộng reach'],
+    report:'MiMi Beauty là creator beauty tập trung tệp nữ trẻ. Audience phân tích cho thấy ~82% nữ trong nhóm 18–24, khớp trực tiếp với brief. Nội dung xoay quanh skincare, self-care và daily essentials — gần với định vị feminine care. KOL có lịch sử affiliate trên TikTok Shop với tỷ lệ chuyển đổi tốt, phù hợp mục tiêu conversion-first. Reach 1.8M thấp hơn các mega-KOL nhưng engagement 9.2% và độ tin cậy cao bù lại; nên dùng làm anchor và ghép thêm micro KOL để scale.',
+    reasoning:[['MiMi Beauty scandal controversy','4 kết quả — không có red flag'],['MiMi Beauty TikTok Shop affiliate results','7 kết quả'],['MiMi Beauty audience female 18-24','5 kết quả']],
+    sources:[['TikTok Creator Marketplace — MiMi Beauty','#'],['Affiliate performance recap Q1','#']]
+  },
+  {
+    rank:3, name:'GymBro Khoa', initials:'GK', niche:'Fitness', platforms:['YOUTUBE','TIKTOK'], primary:'YOUTUBE',
+    followers:'3.1M', engagement:'4.10%', fee:'$45K',
+    fit:3.0, label:'Weak fit', tier:'risk',
+    headline:'Lệch tệp (nam, fitness) và có drama gần đây — không khuyến nghị cho campaign này.',
+    breakdown:{ niche_match:5, platform_match:14, audience_fit:4, engagement:6, reach:8, budget_fit:5, availability:5 },
+    why_good:['Reach 3.1M, hiện diện cả YouTube và TikTok'],
+    why_bad:['Audience chủ yếu nam 18–34 — sai hoàn toàn với feminine care','Niche Fitness không liên quan ngành hàng','Primary platform YouTube, không tối ưu cho TikTok Shop','Engagement 4.1% thấp so với mặt bằng'],
+    dramas:['Tháng 4/2026: tranh cãi quảng cáo thực phẩm bổ sung gây hiểu lầm — rủi ro brand-safety'],
+    reco:['Không khuyến nghị cho campaign feminine care','Có thể cân nhắc cho ngành hàng nam giới / fitness ở campaign khác'],
+    report:'GymBro Khoa là creator fitness với tệp khán giả chủ yếu nam 18–34. Dù reach 3.1M không nhỏ, định vị nội dung và demographic lệch hoàn toàn với sản phẩm feminine care nhắm nữ trẻ. Primary platform là YouTube nên kém tối ưu cho mô hình TikTok Shop. Ngoài ra, tháng 4/2026 KOL vướng tranh cãi quảng cáo thực phẩm bổ sung gây hiểu lầm — một rủi ro brand-safety cần lưu ý. Tổng hợp lại, không phù hợp cho campaign này.',
+    reasoning:[['GymBro Khoa scandal 2026','8 kết quả — phát hiện tranh cãi supplement ads'],['GymBro Khoa audience demographic gender','5 kết quả — chủ yếu nam']],
+    sources:[['News — supplement ad controversy','#'],['Social Blade — GymBro Khoa','#']]
+  }
+];
+
+const TIER = {
+  good:{ stroke:'var(--good)', bg:'var(--good-bg)', fg:'var(--good)' },
+  warn:{ stroke:'var(--warn)', bg:'var(--warn-bg)', fg:'var(--warn)' },
+  risk:{ stroke:'var(--risk)', bg:'var(--risk-bg)', fg:'var(--risk)' }
+};
+const PICON = { YOUTUBE:'YT', INSTAGRAM:'IG', TIKTOK:'TK', FACEBOOK:'FB' };
+
+let idx = 0;
+
+function ring(fit, tier){
+  const r=28, c=2*Math.PI*r, off=c*(1-fit/10);
+  return `<div class="ring"><svg width="64" height="64">
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--border)" stroke-width="6"/>
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="${TIER[tier].stroke}" stroke-width="6"
+      stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>
+  </svg><div class="val"><span class="num">${fit.toFixed(1)}</span><span class="den">/10</span></div></div>`;
+}
+
+function render(){
+  const k = CANDS[idx], t = TIER[k.tier];
+  const chips = `<span class="chip">${k.niche}</span>` + k.platforms.map(p=>`<span class="chip ${p===k.primary?'solid':''}">${PICON[p]||p}</span>`).join('');
+  const bars = Object.keys(MAXPTS).map(dim=>{
+    const v=k.breakdown[dim], m=MAXPTS[dim], pct=Math.round(v/m*100);
+    return `<div class="scbar"><span class="sl">${SLABEL[dim]}</span><div class="track"><div class="fill" style="width:${pct}%"></div></div><span class="sv">${v}/${m}</span></div>`;
+  }).join('');
+  const goods = k.why_good.map(x=>`<div class="whyli">${x}</div>`).join('');
+  const bads = k.why_bad.map(x=>`<div class="whyli">${x}</div>`).join('');
+  const riskHtml = k.dramas.length
+    ? `<div class="risk flag"><span>⚠</span><div><span class="rhd">Rủi ro / scandal: </span>${k.dramas.join('; ')}</div></div>`
+    : `<div class="risk clean"><span>✓</span><div><span class="rhd">Rủi ro / scandal: </span>Không phát hiện red flag gắn đúng KOL này.</div></div>`;
+  const reco = k.reco.map(x=>`<li>${x}</li>`).join('');
+  const reasoning = k.reasoning.map(q=>`<div><span class="q">🔍 ${q[0]}</span> <span class="r">→ ${q[1]}</span></div>`).join('');
+  const sources = k.sources.map(s=>`<a class="src" href="${s[1]}">↗ ${s[0]}</a>`).join('');
+
+  document.getElementById('card-host').innerHTML = `
+    <div class="card">
+      <div class="verdict">
+        ${ring(k.fit, k.tier)}
+        <div class="vtext">
+          <div class="rankbadge">#${k.rank} trong shortlist</div>
+          <span class="vlabel" style="background:${t.bg};color:${t.fg};">${k.label}</span>
+          <p class="vhead">${k.headline}</p>
+        </div>
+      </div>
+
+      <div class="ident">
+        <div class="avatar">${k.initials}</div>
+        <div><p class="iname">${k.name}</p><div class="chips">${chips}</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Followers</div><div class="v">${k.followers}</div></div>
+        <div class="stat"><div class="k">Engagement</div><div class="v">${k.engagement}</div></div>
+        <div class="stat"><div class="k">Booking fee</div><div class="v">${k.fee}</div></div>
+      </div>
+
+      <div class="why">
+        <div class="whybox good"><div class="whyhd">✓ Vì sao phù hợp</div>${goods}</div>
+        <div class="whybox bad"><div class="whyhd">! Điểm cần cân nhắc</div>${bads}</div>
+      </div>
+
+      ${riskHtml}
+
+      <div class="reco"><div class="rhd">💡 Khuyến nghị</div><ul>${reco}</ul></div>
+
+      <div class="scores">${bars}</div>
+
+      <div class="expand">
+        <button class="exptog" onclick="toggleExp(this)">▾ Xem full report & AI reasoning</button>
+        <div class="expbody">
+          <div class="secttl">Báo cáo đầy đủ</div>
+          <div class="report"><p>${k.report}</p></div>
+          <div class="secttl">Quá trình AI nghiên cứu</div>
+          <div class="reasoning">${reasoning}</div>
+          <div class="secttl">Nguồn tham khảo</div>
+          <div class="sources">${sources}</div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('nav-n').textContent = `Ứng viên ${idx+1} / ${CANDS.length}`;
+  document.getElementById('prev').disabled = idx===0;
+  document.getElementById('next').disabled = idx===CANDS.length-1;
+  document.getElementById('dots').innerHTML = CANDS.map((_,i)=>`<button class="dot ${i===idx?'on':''}" onclick="go(${i})"></button>`).join('');
+}
+function move(d){ idx=Math.max(0,Math.min(CANDS.length-1,idx+d)); render(); }
+function go(i){ idx=i; render(); }
+function toggleExp(btn){ const b=btn.nextElementSibling; b.classList.toggle('open'); btn.textContent=(b.classList.contains('open')?'▴ Ẩn full report':'▾ Xem full report & AI reasoning'); }
+render();
+</script>
+</body>
+</html>

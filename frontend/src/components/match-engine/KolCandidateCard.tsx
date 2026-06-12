@@ -115,7 +115,8 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
 
         <Separator />
 
-        {candidate.explanation && renderMarkdown(candidate.explanation)}
+        {/* v2 bridge: explanation is now a structured object — full redesign in P7 */}
+        {candidate.explanation?.full_report_md && renderMarkdown(candidate.explanation.full_report_md)}
       </CardContent>
     </Card>
   )

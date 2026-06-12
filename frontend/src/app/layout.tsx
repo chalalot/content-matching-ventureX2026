@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
-import Sidebar from '@/components/layout/Sidebar'
 
 const inter = Inter({
   variable: '--font-inter',
@@ -25,9 +24,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} h-full`}>
-      <body className="flex h-screen overflow-hidden bg-background text-foreground antialiased">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-background p-6">{children}</main>
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        {children}
       </body>
     </html>
   )

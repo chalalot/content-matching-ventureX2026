@@ -23,6 +23,23 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  /* semantic fit/why/risk tokens (v2) */
+  --color-good: var(--good);
+  --color-good-bg: var(--good-bg);
+  --color-good-border: var(--good-border);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-border: var(--warn-border);
+  --color-risk: var(--risk);
+  --color-risk-bg: var(--risk-bg);
+  --color-risk-border: var(--risk-border);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+  /* pipeline layer accents (v2 process view) */
+  --color-l1: var(--l1);
+  --color-l2: var(--l2);
+  --color-l3: var(--l3);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -72,6 +89,13 @@
   --chart-3: oklch(0.76 0.16 72);
   --chart-4: oklch(0.58 0.20 27);
   --chart-5: oklch(0.55 0.22 300);
+  /* semantic tokens — text uses the base shade, fills use -bg/-border */
+  --good: #2f7d32; --good-bg: #eaf3ea; --good-border: #cfe6cf;
+  --warn: #a3650b; --warn-bg: #fbf2e3; --warn-border: #f0e0c0;
+  --risk: #b3261e; --risk-bg: #fbeaea; --risk-border: #f0cccc;
+  --info: #1f5fa5; --info-bg: #e9f1fb; --info-border: #cfe0f5;
+  /* pipeline layer accents: L1 blue · L2 purple · L3 green */
+  --l1: #1f5fa5; --l2: oklch(0.55 0.20 264); --l3: #2f7d32;
   --radius: 0.5rem;
   --sidebar: oklch(0 0 0);
   --sidebar-foreground: oklch(1 0 0);
@@ -107,6 +131,13 @@
   --chart-3: oklch(0.82 0.14 72);
   --chart-4: oklch(0.68 0.18 27);
   --chart-5: oklch(0.72 0.18 300);
+  /* semantic tokens (dark) — brighter text, dark-tinted fills */
+  --good: #7ee787; --good-bg: #13241a; --good-border: #1f3d2a;
+  --warn: #e3b341; --warn-bg: #2a2113; --warn-border: #4a3a1a;
+  --risk: #ff7b72; --risk-bg: #2a1615; --risk-border: #4a221f;
+  --info: #79c0ff; --info-bg: #11202e; --info-border: #1f3a52;
+  /* pipeline layer accents (dark) */
+  --l1: #79c0ff; --l2: oklch(0.70 0.17 264); --l3: #7ee787;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
