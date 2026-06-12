@@ -31,7 +31,7 @@ export default function MetricCard({ label, value, delta, deltaPositive, sub, lo
           </>
         )}
         {!loading && delta && (
-          <p className={`text-xs mt-1 ${deltaPositive ? 'text-black' : 'text-gray-500'}`}>
+          <p className={`text-xs mt-1 ${deltaPositive ? 'text-foreground' : 'text-muted-foreground'}`}>
             {delta}
           </p>
         )}

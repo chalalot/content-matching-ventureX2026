@@ -13,7 +13,7 @@ function ScoreCircle({ score }: { score: number }) {
   const size = score >= 70 ? 'w-14 h-14 text-base border-4' : score >= 50 ? 'w-12 h-12 text-sm border-2' : 'w-10 h-10 text-xs border'
   return (
     <div
-      className={`${size} rounded-full border-black flex items-center justify-center font-bold shrink-0`}
+      className={`${size} rounded-full border-primary flex items-center justify-center font-bold shrink-0`}
     >
       {score.toFixed(0)}
     </div>
@@ -94,7 +94,7 @@ export default function CandidateCard({ candidate }: CandidateCardProps) {
             <h3 className="text-lg font-bold">{candidate.name}</h3>
             <Badge
               variant={isAvailable ? 'default' : 'secondary'}
-              className={`mt-1 text-xs ${isAvailable ? 'bg-black text-white' : 'bg-muted text-muted-foreground'}`}
+              className={`mt-1 text-xs ${isAvailable ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
             >
               {isAvailable
                 ? `Available · từ ${candidate.available_from ?? 'now'}`

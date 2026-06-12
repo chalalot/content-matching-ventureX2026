@@ -28,7 +28,7 @@ const PLATFORM_ICONS: Record<string, string> = {
 function ScoreCircle({ score }: { score: number }) {
   const size = score >= 70 ? 'w-14 h-14 text-base border-4' : score >= 50 ? 'w-12 h-12 text-sm border-2' : 'w-10 h-10 text-xs border'
   return (
-    <div className={`${size} rounded-full border-black flex items-center justify-center font-bold shrink-0`}>
+    <div className={`${size} rounded-full border-primary flex items-center justify-center font-bold shrink-0`}>
       {score.toFixed(0)}
     </div>
   )
@@ -45,7 +45,7 @@ function KolScoreBreakdownBars({ breakdown }: { breakdown: KolScoreBreakdown }) 
             <div key={key} className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground w-24 shrink-0">{label}</span>
               <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                <div className="h-full bg-black rounded-full transition-all" style={{ width: `${Math.min(100, pct)}%` }} />
+                <div className="h-full rounded-full transition-all bg-gradient-to-r from-[#25F4EE] to-[#FE2C55]" style={{ width: `${Math.min(100, pct)}%` }} />
               </div>
               <span className="text-xs tabular-nums w-12 text-right">{value}/{max}</span>
             </div>
@@ -89,7 +89,7 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
             <div className="flex flex-wrap gap-1.5 mt-1">
               <Badge variant="outline" className="text-xs">{candidate.main_niche}</Badge>
               {candidate.platforms.map(p => (
-                <Badge key={p} variant="secondary" className={`text-xs ${p === candidate.primary_platform ? 'bg-black text-white' : ''}`}>
+                <Badge key={p} variant="secondary" className={`text-xs ${p === candidate.primary_platform ? 'bg-primary text-primary-foreground' : ''}`}>
                   {PLATFORM_ICONS[p] ?? p}
                 </Badge>
               ))}

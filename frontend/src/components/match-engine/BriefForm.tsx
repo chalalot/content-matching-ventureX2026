@@ -289,7 +289,7 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
           <Button
             type="submit"
             disabled={!isValid}
-            className="w-full bg-black text-white hover:bg-gray-800"
+            className="w-full"
           >
             {loading ? (
               <span className="flex items-center gap-2">

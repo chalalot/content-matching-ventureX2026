@@ -65,48 +65,50 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* App theme = TikTok Shop dark (matches /landing). Single dark theme, no light mode. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0 0 0);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0 0);
-  --input: oklch(0.90 0 0);
-  --ring: oklch(0.70 0 0);
-  --chart-1: oklch(0.55 0.20 264);
-  --chart-2: oklch(0.59 0.18 145);
-  --chart-3: oklch(0.76 0.16 72);
-  --chart-4: oklch(0.58 0.20 27);
-  --chart-5: oklch(0.55 0.22 300);
-  /* semantic tokens — text uses the base shade, fills use -bg/-border */
-  --good: #2f7d32; --good-bg: #eaf3ea; --good-border: #cfe6cf;
-  --warn: #a3650b; --warn-bg: #fbf2e3; --warn-border: #f0e0c0;
-  --risk: #b3261e; --risk-bg: #fbeaea; --risk-border: #f0cccc;
-  --info: #1f5fa5; --info-bg: #e9f1fb; --info-border: #cfe0f5;
-  /* pipeline layer accents: L1 blue · L2 purple · L3 green */
-  --l1: #1f5fa5; --l2: oklch(0.55 0.20 264); --l3: #2f7d32;
+  --background: #08090a;
+  --foreground: #f3f4f6;
+  --card: #111316;
+  --card-foreground: #f3f4f6;
+  --popover: #171a1e;
+  --popover-foreground: #f3f4f6;
+  --primary: #FE2C55;            /* TikTok red — primary action */
+  --primary-foreground: #ffffff;
+  --secondary: #171a1e;
+  --secondary-foreground: #f3f4f6;
+  --muted: #171a1e;
+  --muted-foreground: #9aa0a6;
+  --accent: #1f242a;             /* hover surface */
+  --accent-foreground: #f3f4f6;
+  --destructive: #ff5c6c;
+  --border: rgba(255,255,255,.09);
+  --input: rgba(255,255,255,.14);
+  --ring: #25F4EE;               /* cyan focus ring */
+  --chart-1: #25F4EE;            /* cyan */
+  --chart-2: #FE2C55;            /* red */
+  --chart-3: #b69bff;            /* purple */
+  --chart-4: #37d399;            /* green */
+  --chart-5: #f5b53d;            /* amber */
+  /* semantic tokens (dark) — translucent fills sit well on #111316 surfaces */
+  --good: #37d399; --good-bg: rgba(55,211,153,.12); --good-border: rgba(55,211,153,.28);
+  --warn: #f5b53d; --warn-bg: rgba(245,181,61,.12); --warn-border: rgba(245,181,61,.28);
+  --risk: #ff5c6c; --risk-bg: rgba(255,92,108,.12); --risk-border: rgba(255,92,108,.28);
+  --info: #25F4EE; --info-bg: rgba(37,244,238,.10); --info-border: rgba(37,244,238,.28);
+  /* pipeline layer accents: L1 cyan · L2 purple · L3 green */
+  --l1: #25F4EE; --l2: #b69bff; --l3: #37d399;
   --radius: 0.5rem;
-  --sidebar: oklch(0 0 0);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(1 0 0);
-  --sidebar-primary-foreground: oklch(0 0 0);
-  --sidebar-accent: oklch(0.15 0 0);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.20 0 0);
-  --sidebar-ring: oklch(0.40 0 0);
+  --sidebar: #0c0e10;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #FE2C55;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #171a1e;
+  --sidebar-accent-foreground: #f3f4f6;
+  --sidebar-border: rgba(255,255,255,.09);
+  --sidebar-ring: #25F4EE;
 }
 
+/* Legacy .dark token set — unused (no `dark` class is applied; :root is the single dark theme). */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

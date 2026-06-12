@@ -60,7 +60,7 @@ export default function DirectorEnginePage() {
               </div>
 
               {result.brief_summary && (
-                <p className="text-sm border-l-2 border-black pl-3 text-muted-foreground italic">
+                <p className="text-sm border-l-2 border-primary pl-3 text-muted-foreground italic">
                   {result.brief_summary}
                 </p>
               )}
@@ -103,7 +103,7 @@ export default function DirectorEnginePage() {
                     <button
                       key={idx}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === activeIdx ? 'w-6 bg-black dark:bg-white' : 'w-1.5 bg-muted-foreground/30'
+                        idx === activeIdx ? 'w-6 bg-primary' : 'w-1.5 bg-muted-foreground/30'
                       }`}
                       onClick={() => setActiveIdx(idx)}
                       title={`Go to candidate ${idx + 1}`}

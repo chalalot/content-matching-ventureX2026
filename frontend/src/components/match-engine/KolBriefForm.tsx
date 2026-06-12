@@ -288,7 +288,7 @@ export default function KolBriefForm({ onResult, onLoading }: KolBriefFormProps)
             </div>
           </div>
 
-          <Button type="submit" disabled={!isValid} className="w-full bg-black text-white hover:bg-gray-800">
+          <Button type="submit" disabled={!isValid} className="w-full">
             {loading ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">

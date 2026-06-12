@@ -26,7 +26,7 @@ export default function ScoreBreakdown({ breakdown }: ScoreBreakdownProps) {
               <span className="text-xs text-muted-foreground w-24 shrink-0">{label}</span>
               <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
                 <div
-                  className="h-full bg-black rounded-full transition-all"
+                  className="h-full rounded-full transition-all bg-gradient-to-r from-[#25F4EE] to-[#FE2C55]"
                   style={{ width: `${Math.min(100, pct)}%` }}
                 />
               </div>

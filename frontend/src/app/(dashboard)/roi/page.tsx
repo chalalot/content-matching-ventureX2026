@@ -315,7 +315,7 @@ export default function ROIPage() {
           </div>
 
           {negativeCount > 0 && (
-            <Card className="border-black bg-muted/40">
+            <Card className="border-border bg-muted/40">
               <CardContent className="py-3">
                 <p className="text-sm font-medium">
                   Warning: {negativeCount} match{negativeCount > 1 ? 'es have' : ' has'} negative ROI — review cost structure for these campaigns.
