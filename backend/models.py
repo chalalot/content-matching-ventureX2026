@@ -71,13 +71,32 @@ class KolScoreBreakdown(BaseModel):
     availability: float     # 0–5 pts
 
 
+class Source(BaseModel):
+    title: str
+    url: str
+
+
+class KolExplanation(BaseModel):
+    fit_score: float            # 0–10, LLM-judged (distinct from score 0–100)
+    fit_label: str              # "Strong fit" | "Partial fit" | "Weak fit"
+    headline: str               # one-line verdict
+    brief_recap: str            # one-line brief context
+    why_good: list[str]
+    why_not_good: list[str]
+    recent_dramas: list[str]    # [] when no real risk
+    recommendations: list[str]
+    full_report_md: str
+    reasoning_log: str
+    sources: list[Source] = []
+
+
 class KolCandidateResult(BaseModel):
     rank: int
     kol_id: str
     name: str
     score: float
     score_breakdown: KolScoreBreakdown
-    explanation: str
+    explanation: KolExplanation
     main_niche: str
     primary_platform: str
     platforms: list[str]

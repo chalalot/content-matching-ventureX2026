@@ -97,14 +97,7 @@ def match_kol(brief: KolBriefRequest):
             meta = c["metadata"]
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
-            try:
-                explanation = generate_kol_explanation(brief, c)
-            except Exception as e:
-                msg = str(e)
-                if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
-                    explanation = "[AI explanation unavailable — API quota exceeded. Scoring results above are still accurate.]"
-                else:
-                    explanation = f"[AI explanation unavailable: {msg[:120]}]"
+            explanation = generate_kol_explanation(brief, c)  # returns KolExplanation (never raises)
             shortlist.append(KolCandidateResult(
                 rank=i + 1,
                 kol_id=c["id"],
@@ -175,16 +168,10 @@ async def websocket_match_kol(websocket: WebSocket):
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
             
-            try:
-                # generate_kol_explanation is blocking (LLM call), so run it in a thread
-                explanation = await asyncio.to_thread(generate_kol_explanation, brief, c)
-            except Exception as e:
-                msg = str(e)
-                if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
-                    explanation = "[AI explanation unavailable — API quota exceeded.]"
-                else:
-                    explanation = f"[AI explanation unavailable: {msg[:120]}]"
-            
+            # generate_kol_explanation is blocking (LLM call) and returns a KolExplanation
+            # (never raises), so run it in a thread to keep the event loop free.
+            explanation = await asyncio.to_thread(generate_kol_explanation, brief, c)
+
             candidate_result = KolCandidateResult(
                 rank=i + 1,
                 kol_id=c["id"],
