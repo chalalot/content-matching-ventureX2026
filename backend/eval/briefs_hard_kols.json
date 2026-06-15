@@ -1,0 +1,93 @@
+[
+  {
+    "id": "HK1-wellness-tail-niche",
+    "catch": "retrieval miss (L1). 'Wellness' is a single creator in a 53-KOL pool dominated by Fitness/Skincare. Tests whether L1 surfaces a tail niche into the top-20 at all.",
+    "brief": {
+      "brand": "ZenLeaf Supplements",
+      "industry": "Healthcare",
+      "target_niche": "Wellness",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "25-44",
+      "content_format": "vlog",
+      "budget_usd": 3000,
+      "timeline_weeks": 4,
+      "description": "Holistic wellness creator for supplements, yoga and healthy-living content on TikTok."
+    },
+    "expected_ids": ["8f457b69-d25b-593d-85a6-1ba8558f5d30"],
+    "notes": "@WellnessWithCora is the only Wellness creator (TikTok, 25-44, 730k). The risk is she is crowded out of the top-20 by semantically-near Fitness/Skincare creators."
+  },
+  {
+    "id": "HK2-homedecor-tail-niche",
+    "catch": "retrieval miss + zero-data candidate (L1/L2). Tail niche 'Home Decor'; also one Home Decor creator has 0 followers and should NOT outrank the two active ones.",
+    "brief": {
+      "brand": "CasaModern",
+      "industry": "Home & Living",
+      "target_niche": "Home Decor",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "25-44",
+      "content_format": "tutorial",
+      "budget_usd": 3000,
+      "timeline_weeks": 4,
+      "description": "Home décor and organization creator for a furniture and home brand on TikTok."
+    },
+    "expected_ids": [
+      "64e154a0-bcfa-5633-9144-eaef37457ebd",
+      "67f03886-779b-5cc4-b5dc-f733872c2b55"
+    ],
+    "notes": "@HomeWithKate and @HomeInspoLily are active TikTok Home Decor creators (25-44). @DormDecorDiana is also Home Decor but 0 followers / Instagram and should rank below them."
+  },
+  {
+    "id": "HK3-workwear-as-fashion",
+    "catch": "niche word-mismatch / synonym (L2). The ideal creator's niche is 'Workwear' but the brief target_niche is 'Fashion' (workwear is fashion) → niche exact-match floors her at 0.2.",
+    "brief": {
+      "brand": "OfficePro Apparel",
+      "industry": "Fashion",
+      "target_niche": "Fashion",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "25-44",
+      "content_format": "sponsored_post",
+      "budget_usd": 4000,
+      "timeline_weeks": 4,
+      "description": "Professional workwear and office-outfit styling for a corporate apparel brand targeting working professionals."
+    },
+    "expected_ids": ["a876626a-789c-5317-a050-26de1a6a11bb"],
+    "notes": "@WorkwearWendy (main_niche 'Workwear', TikTok, 25-44) is the on-brief pick, but 'Workwear' != 'Fashion' floors her niche score; generic Fashion creators outrank her despite the brief being specifically about workwear."
+  },
+  {
+    "id": "HK4-fitness-age-fit",
+    "catch": "age-range fit (L2 audience_fit). Same niche/platform, differing ages; the exact-age creator should win over wider/older-audience ones.",
+    "brief": {
+      "brand": "PeakForm",
+      "industry": "Fitness",
+      "target_niche": "Fitness",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "25-34",
+      "content_format": "vlog",
+      "budget_usd": 3000,
+      "timeline_weeks": 4,
+      "description": "Fitness and wellness creator promoting activewear to a 25-34 audience on TikTok."
+    },
+    "expected_ids": [
+      "c3adb816-be61-5a6c-9008-474f56f12e6e",
+      "ca63c9ea-4931-5514-9bc3-e99ad6c3964b"
+    ],
+    "notes": "@FitLifeJess (25-34, exact age, 2.89M) and @FitWithMarco (18-34, overlaps) are the on-brief picks; @GymRatRyan is Fitness but 0 followers/Instagram and should rank below."
+  },
+  {
+    "id": "HK5-comedy-influencer-miss",
+    "catch": "retrieval miss in the VN influencer cluster (L1), like the K5 case in the easy set.",
+    "brief": {
+      "brand": "SnackJoy",
+      "industry": "FMCG",
+      "target_niche": "Comedy",
+      "preferred_platform": "FACEBOOK",
+      "target_age_group": "25-34",
+      "content_format": "sponsored_post",
+      "budget_usd": 15000,
+      "timeline_weeks": 6,
+      "description": "Comedy creator for a fun snack-brand campaign on Facebook, targeting 25-34 year olds."
+    },
+    "expected_ids": ["4d6c3f3a-843f-4153-871d-92bfdc9d479a"],
+    "notes": "@Phương Ly (Comedy, Facebook primary, 25-34, 32M) is the exact pick. Tests whether the right VN influencer reaches the top-20 against the large TikTok-Shop cluster."
+  }
+]

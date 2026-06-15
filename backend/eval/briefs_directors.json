@@ -1,0 +1,86 @@
+[
+  {
+    "id": "D1-fmcg-emotional-tvc",
+    "brief": {
+      "brand": "Vinamilk",
+      "industry": "FMCG",
+      "campaign_type": "TVC",
+      "tone": "emotional_storytelling",
+      "budget_usd": 40000,
+      "timeline_weeks": 8,
+      "description": "Heart-warming family TVC for a dairy brand. Emotional storytelling built around real characters in a home setting."
+    },
+    "expected_ids": ["DIR-001", "DIR-023"],
+    "notes": "TVC + emotional_storytelling + FMCG specialty. DIR-001 (FMCG/F&B/Healthcare) and DIR-023 (Healthcare/FMCG/Insurance) both match all three dims, are available, and sit within the 40k budget."
+  },
+  {
+    "id": "D2-luxury-premium-tvc",
+    "brief": {
+      "brand": "Chanel Vietnam",
+      "industry": "Luxury",
+      "campaign_type": "TVC",
+      "tone": "premium_brand",
+      "budget_usd": 120000,
+      "timeline_weeks": 12,
+      "description": "High-end brand film for a luxury fashion house. Premium, refined, internationally polished look."
+    },
+    "expected_ids": ["DIR-022", "DIR-003", "DIR-021"],
+    "notes": "DIR-022 is the exact match (TVC/premium_brand/Luxury). DIR-003 and DIR-021 are cinematic (style differs) but cover Luxury and are available within budget."
+  },
+  {
+    "id": "D3-tech-bold-tvc",
+    "brief": {
+      "brand": "Samsung Vietnam",
+      "industry": "Tech",
+      "campaign_type": "TVC",
+      "tone": "bold_graphic",
+      "budget_usd": 40000,
+      "timeline_weeks": 10,
+      "description": "High-energy product TVC for a consumer electronics launch. Bold graphic style, fast information delivery."
+    },
+    "expected_ids": ["DIR-004", "DIR-025"],
+    "notes": "TVC + bold_graphic + Tech specialty. DIR-004 (Tech/Telco/Automotive) and DIR-025 (Telco/Tech/Banking) both match, available, in budget."
+  },
+  {
+    "id": "D4-music-video-emotional",
+    "brief": {
+      "brand": "Universal Music Vietnam",
+      "industry": "Entertainment",
+      "campaign_type": "music_video",
+      "tone": "emotional_storytelling",
+      "budget_usd": 40000,
+      "timeline_weeks": 8,
+      "description": "Emotional ballad music video, short-film style, with strong acting and real emotion."
+    },
+    "expected_ids": ["DIR-008", "DIR-006"],
+    "notes": "DIR-008 is exact (music_video/emotional_storytelling/Entertainment). DIR-006 is music_video + Entertainment (cinematic style) and available."
+  },
+  {
+    "id": "D5-documentary-healthcare",
+    "brief": {
+      "brand": "Vinmec",
+      "industry": "Healthcare",
+      "campaign_type": "documentary",
+      "tone": "documentary_realism",
+      "budget_usd": 60000,
+      "timeline_weeks": 12,
+      "description": "Observational documentary about patient care and real stories. Natural, unstaged realism."
+    },
+    "expected_ids": ["DIR-011", "DIR-015"],
+    "notes": "Both are documentary / documentary_realism / Healthcare. DIR-011 available; DIR-015 booked (tests availability weighting)."
+  },
+  {
+    "id": "D6-digital-beauty-lifestyle",
+    "brief": {
+      "brand": "Innisfree Vietnam",
+      "industry": "Beauty",
+      "campaign_type": "digital_content",
+      "tone": "lifestyle",
+      "budget_usd": 8000,
+      "timeline_weeks": 6,
+      "description": "Short-form social lifestyle videos for a skincare brand. Relatable, trend-aware, made for TikTok and Instagram."
+    },
+    "expected_ids": ["DIR-016", "DIR-018"],
+    "notes": "DIR-016 is exact (digital_content/lifestyle/Beauty, available, in budget). DIR-018 is digital_content + Beauty (cinematic style, booked)."
+  }
+]

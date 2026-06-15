@@ -16,6 +16,14 @@ from scoring_kol import rank_kol_candidates
 from explanation import generate_explanation
 from explanation_kol import generate_kol_explanation
 
+# Layer 1 retrieval depth. Layer 2 deterministically re-scores everything Layer 1
+# returns, so under-fetching can permanently drop a good candidate before scoring
+# (measured: KOL retrieval misses fixed by raising this — see backend/eval).
+# At the current catalog scale (tens of profiles) this effectively passes the whole
+# pool to the scorer; revisit (tune top_k + retrieval quality) once the catalog grows
+# to hundreds+.
+RETRIEVAL_TOP_K = 60
+
 app = FastAPI(title="AI Matching Engine", version="0.2.0")
 
 app.add_middleware(
@@ -36,7 +44,7 @@ def match(brief: BriefRequest):
     try:
         start = time.time()
 
-        candidates = retrieve_candidates(brief, top_k=20)
+        candidates = retrieve_candidates(brief, top_k=RETRIEVAL_TOP_K)
         ranked = rank_candidates(candidates, brief, top_n=brief.top_n)
 
         shortlist = []
@@ -77,7 +85,7 @@ def match_kol(brief: KolBriefRequest):
     try:
         start = time.time()
 
-        candidates = retrieve_kol_candidates(brief, top_k=20)
+        candidates = retrieve_kol_candidates(brief, top_k=RETRIEVAL_TOP_K)
         ranked = rank_kol_candidates(candidates, brief, top_n=brief.top_n)
 
         shortlist = []

@@ -23,9 +23,33 @@ MAX_POINTS = {dim: w * 100 for dim, w in WEIGHTS.items()}
 FOLLOWERS_CAP = 10_000_000
 ENGAGEMENT_CAP = 10.0  # 10% is exceptional
 
+# Niches that are subsets/close neighbours of one another. A KOL whose niche is in
+# the same group as the brief's target niche gets partial credit (RELATED_NICHE_SCORE)
+# instead of the unrelated floor, so e.g. a "Workwear" creator isn't buried on a
+# "Fashion" brief. Kept deliberately tight — only defensible overlaps — to avoid
+# diluting precision. Tune against backend/eval.
+_NICHE_GROUPS = [
+    {"beauty", "skincare", "makeup"},
+    {"fashion", "workwear"},
+    {"fitness", "wellness"},
+]
+EXACT_NICHE_SCORE = 1.0
+RELATED_NICHE_SCORE = 0.6   # tunable
+UNRELATED_NICHE_SCORE = 0.2
+
+
+def _niches_related(a: str, b: str) -> bool:
+    return any(a in g and b in g for g in _NICHE_GROUPS)
+
 
 def _niche_score(meta: dict, brief: KolBriefRequest) -> float:
-    return 1.0 if meta.get("main_niche", "").lower() == brief.target_niche.lower() else 0.2
+    kol = meta.get("main_niche", "").lower()
+    target = brief.target_niche.lower()
+    if kol == target:
+        return EXACT_NICHE_SCORE
+    if _niches_related(kol, target):
+        return RELATED_NICHE_SCORE
+    return UNRELATED_NICHE_SCORE
 
 
 def _platform_score(meta: dict, brief: KolBriefRequest) -> float:

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "H1-offvocab-campaign-type",
+    "catch": "word-mismatch / alias map (L2). campaign_type 'social_media_content' is NOT in the data's genre set (which uses 'digital_content'), so exact-match floors genre for every director. A human knows social media content = digital content.",
+    "brief": {
+      "brand": "GlowLab",
+      "industry": "Beauty",
+      "campaign_type": "social_media_content",
+      "tone": "lifestyle",
+      "budget_usd": 8000,
+      "timeline_weeks": 6,
+      "description": "Short vertical lifestyle videos for TikTok and Instagram Reels promoting a new skincare line."
+    },
+    "expected_ids": ["DIR-016"],
+    "notes": "DIR-016 is the obvious answer: digital_content + lifestyle + Beauty, available, in budget. Baseline floors its genre score because 'social_media_content' != 'digital_content'."
+  },
+  {
+    "id": "H5-deadline-flexibility",
+    "catch": "deadline flexibility (L2 availability). The exact best fit is 'booked' but frees up ~2 weeks out, well within the 12-week window, so it is effectively available.",
+    "brief": {
+      "brand": "TrustBank",
+      "industry": "Banking",
+      "campaign_type": "TVC",
+      "tone": "premium_brand",
+      "budget_usd": 90000,
+      "timeline_weeks": 12,
+      "description": "Premium brand film for a bank. Long 12-week production window, so a short booking lead time is fine."
+    },
+    "expected_ids": ["DIR-005"],
+    "notes": "DIR-005 is the exact match (TVC/premium_brand/Banking) but currently 'booked' (available_from ~2 weeks out). With a 12-week window a human still picks DIR-005. Tests whether binary availability unfairly penalizes a director who is free in time."
+  }
+]
