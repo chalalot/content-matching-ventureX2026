@@ -1,0 +1,99 @@
+[
+  {
+    "id": "K1-skincare-tiktok-18-24",
+    "brief": {
+      "brand": "The Ordinary VN",
+      "industry": "Beauty",
+      "target_niche": "Skincare",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "18-24",
+      "content_format": "product_review",
+      "budget_usd": 5000,
+      "timeline_weeks": 4,
+      "description": "Authentic skincare product reviews on TikTok aimed at young adults."
+    },
+    "expected_ids": [
+      "8a03869b-cec5-5571-8189-a41dc11b9a61",
+      "cc79a107-2c27-5298-b234-9e60145d814a",
+      "a1b79b4b-ba1e-5712-9990-75e075fbfff2"
+    ],
+    "notes": "Skincare niche on TikTok. @GlowGetterNina (18-24) is the exact age match; @SkincareMia and @SkincareNerdDev are Skincare+TikTok with strong engagement (older audience)."
+  },
+  {
+    "id": "K2-tech-unboxing-tiktok-18-34",
+    "brief": {
+      "brand": "Anker VN",
+      "industry": "Tech",
+      "target_niche": "Tech",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "18-34",
+      "content_format": "unboxing",
+      "budget_usd": 4000,
+      "timeline_weeks": 4,
+      "description": "Gadget unboxing and honest tech reviews on TikTok Shop."
+    },
+    "expected_ids": [
+      "96bd9808-cdea-5844-ab8d-1c2a20df149e",
+      "3e99f8d1-2419-5608-ba2c-ec42f7786246",
+      "17d7c5c8-71dd-5f67-b476-4ae273c47de4"
+    ],
+    "notes": "Tech niche on TikTok, 18-34. @TechMikeReviews, @GadgetGuruJake, @TechTalkPriya all match niche + platform + age exactly."
+  },
+  {
+    "id": "K3-beauty-haul-tiktok-18-24",
+    "brief": {
+      "brand": "Maybelline VN",
+      "industry": "Beauty",
+      "target_niche": "Beauty",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "18-24",
+      "content_format": "unboxing",
+      "budget_usd": 4000,
+      "timeline_weeks": 4,
+      "description": "Beauty product hauls and try-ons on TikTok for a young audience."
+    },
+    "expected_ids": [
+      "b0a1ce6e-5dbc-54c1-b212-fec8e004e36e",
+      "80c3c446-a20a-5fa4-b400-e1c3e12b0629"
+    ],
+    "notes": "Beauty niche on TikTok. @BeautyHaulsEmma (18-24) exact; @BeautyByAlex (18-34) overlaps the target age."
+  },
+  {
+    "id": "K4-fashion-tiktok-18-34",
+    "brief": {
+      "brand": "Shein VN",
+      "industry": "Fashion",
+      "target_niche": "Fashion",
+      "preferred_platform": "TIKTOK",
+      "target_age_group": "18-34",
+      "content_format": "sponsored_post",
+      "budget_usd": 6000,
+      "timeline_weeks": 4,
+      "description": "Fashion try-on hauls and styling content on TikTok."
+    },
+    "expected_ids": [
+      "a5e59481-e5fb-50b7-8933-cf0fee3e8577",
+      "f08d50ed-337d-5747-afa2-43b22a284850"
+    ],
+    "notes": "Fashion niche on TikTok, 18-34. @StyleQueenRachel and @FashionFwdTyler match all dims with strong reach/engagement."
+  },
+  {
+    "id": "K5-music-influencer-instagram-18-24",
+    "brief": {
+      "brand": "Pepsi Vietnam",
+      "industry": "Entertainment",
+      "target_niche": "Music",
+      "preferred_platform": "INSTAGRAM",
+      "target_age_group": "18-24",
+      "content_format": "sponsored_post",
+      "budget_usd": 20000,
+      "timeline_weeks": 6,
+      "description": "Celebrity music influencer endorsement for a youth beverage campaign on Instagram."
+    },
+    "expected_ids": [
+      "4958726b-1980-4d36-adfb-c38eca74e19d",
+      "d8da0b21-400a-4d94-880b-55e58475fcda"
+    ],
+    "notes": "Music niche, Instagram. Sơn Tùng M-TP (Premium) is exact (Music/INSTAGRAM/18-24); Đức Phúc is Music + INSTAGRAM primary. Tests the VN mega-influencer cluster."
+  }
+]

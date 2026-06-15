@@ -52,12 +52,9 @@ const CONTENT_FORMATS = [
 ]
 
 interface KolBriefFormProps {
-  // Hand the assembled brief up; the page owns the realtime stream.
   onSubmit: (brief: KolBriefRequest) => void
-  // Controlled by the page — true while the stream is running.
   loading: boolean
-  // Stream errors surfaced back to the form.
-  error?: string | null
+  error: string | null
 }
 
 export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormProps) {
@@ -125,6 +122,7 @@ export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormP
       provider,
     }
 
+    // The parent (engine page) drives the WebSocket stream and owns loading/error.
     onSubmit(brief)
   }
 

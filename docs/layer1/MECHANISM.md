@@ -4,7 +4,33 @@
 
 ## Mục đích
 
-Từ 1 brief (text + metadata), lọc nhanh 25 director → trả về **top-K candidate gần nhất về ngữ nghĩa** cho Layer 2 chấm điểm. Không quyết định ai thắng — chỉ thu hẹp tập tìm kiếm.
+Từ 1 brief (text + metadata), lọc nhanh director/KOL → trả về **top-K candidate gần nhất về ngữ nghĩa** cho Layer 2 chấm điểm. Không quyết định ai thắng — chỉ thu hẹp tập tìm kiếm.
+
+> Có file song song [retrieval_kol.py](../../backend/retrieval_kol.py) cho pipeline KOL (cùng cơ chế, collection `kols`, 53 profiles).
+
+## Cập nhật 2026-06-14 — Over-fetch (sửa retrieval miss)
+
+> Thay đổi **KHÔNG nằm trong logic retrieval** — model embedding, query text, và cosine search giữ nguyên 100%. Chỉ đổi **độ sâu retrieve** gọi từ [main.py](../../backend/main.py): `top_k=20` → `RETRIEVAL_TOP_K = 60` (dùng cho cả director và KOL).
+
+**Vấn đề đo được** (qua eval harness [backend/eval/](../../backend/eval/)): 2 KOL đúng nhưng bị *miss* ngay ở Layer 1 — không lọt top-20 nên Layer 2 **không bao giờ thấy** để chấm:
+- Sơn Tùng M-TP (Premium) — cosine rank **#43/53**
+- Phương Ly — cosine rank **#28/53**
+
+**Nguyên nhân:** pool KOL có 53 nhưng chỉ lấy top-20 → Layer 1 lọc quá gắt, loại candidate tốt *trước khi* Layer 2 kịp chấm. (Layer 2 vốn rank lại toàn bộ bằng rule deterministic, nên đưa nhiều candidate vào là an toàn & rẻ.)
+
+**Cách sửa:** nâng `top_k` để Layer 2 nhìn thấy gần như cả pool. Không động vào cách Layer 1 *tìm* candidate, chỉ đổi *bao nhiêu* candidate được chuyển sang Layer 2.
+
+**Kết quả (đo bằng eval):**
+
+| Set | recall@5 | MRR |
+|---|---|---|
+| KOL (easy) | 0.90 → **1.00** | 1.00 → 1.00 |
+| KOL (hard) | 0.80 → **1.00** | 0.64 → **1.00** |
+| Director | 1.00 → 1.00 (không đổi) | 1.00 → 1.00 |
+
+**Caveat:** cách này hợp lý vì catalog còn nhỏ (`top_k=60` ≈ lấy hết 53 KOL / 25 director). Khi catalog lớn (hàng trăm+), `top_k=60` lại trở thành filter thật → **lúc đó mới** cần cải thiện chất lượng retrieval (embedding mạnh hơn / query rewrite / rerank).
+
+**Đã thử & loại:** reshape query KOL cho giống format corpus — đo thấy *hòa* (sửa được Phương Ly nhưng làm Đức Phúc rớt khỏi top-20) nên đã **revert**. Logic retrieval giữ nguyên.
 
 ## Cơ chế (4 bước)
 

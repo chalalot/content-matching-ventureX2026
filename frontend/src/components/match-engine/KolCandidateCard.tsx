@@ -1,4 +1,7 @@
+'use client'
+
 import type { KolCandidateResult, KolScoreBreakdown } from '@/lib/data/types'
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -34,24 +37,25 @@ function ScoreCircle({ score }: { score: number }) {
   )
 }
 
-function KolScoreBreakdownBars({ breakdown }: { breakdown: KolScoreBreakdown }) {
+function KolScoreRadar({ breakdown }: { breakdown: KolScoreBreakdown }) {
+  // Normalize each dimension to % of its own max so the polygon shape reflects
+  // how well-matched each dimension is (a full heptagon = perfect on all 7).
+  const data = (Object.entries(SCORE_LABELS) as [keyof KolScoreBreakdown, [string, number]][]).map(
+    ([key, [label, max]]) => ({
+      dim: label,
+      pct: max > 0 ? Math.round(((breakdown[key] ?? 0) / max) * 100) : 0,
+    })
+  )
   return (
-    <div className="flex flex-col gap-2 mt-3">
-      {(Object.entries(SCORE_LABELS) as [keyof KolScoreBreakdown, [string, number]][]).map(
-        ([key, [label, max]]) => {
-          const value = breakdown[key] ?? 0
-          const pct = max > 0 ? (value / max) * 100 : 0
-          return (
-            <div key={key} className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground w-24 shrink-0">{label}</span>
-              <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                <div className="h-full rounded-full transition-all bg-gradient-to-r from-[#25F4EE] to-[#FE2C55]" style={{ width: `${Math.min(100, pct)}%` }} />
-              </div>
-              <span className="text-xs tabular-nums w-12 text-right">{value}/{max}</span>
-            </div>
-          )
-        }
-      )}
+    <div className="mt-1">
+      <ResponsiveContainer width="100%" height={250}>
+        <RadarChart data={data} outerRadius="68%">
+          <PolarGrid stroke="var(--border)" />
+          <PolarAngleAxis dataKey="dim" tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }} />
+          <Radar dataKey="pct" stroke="#FE2C55" fill="#FE2C55" fillOpacity={0.3} />
+        </RadarChart>
+      </ResponsiveContainer>
+      <p className="text-center text-[11px] text-muted-foreground">Fit by dimension (% of each max)</p>
     </div>
   )
 }
@@ -111,7 +115,7 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
           </div>
         </div>
 
-        <KolScoreBreakdownBars breakdown={candidate.score_breakdown} />
+        <KolScoreRadar breakdown={candidate.score_breakdown} />
 
         <Separator />
 

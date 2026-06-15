@@ -4,7 +4,30 @@
 
 ## Mục đích
 
-Nhận top-20 candidates từ Layer 1 → chấm điểm rule-based theo 7 dimension → sort → trả top-N (default 5). Quyết định ai thắng, ai thua.
+Nhận candidates từ Layer 1 (mặc định **top-60**, xem `RETRIEVAL_TOP_K` ở Layer 1) → chấm điểm rule-based theo 7 dimension → sort → trả top-N (default 5). Quyết định ai thắng, ai thua.
+
+> Có scorer song song [scoring_kol.py](../../backend/scoring_kol.py) cho KOL — cùng kiến trúc 7-dimension nhưng dimension đặc thù KOL (`niche_match`, `platform_match`, `audience_fit`, `engagement`, `reach`, `budget_fit`, `availability`).
+
+## Cập nhật 2026-06-14 — KOL niche synonym map
+
+> Phạm vi: **scoring.py (director) KHÔNG đổi** — eval không phát hiện lỗi nào ở pipeline director. Thay đổi nằm ở scorer KOL [scoring_kol.py](../../backend/scoring_kol.py).
+
+**Vấn đề đo được** (eval [backend/eval/](../../backend/eval/)): brief có `target_niche = "Fashion"` (mô tả về workwear) → creator @WorkwearWendy (`main_niche = "Workwear"`) bị **floor 0.2** vì so khớp chuỗi chính xác (`"Workwear" != "Fashion"`), tụt xuống **#8**. Workwear thực chất *là* fashion.
+
+**Cách sửa:** thêm `_NICHE_GROUPS` (synonym map) trong scoring_kol.py — niche cùng nhóm được điểm trung gian thay vì floor:
+
+| Quan hệ niche | Điểm |
+|---|---|
+| Trùng khớp (exact) | `1.0` |
+| Liên quan (cùng nhóm) | `0.6` ← `RELATED_NICHE_SCORE` (tunable) |
+| Không liên quan | `0.2` |
+
+Nhóm hiện tại (cố ý **hẹp** để không làm loãng precision): `{beauty, skincare, makeup}`, `{fashion, workwear}`, `{fitness, wellness}`.
+
+**Kết quả:** @WorkwearWendy **#8 → #1**. KOL (hard) recall@5 0.80 → **1.00**, MRR 0.82 → **1.00**.
+Đánh đổi nhỏ: KOL (easy) precision@k 0.83 → 0.67 — creator niche *liên quan* lọt vào top-k (hành vi hợp lý), nhưng **recall@5 & MRR vẫn 1.00** (không expected nào rớt khỏi top-5).
+
+**Caveat (honest):** đây là map **hardcode** — phải tự maintain, chỉ phủ các cặp đã liệt kê (vd "Cooking" vs "Food" chưa có). Giải pháp tổng quát hơn: match niche bằng **semantic similarity** (tận dụng embedding, không cần list) — cân nhắc khi vocab niche lớn. Chi tiết: [docs/plan/layer1-layer2-improvement-plan.md](../plan/layer1-layer2-improvement-plan.md).
 
 ## Cơ chế
 
@@ -96,8 +119,8 @@ top_n: int = 5
 
 Đã wire sẵn trong [main.py:31-32](../../backend/main.py):
 ```python
-candidates = retrieve_candidates(brief, top_k=20)       # Layer 1
-ranked = rank_candidates(candidates, brief, top_n=...)  # Layer 2
+candidates = retrieve_candidates(brief, top_k=RETRIEVAL_TOP_K)  # Layer 1 (=60)
+ranked = rank_candidates(candidates, brief, top_n=...)         # Layer 2
 ```
 
 Test `test_layer1_layer2_pipeline_smoke` (trong [test_scoring.py](../../backend/test_scoring.py)) verify end-to-end: real Chroma retrieve → score → rank → top 5 sorted, không crash.
