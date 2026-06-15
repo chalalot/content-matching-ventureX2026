@@ -115,8 +115,13 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
 
         <Separator />
 
-        {/* v2 bridge: explanation is now a structured object — full redesign in P7 */}
-        {candidate.explanation?.full_report_md && renderMarkdown(candidate.explanation.full_report_md)}
+        {/* explanation arrives as a markdown string (websocket / backend) or, in v2,
+            a structured object with full_report_md — handle both. */}
+        {(() => {
+          const exp = candidate.explanation as unknown
+          const md = typeof exp === 'string' ? exp : (exp as { full_report_md?: string } | null)?.full_report_md
+          return md ? renderMarkdown(md) : null
+        })()}
       </CardContent>
     </Card>
   )

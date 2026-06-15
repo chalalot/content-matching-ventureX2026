@@ -13,8 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { matchKols } from '@/lib/api/client'
-import type { KolBriefRequest, KolMatchResponse } from '@/lib/data/types'
+import type { KolBriefRequest } from '@/lib/data/types'
 import { formatUSD } from '@/lib/utils/formatters'
 
 const INDUSTRIES = [
@@ -53,11 +52,15 @@ const CONTENT_FORMATS = [
 ]
 
 interface KolBriefFormProps {
-  onResult: (result: KolMatchResponse) => void
-  onLoading: (loading: boolean) => void
+  // Hand the assembled brief up; the page owns the realtime stream.
+  onSubmit: (brief: KolBriefRequest) => void
+  // Controlled by the page — true while the stream is running.
+  loading: boolean
+  // Stream errors surfaced back to the form.
+  error?: string | null
 }
 
-export default function KolBriefForm({ onResult, onLoading }: KolBriefFormProps) {
+export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormProps) {
   const [provider, setProvider] = useState('google')
   const [brand, setBrand] = useState('')
   const [industry, setIndustry] = useState('')
@@ -69,8 +72,6 @@ export default function KolBriefForm({ onResult, onLoading }: KolBriefFormProps)
   const [timelineWeeks, setTimelineWeeks] = useState(4)
   const [description, setDescription] = useState('')
   const [topN, setTopN] = useState(5)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
@@ -106,7 +107,7 @@ export default function KolBriefForm({ onResult, onLoading }: KolBriefFormProps)
 
   const isValid = brand.trim().length > 0 && description.trim().length >= 30 && !loading
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!isValid) return
 
@@ -124,19 +125,7 @@ export default function KolBriefForm({ onResult, onLoading }: KolBriefFormProps)
       provider,
     }
 
-    setLoading(true)
-    setError(null)
-    onLoading(true)
-
-    try {
-      const result = await matchKols(brief)
-      onResult(result)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
-    } finally {
-      setLoading(false)
-      onLoading(false)
-    }
+    onSubmit(brief)
   }
 
   return (
