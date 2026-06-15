@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -84,8 +86,34 @@ class KolCandidateResult(BaseModel):
     booking_fee: float
 
 
+# ── Pipeline (per-layer) view ────────────────────────────────────────────────
+# Mirrors the frontend StageCandidate / PipelineStage types (lib/data/types.ts).
+# Lets the UI show what each layer did: L1 retrieval ranking, L2 scoring + cut.
+
+class StageCandidate(BaseModel):
+    kol_id: str
+    name: str
+    status: str                       # passed | filtered | shortlisted | dropped
+    metric: Optional[float] = None    # L1: similarity (0–1) · L2: score (0–100)
+    rank: Optional[int] = None        # 1-based position within the stage
+    reason: Optional[str] = None      # drop/filter reason (StageReason or free text)
+    breakdown: Optional[dict] = None  # L2: per-dimension score points (how the score was built)
+
+
+class PipelineStage(BaseModel):
+    id: str                           # retrieval | scoring | explanation
+    layer: int                        # 1 | 2 | 3
+    name: str
+    method: str
+    in_count: int
+    out_count: int
+    agentic: bool = False
+    candidates: list[StageCandidate] = []
+
+
 class KolMatchResponse(BaseModel):
     brief_summary: str
     shortlist: list[KolCandidateResult]
+    pipeline: list[PipelineStage] = []   # stage-by-stage funnel (L1, L2, L3)
     total_candidates_considered: int
     response_time_ms: int

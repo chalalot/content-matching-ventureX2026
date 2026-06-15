@@ -12,11 +12,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from models import BriefRequest, MatchResponse, CandidateResult, ScoreBreakdown
 from models import KolBriefRequest, KolMatchResponse, KolCandidateResult
 from retrieval import retrieve_candidates
-from retrieval_kol import retrieve_kol_candidates
+from retrieval_kol import retrieve_kol_candidates, kol_collection_count
 from scoring import rank_candidates
-from scoring_kol import rank_kol_candidates
+from scoring_kol import rank_kol_candidates_full
 from explanation import generate_explanation
 from explanation_kol import generate_kol_explanation
+from pipeline_kol import build_l1_stage, build_l2_stage, build_l3_stage
 
 # Layer 1 retrieval depth. Layer 2 deterministically re-scores everything Layer 1
 # returns, so under-fetching can permanently drop a good candidate before scoring
@@ -88,7 +89,8 @@ def match_kol(brief: KolBriefRequest):
         start = time.time()
 
         candidates = retrieve_kol_candidates(brief, top_k=RETRIEVAL_TOP_K)
-        ranked = rank_kol_candidates(candidates, brief, top_n=brief.top_n)
+        ranked_full = rank_kol_candidates_full(candidates, brief, top_n=brief.top_n)
+        ranked = [c for c in ranked_full if c["shortlisted"]]
 
         shortlist = []
         for i, c in enumerate(ranked):
@@ -118,9 +120,16 @@ def match_kol(brief: KolBriefRequest):
                 booking_fee=float(meta.get("booking_fee_estimate", 0)),
             ))
 
+        pipeline = [
+            build_l1_stage(candidates, kol_collection_count()),
+            build_l2_stage(ranked_full, brief.top_n),
+            build_l3_stage(ranked),
+        ]
+
         return KolMatchResponse(
             brief_summary=f"{brief.content_format} for {brief.brand} ({brief.target_niche})",
             shortlist=shortlist,
+            pipeline=pipeline,
             total_candidates_considered=len(candidates),
             response_time_ms=int((time.time() - start) * 1000),
         )
@@ -141,9 +150,17 @@ async def websocket_match_kol(websocket: WebSocket):
 
         # 2. Retrieve and rank candidates (run in thread to prevent blocking event loop)
         candidates = await asyncio.to_thread(retrieve_kol_candidates, brief, top_k=RETRIEVAL_TOP_K)
-        ranked = await asyncio.to_thread(rank_kol_candidates, candidates, brief, top_n=brief.top_n)
+        ranked_full = await asyncio.to_thread(rank_kol_candidates_full, candidates, brief, top_n=brief.top_n)
+        ranked = [c for c in ranked_full if c["shortlisted"]]
 
-        # Let the client know we have finished retrieval/ranking and are starting AI explanations
+        # 2a. Stream Layer 1 (retrieval ranking) and Layer 2 (scoring) results immediately,
+        # so the user sees what each layer did before the slow AI explanations start.
+        l1_stage = build_l1_stage(candidates, kol_collection_count())
+        l2_stage = build_l2_stage(ranked_full, brief.top_n)
+        await websocket.send_json({"type": "stage", "data": l1_stage.model_dump()})
+        await websocket.send_json({"type": "stage", "data": l2_stage.model_dump()})
+
+        # Let the client know we're starting AI explanations (Layer 3)
         await websocket.send_json({
             "type": "init",
             "total_candidates_considered": len(candidates),
@@ -191,9 +208,11 @@ async def websocket_match_kol(websocket: WebSocket):
             })
 
         # 4. Send the final compiled MatchResponse payload to signify completion
+        l3_stage = build_l3_stage(ranked)
         final_response = KolMatchResponse(
             brief_summary=f"{brief.content_format} for {brief.brand} ({brief.target_niche})",
             shortlist=shortlist,
+            pipeline=[l1_stage, l2_stage, l3_stage],
             total_candidates_considered=len(candidates),
             response_time_ms=int((time.time() - start) * 1000),
         )

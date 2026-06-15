@@ -133,3 +133,37 @@ def rank_kol_candidates(
         scored.append({**c, "score": score, "score_breakdown": breakdown.model_dump()})
     scored.sort(key=lambda x: x["score"], reverse=True)
     return scored[:top_n]
+
+
+def _drop_reason(meta: dict, points: dict) -> str:
+    """Best-effort primary reason a candidate missed the shortlist.
+    Maps to the frontend StageReason enum (wrong_platform | empty_record |
+    over_budget | audience_mismatch | low_score)."""
+    if int(meta.get("total_followers", 0) or 0) == 0:
+        return "empty_record"
+    if points.get("platform_match", 99) <= 2.0:    # platform floor (0.1 * 20)
+        return "wrong_platform"
+    if points.get("budget_fit", 99) <= 0.5:        # budget floor (0.1 * 5)
+        return "over_budget"
+    if points.get("audience_fit", 99) <= 9.0:      # weak age overlap
+        return "audience_mismatch"
+    return "low_score"
+
+
+def rank_kol_candidates_full(
+    candidates: list[dict], brief: KolBriefRequest, top_n: int = 5
+) -> list[dict]:
+    """Score & sort ALL candidates (not just top_n), annotating each with `rank`,
+    `shortlisted` (rank <= top_n), and a `drop_reason` for the rest. Powers the
+    Layer 2 pipeline view; the shortlist is `[c for c in result if c["shortlisted"]]`."""
+    scored = []
+    for c in candidates:
+        score, breakdown = score_kol_candidate(c["metadata"], brief)
+        scored.append({**c, "score": score, "score_breakdown": breakdown.model_dump()})
+    scored.sort(key=lambda x: x["score"], reverse=True)
+    for i, c in enumerate(scored):
+        c["rank"] = i + 1
+        c["shortlisted"] = i < top_n
+        if not c["shortlisted"]:
+            c["drop_reason"] = _drop_reason(c["metadata"], c["score_breakdown"])
+    return scored

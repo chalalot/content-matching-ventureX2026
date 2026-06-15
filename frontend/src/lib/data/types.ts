@@ -277,6 +277,7 @@ export interface StageCandidate {
   metric?: number | null   // L1: similarity (cosine) · L2: score 0–100
   rank?: number | null     // L2: rank if shortlisted
   reason?: StageReason | string | null  // filter/drop reason
+  breakdown?: Record<string, number> | null  // L2: per-dimension score points
 }
 
 export interface PipelineStage {
