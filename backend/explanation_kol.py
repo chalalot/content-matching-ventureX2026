@@ -1,19 +1,20 @@
-"""
-Layer 3 (KOL) — AI Explanation
-Input:  one ranked KOL candidate + KolBriefRequest
-Output: markdown explanation string
-Uses same deepagents + web search pattern as explanation.py
-"""
-
 import concurrent.futures
 from datetime import date
 
 from deepagents import create_deep_agent
+from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 
 from llm import google_llm, xai_llm, openai_llm
 from models import KolBriefRequest
 from tools import search_web
+
+class CastingReport(BaseModel):
+    brief_summary: str = Field(description="2-3 sentence summary of why the candidate fits the brief.")
+    why_good: str = Field(description="Detail explanation of strengths/alignment.")
+    why_not_good: str = Field(description="Detailed explanation of potential risks or limitations.")
+    recent_dramas: str = Field(description="Recent scandals or controversies, or 'None' if none found.")
+    recommendations: str = Field(description="Actionable advice for the campaign team.")
 
 SYSTEM_PROMPT = """
 You are a KOL partnership advisor at a Vietnamese marketing agency.
@@ -24,7 +25,7 @@ Use a diverse set of queries:
 - "{kol_name} brand collaboration results"
 - "{kol_name} {niche} content"
 Pay attention to current date vs. search result dates — old scandals may be less relevant.
-Produce a concise report explaining why the KOL fits (or doesn't fit) this campaign.
+Produce a structured report assessing why the KOL fits (or doesn't fit) this campaign.
 Reference their follower count, engagement, niche, past brand deals, and your research.
 """
 
@@ -54,15 +55,31 @@ KOL Profile:
 - Bio: {bio}
 """
 
-google_agent = create_deep_agent(model=google_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
+# Pass response_format=CastingReport to the deep agents
+google_agent = create_deep_agent(
+    model=google_llm, 
+    tools=[search_web], 
+    system_prompt=SYSTEM_PROMPT,
+    response_format=CastingReport
+)
 
 xai_agent = None
 if xai_llm:
-    xai_agent = create_deep_agent(model=xai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
+    xai_agent = create_deep_agent(
+        model=xai_llm, 
+        tools=[search_web], 
+        system_prompt=SYSTEM_PROMPT,
+        response_format=CastingReport
+    )
 
 openai_agent = None
 if openai_llm:
-    openai_agent = create_deep_agent(model=openai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
+    openai_agent = create_deep_agent(
+        model=openai_llm, 
+        tools=[search_web], 
+        system_prompt=SYSTEM_PROMPT,
+        response_format=CastingReport
+    )
 
 
 def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> str:
@@ -89,7 +106,7 @@ def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> str:
         bio=meta.get("bio", ""),
     )
 
-    def _invoke():
+    def _invoke() -> str:
         if brief.provider == "openai":
             if not openai_agent:
                 raise ValueError("OpenAI API key is not configured on the server.")
@@ -105,23 +122,28 @@ def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> str:
 
         response = agent.invoke({"messages": HumanMessage(content=prompt)})
 
-        if isinstance(response, dict) and "messages" in response:
-            last_msg = response["messages"][-1]
-            content = last_msg.content
-        else:
-            content = response.content if hasattr(response, "content") else response
+        # Extract structured response according to the deepagents guide
+        report: CastingReport = response.get("structured_response")
+        if not report:
+            raise ValueError("Failed to retrieve structured response from the agent.")
 
-        if isinstance(content, list):
-            texts = []
-            for block in content:
-                if isinstance(block, dict) and block.get("type") == "text":
-                    texts.append(block.get("text", ""))
-                elif hasattr(block, "text"):
-                    texts.append(block.text)
-                elif isinstance(block, str):
-                    texts.append(block)
-            return "\n".join(texts)
-        return content
+        # Convert the structured Pydantic object back into a clean Markdown string
+        markdown_output = f"""## Executive Summary
+{report.brief_summary}
+
+### Strengths & Alignment
+{report.why_good}
+
+### Risks & Limitations
+{report.why_not_good}
+
+### Background Check (Scandals & Controversies)
+{report.recent_dramas}
+
+### Strategic Recommendations
+{report.recommendations}"""
+        
+        return markdown_output
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(_invoke)
