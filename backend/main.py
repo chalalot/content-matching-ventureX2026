@@ -4,8 +4,10 @@ Run: uvicorn main:app --reload  (from inside backend/)
 import os
 os.environ["ANONYMIZED_TELEMETRY"] = "FALSE"
 
+import asyncio
+import json
 import time
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from models import BriefRequest, MatchResponse, CandidateResult, ScoreBreakdown
 from models import KolBriefRequest, KolMatchResponse, KolCandidateResult
@@ -138,7 +140,7 @@ async def websocket_match_kol(websocket: WebSocket):
         start = time.time()
 
         # 2. Retrieve and rank candidates (run in thread to prevent blocking event loop)
-        candidates = await asyncio.to_thread(retrieve_kol_candidates, brief, top_k=20)
+        candidates = await asyncio.to_thread(retrieve_kol_candidates, brief, top_k=RETRIEVAL_TOP_K)
         ranked = await asyncio.to_thread(rank_kol_candidates, candidates, brief, top_n=brief.top_n)
 
         # Let the client know we have finished retrieval/ranking and are starting AI explanations
