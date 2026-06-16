@@ -38,16 +38,20 @@ RELATED_NICHE_SCORE = 0.6   # tunable
 UNRELATED_NICHE_SCORE = 0.2
 
 
-def _niches_related(a: str, b: str) -> bool:
+def _niches_related(a: str, b: str, related_niches: set[str] | None = None) -> bool:
+    # Agent override (Layer 1/2): a flat set of niches the agent judged related to
+    # the brief's target niche. If the KOL niche is in that set, treat as related.
+    if related_niches is not None:
+        return a in related_niches
     return any(a in g and b in g for g in _NICHE_GROUPS)
 
 
-def _niche_score(meta: dict, brief: KolBriefRequest) -> float:
+def _niche_score(meta: dict, brief: KolBriefRequest, related_niches: set[str] | None = None) -> float:
     kol = meta.get("main_niche", "").lower()
     target = brief.target_niche.lower()
     if kol == target:
         return EXACT_NICHE_SCORE
-    if _niches_related(kol, target):
+    if _niches_related(kol, target, related_niches):
         return RELATED_NICHE_SCORE
     return UNRELATED_NICHE_SCORE
 
@@ -115,11 +119,26 @@ _SCORERS = {
 }
 
 
-def score_kol_candidate(meta: dict, brief: KolBriefRequest) -> tuple[float, KolScoreBreakdown]:
-    points = {
-        dim: round(scorer(meta, brief) * MAX_POINTS[dim], 2)
-        for dim, scorer in _SCORERS.items()
-    }
+def _max_points(weights: dict | None) -> dict:
+    """Per-dimension max points. With agent-supplied weights, normalize so the
+    total still sums to 100 — keeps scores comparable to the default model."""
+    if not weights:
+        return MAX_POINTS
+    total = sum(weights.get(dim, 0) for dim in WEIGHTS) or 1.0
+    return {dim: (weights.get(dim, WEIGHTS[dim]) / total) * 100 for dim in WEIGHTS}
+
+
+def score_kol_candidate(
+    meta: dict,
+    brief: KolBriefRequest,
+    weights: dict | None = None,
+    related_niches: set[str] | None = None,
+) -> tuple[float, KolScoreBreakdown]:
+    max_points = _max_points(weights)
+    points = {}
+    for dim, scorer in _SCORERS.items():
+        raw = _niche_score(meta, brief, related_niches) if dim == "niche_match" else scorer(meta, brief)
+        points[dim] = round(raw * max_points[dim], 2)
     total = round(sum(points.values()), 2)
     return total, KolScoreBreakdown(**points)
 
@@ -151,14 +170,21 @@ def _drop_reason(meta: dict, points: dict) -> str:
 
 
 def rank_kol_candidates_full(
-    candidates: list[dict], brief: KolBriefRequest, top_n: int = 5
+    candidates: list[dict],
+    brief: KolBriefRequest,
+    top_n: int = 5,
+    weights: dict | None = None,
+    related_niches: set[str] | None = None,
 ) -> list[dict]:
     """Score & sort ALL candidates (not just top_n), annotating each with `rank`,
     `shortlisted` (rank <= top_n), and a `drop_reason` for the rest. Powers the
-    Layer 2 pipeline view; the shortlist is `[c for c in result if c["shortlisted"]]`."""
+    Layer 2 pipeline view; the shortlist is `[c for c in result if c["shortlisted"]]`.
+
+    `weights` / `related_niches` are optional overrides from the Layer 2 Scoring
+    Agent; when omitted, this is the original deterministic model."""
     scored = []
     for c in candidates:
-        score, breakdown = score_kol_candidate(c["metadata"], brief)
+        score, breakdown = score_kol_candidate(c["metadata"], brief, weights, related_niches)
         scored.append({**c, "score": score, "score_breakdown": breakdown.model_dump()})
     scored.sort(key=lambda x: x["score"], reverse=True)
     for i, c in enumerate(scored):

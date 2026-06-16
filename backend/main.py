@@ -18,6 +18,20 @@ from scoring_kol import rank_kol_candidates_full
 from explanation import generate_explanation
 from explanation_kol import generate_kol_explanation
 from pipeline_kol import build_l1_stage, build_l2_stage, build_l3_stage
+from agent_l1_kol import run_layer1
+from agent_l2_kol import run_layer2
+
+
+def _l1_method(intent) -> str:
+    """Funnel-band text describing what the L1 Brief Interpreter agent did."""
+    if intent.related_niches:
+        return f"AI hiểu brief & mở rộng niche liên quan: {', '.join(intent.related_niches[:4])}"
+    return "AI hiểu brief & dựng truy vấn tìm creator"
+
+
+def _l2_method(policy) -> str:
+    """Funnel-band text describing what the L2 Scoring agent did."""
+    return policy.rationale or "AI chấm & xếp hạng theo ưu tiên chiến dịch"
 
 # Layer 1 retrieval depth. Layer 2 deterministically re-scores everything Layer 1
 # returns, so under-fetching can permanently drop a good candidate before scoring
@@ -88,8 +102,13 @@ def match_kol(brief: KolBriefRequest):
     try:
         start = time.time()
 
-        candidates = retrieve_kol_candidates(brief, top_k=RETRIEVAL_TOP_K)
-        ranked_full = rank_kol_candidates_full(candidates, brief, top_n=brief.top_n)
+        # Layer 1 agent (interpret brief → retrieve) and Layer 2 agent (policy → score).
+        # Both fall back to the deterministic path internally if the LLM fails.
+        candidates, intent = run_layer1(brief, top_k=RETRIEVAL_TOP_K)
+        ranked_full, policy = run_layer2(
+            candidates, brief, top_n=brief.top_n,
+            intent_related_niches=intent.related_niches, emphasis=intent.emphasis,
+        )
         ranked = [c for c in ranked_full if c["shortlisted"]]
 
         shortlist = []
@@ -97,14 +116,7 @@ def match_kol(brief: KolBriefRequest):
             meta = c["metadata"]
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
-            try:
-                explanation = generate_kol_explanation(brief, c)
-            except Exception as e:
-                msg = str(e)
-                if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
-                    explanation = "[AI explanation unavailable — API quota exceeded. Scoring results above are still accurate.]"
-                else:
-                    explanation = f"[AI explanation unavailable: {msg[:120]}]"
+            explanation = generate_kol_explanation(brief, c)
             shortlist.append(KolCandidateResult(
                 rank=i + 1,
                 kol_id=c["id"],
@@ -121,8 +133,8 @@ def match_kol(brief: KolBriefRequest):
             ))
 
         pipeline = [
-            build_l1_stage(candidates, kol_collection_count()),
-            build_l2_stage(ranked_full, brief.top_n),
+            build_l1_stage(candidates, kol_collection_count(), method=_l1_method(intent)),
+            build_l2_stage(ranked_full, brief.top_n, method=_l2_method(policy)),
             build_l3_stage(ranked),
         ]
 
@@ -148,15 +160,19 @@ async def websocket_match_kol(websocket: WebSocket):
 
         start = time.time()
 
-        # 2. Retrieve and rank candidates (run in thread to prevent blocking event loop)
-        candidates = await asyncio.to_thread(retrieve_kol_candidates, brief, top_k=RETRIEVAL_TOP_K)
-        ranked_full = await asyncio.to_thread(rank_kol_candidates_full, candidates, brief, top_n=brief.top_n)
+        # 2. Layer 1 agent (interpret brief → retrieve) then Layer 2 agent (policy → score).
+        # Run in threads to keep the event loop free; each falls back to the
+        # deterministic path internally if its LLM call fails.
+        candidates, intent = await asyncio.to_thread(run_layer1, brief, RETRIEVAL_TOP_K)
+        ranked_full, policy = await asyncio.to_thread(
+            run_layer2, candidates, brief, brief.top_n, intent.related_niches, intent.emphasis
+        )
         ranked = [c for c in ranked_full if c["shortlisted"]]
 
         # 2a. Stream Layer 1 (retrieval ranking) and Layer 2 (scoring) results immediately,
         # so the user sees what each layer did before the slow AI explanations start.
-        l1_stage = build_l1_stage(candidates, kol_collection_count())
-        l2_stage = build_l2_stage(ranked_full, brief.top_n)
+        l1_stage = build_l1_stage(candidates, kol_collection_count(), method=_l1_method(intent))
+        l2_stage = build_l2_stage(ranked_full, brief.top_n, method=_l2_method(policy))
         await websocket.send_json({"type": "stage", "data": l1_stage.model_dump()})
         await websocket.send_json({"type": "stage", "data": l2_stage.model_dump()})
 
@@ -175,16 +191,10 @@ async def websocket_match_kol(websocket: WebSocket):
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
             
-            try:
-                # generate_kol_explanation is blocking (LLM call), so run it in a thread
-                explanation = await asyncio.to_thread(generate_kol_explanation, brief, c)
-            except Exception as e:
-                msg = str(e)
-                if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
-                    explanation = "[AI explanation unavailable — API quota exceeded.]"
-                else:
-                    explanation = f"[AI explanation unavailable: {msg[:120]}]"
-            
+            # generate_kol_explanation is blocking (LLM call), so run it in a thread.
+            # It handles its own errors/timeout and always returns a KolExplanation.
+            explanation = await asyncio.to_thread(generate_kol_explanation, brief, c)
+
             candidate_result = KolCandidateResult(
                 rank=i + 1,
                 kol_id=c["id"],

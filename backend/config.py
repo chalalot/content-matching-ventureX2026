@@ -18,10 +18,25 @@ class Settings(BaseSettings):
     timeout: Optional[int] = None
     max_retries: int = 2
 
+    # Hard cap for one Layer-3 explanation (deep agent: web search + reasoning,
+    # then a hidden Vietnamese-translation pass). DeepSeek search alone can hit
+    # ~60s; the translate call adds a bit more, so give it headroom.
+    explanation_timeout: int = 120
+
+    # Hard cap for the Layer-1 (Brief Interpreter) and Layer-2 (Scoring Strategist)
+    # agents. These are single structured LLM calls (no web search), so they should
+    # be quick; keep the cap short so a stalled call falls back fast and the pipeline
+    # never makes the user wait. On timeout/error each layer uses its deterministic path.
+    agent_timeout: int = 25
+
     google_api_key: str
 
     xai_api_key: Optional[str] = None
     xai_model: str = "grok-2-latest"
+
+    deepseek_api_key: Optional[str] = None
+    deepseek_model: str = "deepseek-chat"
+    deepseek_base_url: str = "https://api.deepseek.com"
 
     websearch_url: str = "https://api.exa.ai/search"
 

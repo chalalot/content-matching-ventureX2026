@@ -21,9 +21,12 @@ def _name(c: dict) -> str:
     return c.get("metadata", {}).get("stage_name", "") or ""
 
 
-def build_l1_stage(candidates: list[dict], corpus_size: int) -> PipelineStage:
+def build_l1_stage(
+    candidates: list[dict], corpus_size: int, method: str | None = None
+) -> PipelineStage:
     """Layer 1 — relevance ranking. Every retrieved candidate is 'passed'
-    (over-fetch keeps the whole pool); metric is the similarity score."""
+    (over-fetch keeps the whole pool); metric is the similarity score.
+    `method` overrides the funnel-band description (e.g. the agent's enriched query)."""
     cands = [
         StageCandidate(
             kol_id=c["id"],
@@ -38,15 +41,19 @@ def build_l1_stage(candidates: list[dict], corpus_size: int) -> PipelineStage:
         id="retrieval",
         layer=1,
         name="Semantic Retrieval",
-        method=L1_METHOD,
+        method=method or L1_METHOD,
         in_count=corpus_size,
         out_count=len(candidates),
+        agentic=True,
         candidates=cands,
     )
 
 
-def build_l2_stage(ranked_full: list[dict], top_n: int) -> PipelineStage:
-    """Layer 2 — scoring. Shortlisted (top-N) vs dropped, with score + reason."""
+def build_l2_stage(
+    ranked_full: list[dict], top_n: int, method: str | None = None
+) -> PipelineStage:
+    """Layer 2 — scoring. Shortlisted (top-N) vs dropped, with score + reason.
+    `method` overrides the funnel-band description (e.g. the agent's weight rationale)."""
     cands = []
     for c in ranked_full:
         shortlisted = c.get("shortlisted", False)
@@ -63,9 +70,10 @@ def build_l2_stage(ranked_full: list[dict], top_n: int) -> PipelineStage:
         id="scoring",
         layer=2,
         name="Weighted Scoring",
-        method=L2_METHOD,
+        method=method or L2_METHOD,
         in_count=len(ranked_full),
         out_count=min(top_n, len(ranked_full)),
+        agentic=True,
         candidates=cands,
     )
 

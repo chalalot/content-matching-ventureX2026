@@ -62,11 +62,16 @@ def _distance_to_similarity(distance) -> float | None:
     return round(1.0 / (1.0 + distance), 4)
 
 
-def retrieve_kol_candidates(brief: KolBriefRequest, top_k: int = 20) -> list[dict]:
+def retrieve_kol_candidates(
+    brief: KolBriefRequest, top_k: int = 20, query_text: str | None = None
+) -> list[dict]:
+    """`query_text` lets the Layer 1 agent supply an enriched query; when omitted
+    we build the plain query from the brief (original behavior)."""
     collection = _get_kol_collection()
     model = _get_model()
 
-    query_vec = model.encode([_build_kol_query(brief)]).tolist()
+    query = query_text or _build_kol_query(brief)
+    query_vec = model.encode([query]).tolist()
     k = min(top_k, collection.count())
 
     result = collection.query(query_embeddings=query_vec, n_results=k)
