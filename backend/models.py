@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BriefRequest(BaseModel):
@@ -71,13 +71,24 @@ class KolScoreBreakdown(BaseModel):
     availability: float     # 0–5 pts
 
 
+class KolExplanation(BaseModel):
+    """Layer-3 report, fully in Vietnamese. Each list item is one short bullet so
+    the frontend can render discrete cards (exec summary, strengths, risks,
+    background-check flags, recommendations) like result-stitch.html."""
+    brief_summary: str = Field(description="2-3 câu tóm tắt vì sao KOL này hợp (hoặc không) với chiến dịch.")
+    why_good: list[str] = Field(default_factory=list, description="Các điểm mạnh / phù hợp, mỗi ý 1 câu ngắn.")
+    why_not_good: list[str] = Field(default_factory=list, description="Các rủi ro / hạn chế, mỗi ý 1 câu ngắn.")
+    recent_dramas: list[str] = Field(default_factory=list, description="Scandal/lùm xùm gần đây; để rỗng nếu không có.")
+    recommendations: list[str] = Field(default_factory=list, description="Đề xuất hành động cụ thể cho team chiến dịch.")
+
+
 class KolCandidateResult(BaseModel):
     rank: int
     kol_id: str
     name: str
     score: float
     score_breakdown: KolScoreBreakdown
-    explanation: str
+    explanation: KolExplanation
     main_niche: str
     primary_platform: str
     platforms: list[str]

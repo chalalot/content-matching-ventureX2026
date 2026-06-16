@@ -1,11 +1,12 @@
 'use client'
 
-import type { KolCandidateResult, KolScoreBreakdown } from '@/lib/data/types'
+import type { KolCandidateResult, KolExplanation, KolScoreBreakdown } from '@/lib/data/types'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { formatNumber } from '@/lib/utils/formatters'
+import { Terminal, ThumbsUp, ThumbsDown, ShieldAlert, ShieldCheck, Gavel, ArrowRight } from 'lucide-react'
 
 interface KolCandidateCardProps {
   candidate: KolCandidateResult
@@ -28,6 +29,28 @@ const PLATFORM_ICONS: Record<string, string> = {
   FACEBOOK: 'FB',
 }
 
+// Verdict badge derived from the match score (≥70 strong · 50–69 consider · <50 mismatch).
+function getVerdict(score: number) {
+  if (score >= 70) return { label: 'STRONG FIT', sub: 'NÊN HỢP TÁC', cls: 'bg-[#25F4EE] text-black' }
+  if (score >= 50) return { label: 'CONSIDER', sub: 'CÂN NHẮC', cls: 'bg-amber-400 text-black' }
+  return { label: 'MISMATCH', sub: 'KHÔNG NÊN', cls: 'bg-[#FE2C55] text-white' }
+}
+
+// Stale localStorage may still hold a plain-string explanation — normalize either way.
+function normalizeExplanation(exp: unknown): KolExplanation {
+  if (exp && typeof exp === 'object') {
+    const e = exp as Partial<KolExplanation>
+    return {
+      brief_summary: e.brief_summary ?? '',
+      why_good: e.why_good ?? [],
+      why_not_good: e.why_not_good ?? [],
+      recent_dramas: e.recent_dramas ?? [],
+      recommendations: e.recommendations ?? [],
+    }
+  }
+  return { brief_summary: typeof exp === 'string' ? exp : '', why_good: [], why_not_good: [], recent_dramas: [], recommendations: [] }
+}
+
 function ScoreCircle({ score }: { score: number }) {
   const size = score >= 70 ? 'w-14 h-14 text-base border-4' : score >= 50 ? 'w-12 h-12 text-sm border-2' : 'w-10 h-10 text-xs border'
   return (
@@ -38,8 +61,6 @@ function ScoreCircle({ score }: { score: number }) {
 }
 
 function KolScoreRadar({ breakdown }: { breakdown: KolScoreBreakdown }) {
-  // Normalize each dimension to % of its own max so the polygon shape reflects
-  // how well-matched each dimension is (a full heptagon = perfect on all 7).
   const data = (Object.entries(SCORE_LABELS) as [keyof KolScoreBreakdown, [string, number]][]).map(
     ([key, [label, max]]) => ({
       dim: label,
@@ -55,34 +76,46 @@ function KolScoreRadar({ breakdown }: { breakdown: KolScoreBreakdown }) {
           <Radar dataKey="pct" stroke="#FE2C55" fill="#FE2C55" fillOpacity={0.3} />
         </RadarChart>
       </ResponsiveContainer>
-      <p className="text-center text-[11px] text-muted-foreground">Fit by dimension (% of each max)</p>
+      <p className="text-center text-[11px] text-muted-foreground">Độ phù hợp theo từng tiêu chí (% của điểm tối đa)</p>
     </div>
   )
 }
 
-function parseBoldText(text: string) {
-  return text.split('**').map((part, i) =>
-    i % 2 === 1 ? <strong key={i} className="font-semibold text-foreground">{part}</strong> : part
-  )
-}
-
-function renderMarkdown(content: string) {
-  if (!content) return null
+// A titled section that renders a list of one-line bullets.
+function BulletSection({
+  title,
+  icon,
+  accent,
+  items,
+}: {
+  title: string
+  icon: React.ReactNode
+  accent: string
+  items: string[]
+}) {
+  if (!items.length) return null
   return (
-    <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        const t = line.trim()
-        if (!t) return null
-        if (t.startsWith('## ')) return <h4 key={i} className="text-sm font-bold text-foreground mt-4 mb-2">{parseBoldText(t.slice(3))}</h4>
-        if (t.startsWith('### ')) return <h5 key={i} className="text-xs font-bold text-foreground mt-3 mb-1">{parseBoldText(t.slice(4))}</h5>
-        if (t.startsWith('- ') || t.startsWith('* ')) return <ul key={i} className="list-disc pl-4 my-1"><li className="text-sm">{parseBoldText(t.slice(2))}</li></ul>
-        return <p key={i} className="my-1">{parseBoldText(t)}</p>
-      })}
+    <div className="flex flex-col gap-2">
+      <h4 className="flex items-center gap-2 text-sm font-bold text-foreground">
+        <span className={accent}>{icon}</span>
+        {title}
+      </h4>
+      <ul className="flex flex-col gap-1.5 pl-1">
+        {items.map((t, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+            <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${accent.replace('text-', 'bg-')}`} />
+            <span>{t}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
 export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
+  const verdict = getVerdict(candidate.score)
+  const exp = normalizeExplanation(candidate.explanation)
+
   return (
     <Card className="border border-border">
       <CardHeader className="pb-2">
@@ -99,11 +132,16 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
               ))}
             </div>
           </div>
-          <ScoreCircle score={candidate.score} />
+          <div className="flex flex-col items-end gap-2">
+            <ScoreCircle score={candidate.score} />
+            <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider ${verdict.cls}`}>
+              {verdict.label}
+            </span>
+          </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
             <p className="text-muted-foreground">Followers</p>
@@ -119,13 +157,74 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
 
         <Separator />
 
-        {/* explanation arrives as a markdown string (websocket / backend) or, in v2,
-            a structured object with full_report_md — handle both. */}
-        {(() => {
-          const exp = candidate.explanation as unknown
-          const md = typeof exp === 'string' ? exp : (exp as { full_report_md?: string } | null)?.full_report_md
-          return md ? renderMarkdown(md) : null
-        })()}
+        {/* Exec summary — "terminal" style block */}
+        {exp.brief_summary && (
+          <div className="rounded-lg border border-border border-l-4 border-l-[#25F4EE] bg-muted/40 p-3">
+            <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground">
+              <Terminal className="h-3.5 w-3.5 text-[#25F4EE]" />
+              TÓM TẮT ĐÁNH GIÁ
+            </p>
+            <p className="text-sm leading-relaxed text-foreground">{exp.brief_summary}</p>
+          </div>
+        )}
+
+        <BulletSection
+          title="Điểm mạnh & phù hợp"
+          icon={<ThumbsUp className="h-4 w-4" />}
+          accent="text-[#25F4EE]"
+          items={exp.why_good}
+        />
+
+        <BulletSection
+          title="Rủi ro & hạn chế"
+          icon={<ThumbsDown className="h-4 w-4" />}
+          accent="text-amber-500"
+          items={exp.why_not_good}
+        />
+
+        {/* Background check / risk radar */}
+        <div className="flex flex-col gap-2">
+          <h4 className="flex items-center gap-2 text-sm font-bold text-foreground">
+            <ShieldAlert className="h-4 w-4 text-[#FE2C55]" />
+            Kiểm tra rủi ro (scandal/lùm xùm)
+          </h4>
+          {exp.recent_dramas.length > 0 ? (
+            <div className="flex flex-col gap-2 rounded-lg border border-[#FE2C55]/30 bg-[#FE2C55]/5 p-3">
+              {exp.recent_dramas.map((d, i) => (
+                <p key={i} className="flex items-start gap-2 text-sm text-foreground">
+                  <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#FE2C55]" />
+                  <span>{d}</span>
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 text-sm text-emerald-600">
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              Không phát hiện red flag đáng kể.
+            </p>
+          )}
+        </div>
+
+        {/* Strategic verdict + recommendations */}
+        {exp.recommendations.length > 0 && (
+          <div className="overflow-hidden rounded-lg border border-border">
+            <div className={`flex items-center justify-between px-3 py-2 ${verdict.cls}`}>
+              <span className="flex items-center gap-1.5 text-sm font-black tracking-tight">
+                <Gavel className="h-4 w-4" />
+                ĐỀ XUẤT CHIẾN LƯỢC
+              </span>
+              <span className="rounded bg-black/20 px-2 py-0.5 text-[10px] font-bold">{verdict.sub}</span>
+            </div>
+            <ul className="flex flex-col gap-2 p-3">
+              {exp.recommendations.map((r, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#25F4EE]" />
+                  <span>{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

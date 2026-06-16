@@ -161,3 +161,90 @@
     @apply font-sans;
   }
 }
+
+/* Decorative background blobs — soft glowy fades that slowly drift + pulse,
+   using the TikTok palette (cyan #25F4EE, red #FE2C55, purple #b69bff). */
+.bg-blob {
+  position: absolute;
+  width: 38rem;
+  height: 38rem;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.22;
+  will-change: transform, opacity;
+}
+.bg-blob-cyan {
+  background: radial-gradient(circle, #25F4EE 0%, transparent 70%);
+  animation: blob-drift-a 22s ease-in-out infinite;
+}
+.bg-blob-red {
+  background: radial-gradient(circle, #FE2C55 0%, transparent 70%);
+  animation: blob-drift-b 28s ease-in-out infinite;
+}
+.bg-blob-purple {
+  background: radial-gradient(circle, #b69bff 0%, transparent 70%);
+  animation: blob-drift-a 34s ease-in-out infinite;
+}
+
+@keyframes blob-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.18; }
+  50% { transform: translate(6%, 8%) scale(1.12); opacity: 0.28; }
+}
+@keyframes blob-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1.05); opacity: 0.16; }
+  50% { transform: translate(-7%, -6%) scale(0.95); opacity: 0.26; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blob { animation: none; }
+}
+
+/* Glassy pipeline cards (Stitch design) — frosted surface + per-layer glow. */
+.glass-card {
+  background: rgba(18, 19, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+}
+.glow-l1 { box-shadow: 0 0 20px rgba(37, 244, 238, 0.15); border-color: rgba(37, 244, 238, 0.3); }
+.glow-l2 { box-shadow: 0 0 20px rgba(182, 155, 255, 0.15); border-color: rgba(182, 155, 255, 0.3); }
+.glow-l3 { box-shadow: 0 0 20px rgba(55, 211, 153, 0.15); border-color: rgba(55, 211, 153, 0.3); }
+
+/* Brief form CTA — soft red glow that breathes. */
+.pulse-glow { animation: pulse-glow 2.4s infinite ease-in-out; }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(254, 44, 85, 0.4); }
+  50% { box-shadow: 0 0 26px rgba(254, 44, 85, 0.7); }
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.status-pulse { animation: status-pulse 2s infinite ease-in-out; }
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.caret-blink { animation: caret-blink 0.9s step-end infinite; }
+
+/* ── Pipeline carousel (neon, borderless) ──────────────────────────────── */
+/* Per-layer neon glow on SVG line-art. */
+.pl-glow-l1 { filter: drop-shadow(0 0 6px #25F4EE) drop-shadow(0 0 14px rgba(37,244,238,.5)); }
+.pl-glow-l2 { filter: drop-shadow(0 0 6px #b69bff) drop-shadow(0 0 14px rgba(182,155,255,.5)); }
+.pl-glow-l3 { filter: drop-shadow(0 0 6px #37d399) drop-shadow(0 0 14px rgba(55,211,153,.5)); }
+/* Soft ambient backdrop glow behind each stage. */
+.pl-halo { filter: blur(90px); opacity: .16; }
+/* Funnel / document outline draws itself in. */
+@keyframes pl-draw-in { to { stroke-dashoffset: 0; } }
+.pl-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pl-draw-in 1.2s ease forwards; }
+/* Layer-2 radar sweep. */
+@keyframes pl-spin { to { transform: rotate(360deg); } }
+.pl-spin { transform-origin: 0 0; animation: pl-spin 3s linear infinite; }
+/* Stepper progress rail filling over a layer's dwell time. */
+@keyframes pl-fill { from { width: 0; } to { width: 100%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .status-pulse, .caret-blink, .pulse-glow, .pl-draw, .pl-spin { animation: none; }
+  .pl-draw { stroke-dashoffset: 0; }
+}

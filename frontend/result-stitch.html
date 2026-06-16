@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KOL Match Engine - Candidate Audit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#ad8889",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#190a0b",
+                        "on-error": "#690005",
+                        "surface-container-low": "#281718",
+                        "primary": "#ffb3b6",
+                        "inverse-surface": "#fcdbdb",
+                        "on-tertiary-container": "#311073",
+                        "on-secondary-fixed-variant": "#00504d",
+                        "on-primary-fixed-variant": "#920027",
+                        "on-primary-container": "#5b0015",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-tertiary-fixed": "#22005d",
+                        "secondary-fixed-dim": "#00ddd8",
+                        "tertiary-fixed-dim": "#cfbcff",
+                        "on-tertiary": "#381a7a",
+                        "on-background": "#fcdbdb",
+                        "surface-container": "#2d1b1b",
+                        "on-surface-variant": "#e6bcbd",
+                        "tertiary-container": "#9b81e2",
+                        "surface-tint": "#ffb3b6",
+                        "on-tertiary-fixed-variant": "#4f3592",
+                        "inverse-on-surface": "#3f2b2c",
+                        "surface-dim": "#1f0f10",
+                        "background": "#08090a", /* Overridden per spec */
+                        "surface-container-high": "#382526",
+                        "on-primary-fixed": "#40000c",
+                        "outline-variant": "rgba(255,255,255,0.09)", /* Adjusted for card borders */
+                        "on-secondary": "#003735",
+                        "primary-container": "#ff5168",
+                        "surface-container-highest": "#442f30",
+                        "tertiary": "#cfbcff",
+                        "surface": "#121314", /* Card Layer */
+                        "error": "#FE2C55", /* Tiktok Red */
+                        "secondary": "#25F4EE", /* Tiktok Cyan */
+                        "secondary-fixed": "#35fbf5",
+                        "primary-fixed-dim": "#ffb3b6",
+                        "secondary-container": "#05ece7",
+                        "surface-variant": "#442f30",
+                        "on-secondary-container": "#006764",
+                        "on-primary": "#680019",
+                        "primary-fixed": "#ffdada",
+                        "on-surface": "#fcdbdb",
+                        "inverse-primary": "#be0036",
+                        "surface-bright": "#493434",
+                        "on-secondary-fixed": "#00201f",
+                        "on-error-container": "#ffdad6",
+                        "valid-data": "#37D399" /* Added valid green */
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "margin": "24px",
+                        "xl": "40px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "gutter": "20px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "data-lg": ["JetBrains Mono", "monospace"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "data-sm": ["JetBrains Mono", "monospace"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "data-lg": ["18px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "data-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background-color: theme('colors.surface');
+            border: 1px solid theme('colors.outline-variant');
+            backdrop-filter: blur(20px);
+            border-radius: theme('borderRadius.lg');
+        }
+        
+        .typing-effect::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: theme('colors.secondary');
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .gradient-overlay {
+            background: linear-gradient(to top, rgba(8, 9, 10, 0.9) 0%, rgba(8, 9, 10, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen antialiased selection:bg-secondary selection:text-surface">
+<!-- Top Navigation Shell -->
+<nav class="docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-margin py-md bg-surface/70 dark:bg-surface/70 backdrop-blur-xl border-b border-outline-variant/30 flat no shadows">
+<div class="flex items-center gap-margin">
+<div class="text-headline-md font-headline-md font-black tracking-tighter text-primary dark:text-primary">
+                Kinetic Engine
+            </div>
+<!-- Navigation Links -->
+<div class="hidden md:flex gap-lg">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 text-body-sm font-body-sm" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-body-sm font-body-sm active:translate-x-1 duration-200" href="#">Match Engine</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 text-body-sm font-body-sm" href="#">Campaigns</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 text-body-sm font-body-sm" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<!-- Search placeholder -->
+<div class="hidden md:flex bg-surface-container rounded-full px-4 py-2 border border-outline-variant/30 focus-within:border-secondary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm text-on-surface w-32 placeholder-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-body-sm font-body-sm font-semibold scale-95 transition-transform duration-150 shadow-[0_0_10px_rgba(254,44,85,0.3)] hover:shadow-[0_0_15px_rgba(254,44,85,0.5)]">
+                Create Brief
+            </button>
+<div class="h-8 w-8 rounded-full bg-surface-container overflow-hidden border border-outline-variant/30">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close up portrait of a young professional woman. She is wearing dark, futuristic cyberpunk-inspired clothing. The lighting is moody with subtle neon cyan reflections on her face. The background is a dark, out-of-focus digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2jlL_Z0FCS9usEY-10vk8BPaEKHEo_1fY0yP2DPaZNE4zeHFNFBNIEPrS429IvILvtJfmImpYE52BNYQjp_nmfvP9gRp2o5wrW62HTYTVbCZtLBXoRjcaxmCBn_iAA1NNcBz_zJl9Um8qEyGG7ty9jg2YnG913lplvgi9U_VPYtt60rPue1afBnfms-VZKfpKErcakYRwFZmSJZYshpM80pwO-F1593UlYdWO2ahexDJN9PNj5ElSXzLr-KKjbX9apUwCS9a6CGM"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="container mx-auto px-margin py-lg grid grid-cols-1 lg:grid-cols-12 gap-margin">
+<!-- Header / Context Context -->
+<header class="col-span-full flex flex-col md:flex-row justify-between items-start md:items-end mb-md gap-4">
+<div>
+<p class="text-body-sm font-body-sm text-on-surface-variant uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">folder_open</span>
+                    Campaign: ROG Asus Gaming 2026
+                </p>
+<h1 class="text-headline-lg md:text-display-lg font-headline-lg md:font-display-lg text-on-surface mt-2">Candidate Audit</h1>
+</div>
+<div class="glass-card px-4 py-2 flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-valid-data animate-pulse shadow-[0_0_8px_rgba(55,211,153,0.8)]"></div>
+<div class="flex flex-col">
+<span class="text-data-sm font-data-sm text-on-surface-variant">ENGINE STATUS</span>
+<span class="text-body-sm font-body-sm font-semibold text-secondary">89.4% Confidence</span>
+</div>
+</div>
+</header>
+<!-- Left Column: Candidate Profile -->
+<aside class="col-span-1 lg:col-span-4 flex flex-col gap-margin">
+<!-- Profile Card -->
+<div class="glass-card overflow-hidden relative group">
+<div class="h-64 relative">
+<img alt="Artist Profile" class="w-full h-full object-cover" data-alt="A dramatic portrait of an Asian male pop artist on stage. He is wearing high-end streetwear. The stage lighting is intense with dark shadows and striking beams of red and cyan light. The aesthetic is modern, energetic, and slightly cyberpunk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcY-RbEhSWKZuasAF7XrYxCewudAdjvNGvLd8kuHcbfPQO74c4bm1xQkVu0otbvU5y7s130Q969h4V6A9GvB5P3AtP0y4haPhhvz-XBIabA3x_qmssdulUar8_pu8zVZzMfUqBl3y621YSjAUhWcZJkchfnL6wHdHtEYSppU1z2UJVVPY5lk-3RcaIn1HSA2XsVP1mzdFw4cNytQNjZXqiGvS6ECpJ6aDS5HZ3XHMXDTKm7WtDnJ6SqSGc9fNuGZuRrL8Hj3f2bqM"/>
+<div class="absolute inset-0 gradient-overlay"></div>
+<!-- Status Badge -->
+<div class="absolute top-4 right-4 bg-error text-white text-data-sm font-data-sm px-3 py-1 rounded-full border border-white/20 shadow-[0_0_15px_rgba(254,44,85,0.6)] flex items-center gap-1 z-10">
+<span class="material-symbols-outlined text-[14px]">block</span>
+                        MISMATCH
+                    </div>
+<div class="absolute bottom-4 left-4 right-4 z-10">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-white mb-1">Sơn Tùng M-TP</h2>
+<div class="flex gap-2 mb-2">
+<span class="bg-tertiary-container/20 text-tertiary text-data-sm font-data-sm px-2 py-1 rounded">Music</span>
+<span class="bg-secondary/20 text-secondary text-data-sm font-data-sm px-2 py-1 rounded">Pop</span>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface grid grid-cols-2 gap-4 border-t border-outline-variant/50">
+<div>
+<p class="text-data-sm font-data-sm text-on-surface-variant mb-1">TOTAL REACH</p>
+<p class="text-data-lg font-data-lg text-on-surface">39.2M</p>
+</div>
+<div>
+<p class="text-data-sm font-data-sm text-on-surface-variant mb-1">ENGAGEMENT</p>
+<p class="text-data-lg font-data-lg text-secondary">4.75%</p>
+</div>
+<div class="col-span-2 mt-2">
+<p class="text-data-sm font-data-sm text-on-surface-variant mb-1">PLATFORM DOMINANCE</p>
+<div class="flex items-center gap-2">
+<div class="flex-grow bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-error h-full" style="width: 75%"></div>
+</div>
+<span class="text-data-sm font-data-sm text-on-surface">YouTube (75%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Radar Chart Placeholder (using simple CSS shapes for structure) -->
+<div class="glass-card p-6 flex flex-col items-center justify-center min-h-[300px] relative">
+<p class="text-data-sm font-data-sm text-on-surface-variant absolute top-6 left-6">ATTRIBUTE RADAR</p>
+<!-- Simple visual representation of a radar chart -->
+<div class="relative w-48 h-48 rounded-full border border-outline-variant/30 flex items-center justify-center">
+<div class="absolute w-32 h-32 rounded-full border border-outline-variant/20"></div>
+<div class="absolute w-16 h-16 rounded-full border border-outline-variant/10"></div>
+<!-- Axis lines -->
+<div class="absolute w-full h-[1px] bg-outline-variant/30 transform rotate-0"></div>
+<div class="absolute w-full h-[1px] bg-outline-variant/30 transform rotate-45"></div>
+<div class="absolute w-full h-[1px] bg-outline-variant/30 transform rotate-90"></div>
+<div class="absolute w-full h-[1px] bg-outline-variant/30 transform rotate-135"></div>
+<!-- Data Polygon (Stylized) -->
+<svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100">
+<polygon fill="rgba(254,44,85,0.2)" points="50,10 80,40 60,90 40,90 10,40" stroke="#FE2C55" stroke-width="1.5"></polygon>
+</svg>
+</div>
+<div class="mt-4 flex gap-4 text-data-sm font-data-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-error"></div> Artist</span>
+<span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-secondary"></div> Ideal</span>
+</div>
+</div>
+</aside>
+<!-- Right Column: Analysis Modules -->
+<section class="col-span-1 lg:col-span-8 flex flex-col gap-margin">
+<!-- Executive Summary Terminal -->
+<div class="glass-card p-6 bg-surface-container-lowest/80 border-l-4 border-l-secondary">
+<div class="flex items-center gap-2 mb-3 border-b border-outline-variant/30 pb-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">terminal</span>
+<span class="text-data-sm font-data-sm text-on-surface-variant tracking-wider">EXEC_SUMMARY.LOG</span>
+</div>
+<p class="text-data-sm font-data-sm text-on-surface leading-relaxed typing-effect min-h-[60px]">
+                    ANALYSIS COMPLETE. Critical demographic misalignment detected. While overall reach is exceptionally high, core audience over-indexes in mainstream pop/lifestyle segments with minimal affinity for hardcore PC gaming hardware. Significant brand safety risks flagged in historical data.
+                </p>
+</div>
+<!-- Alignment Scoreboard -->
+<div class="glass-card p-6">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">tune</span>
+                    Alignment Scoreboard
+                </h3>
+<div class="flex flex-col gap-5">
+<!-- Bar 1 -->
+<div>
+<div class="flex justify-between mb-1 text-data-sm font-data-sm">
+<span class="text-on-surface">Massive Reach</span>
+<span class="text-valid-data">98%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-valid-data h-full shadow-[0_0_8px_rgba(55,211,153,0.5)]" style="width: 98%"></div>
+</div>
+</div>
+<!-- Bar 2 -->
+<div>
+<div class="flex justify-between mb-1 text-data-sm font-data-sm">
+<span class="text-on-surface">Brand Experience</span>
+<span class="text-valid-data">90%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-valid-data h-full shadow-[0_0_8px_rgba(55,211,153,0.5)]" style="width: 90%"></div>
+</div>
+</div>
+<!-- Bar 3 -->
+<div>
+<div class="flex justify-between mb-1 text-data-sm font-data-sm">
+<span class="text-on-surface">Niche Fit (PC Gaming)</span>
+<span class="text-error">5%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-error h-full shadow-[0_0_8px_rgba(254,44,85,0.5)]" style="width: 5%"></div>
+</div>
+</div>
+<!-- Bar 4 -->
+<div>
+<div class="flex justify-between mb-1 text-data-sm font-data-sm">
+<span class="text-on-surface">Demographic Match</span>
+<span class="text-error">0%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-error h-full shadow-[0_0_8px_rgba(254,44,85,0.5)]" style="width: 1%"></div> <!-- 1% for visibility -->
+</div>
+</div>
+</div>
+</div>
+<!-- Risk Radar -->
+<div class="glass-card p-6 border border-error/30 bg-surface-container/50 relative overflow-hidden">
+<!-- Subtle warning background pattern -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #FE2C55 25%, transparent 25%, transparent 75%, #FE2C55 75%, #FE2C55), repeating-linear-gradient(45deg, #FE2C55 25%, transparent 25%, transparent 75%, #FE2C55 75%, #FE2C55); background-position: 0 0, 10px 10px; background-size: 20px 20px;"></div>
+<h3 class="text-headline-md font-headline-md text-error mb-4 flex items-center gap-2 relative z-10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+                    Background Check / Risk Radar
+                </h3>
+<div class="bg-surface p-4 rounded-lg border border-error/20 flex flex-col gap-3 relative z-10">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-error mt-0.5 text-[20px]">report</span>
+<div>
+<p class="text-data-sm font-data-sm text-error mb-1">FLAG_ID: 2026-06-PLG</p>
+<p class="text-body-sm font-body-sm text-on-surface">Major plagiarism controversy in June 2026 involving track production elements. High negative sentiment lingering in tech-savvy/producer communities.</p>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30"></div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-error mt-0.5 text-[20px]">policy</span>
+<div>
+<p class="text-data-sm font-data-sm text-error mb-1">FLAG_ID: 2026-08-CUL</p>
+<p class="text-body-sm font-body-sm text-on-surface">Cultural sensitivity incident regarding MV imagery. Requires strict PR review before any association.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Strategic Verdict -->
+<div class="glass-card p-0 border-2 border-error overflow-hidden shadow-[0_0_20px_rgba(254,44,85,0.15)] mt-4">
+<div class="bg-error text-white p-4 flex items-center justify-between">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile font-black tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">gavel</span>
+                        STRATEGIC VERDICT
+                    </h2>
+<span class="bg-black/30 px-3 py-1 rounded text-data-sm font-data-sm font-bold border border-white/20">DO NOT CAST</span>
+</div>
+<div class="p-6 bg-surface-container-lowest">
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-4">
+                        Recommendation engine suggests alternative candidates with higher hardware/gaming affinity scores and lower risk profiles for the ROG Asus 2026 campaign:
+                    </p>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/30 bg-surface hover:border-secondary/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-data-sm font-data-sm">#1</div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">MixiGaming</p>
+<p class="text-data-sm font-data-sm text-on-surface-variant">98% Niche Fit</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/30 bg-surface hover:border-secondary/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-data-sm font-data-sm">#2</div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">SofM</p>
+<p class="text-data-sm font-data-sm text-on-surface-variant">95% Niche Fit</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</li>
+<li class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/30 bg-surface hover:border-secondary/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-data-sm font-data-sm">#3</div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">Levi</p>
+<p class="text-data-sm font-data-sm text-on-surface-variant">88% Niche Fit</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+</body></html>

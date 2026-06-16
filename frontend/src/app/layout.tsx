@@ -13,7 +13,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ALIEN Platform',
+  title: 'PennyWorth KOL Matching',
   description: 'Content matching analytics and AI-powered director matching',
 }
 

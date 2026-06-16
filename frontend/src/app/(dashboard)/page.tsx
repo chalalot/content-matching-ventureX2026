@@ -35,7 +35,7 @@ export default function HomePage() {
   return (
     <div>
       <PageHeader
-        title="ALIEN Platform"
+        title="PennyWorth KOL Matching"
         description="Content matching analytics dashboard"
       />
 

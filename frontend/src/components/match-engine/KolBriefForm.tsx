@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Slider } from '@/components/ui/slider'
@@ -12,9 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FileText, CheckCircle2, Search } from 'lucide-react'
 import type { KolBriefRequest } from '@/lib/data/types'
-import { formatUSD } from '@/lib/utils/formatters'
 
 const INDUSTRIES = [
   'FMCG', 'F&B', 'Fashion', 'Banking', 'Insurance',
@@ -58,7 +56,7 @@ interface KolBriefFormProps {
 }
 
 export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormProps) {
-  const [provider, setProvider] = useState('google')
+  const [provider, setProvider] = useState('deepseek')
   const [brand, setBrand] = useState('')
   const [industry, setIndustry] = useState('')
   const [targetNiche, setTargetNiche] = useState('')
@@ -126,176 +124,208 @@ export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormP
     onSubmit(brief)
   }
 
+  const descOk = description.trim().length >= 30
+  const budgetK = Math.round(budgetUsd / 1000)
+
   return (
-    <Card className="border border-border">
-      <CardHeader>
-        <CardTitle className="text-base">Campaign Brief</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Model Provider *</label>
-            <Select value={provider} onValueChange={v => setProvider(v ?? 'google')}>
-              <SelectTrigger><SelectValue placeholder="Select model provider" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="google">Google Gemini</SelectItem>
-                <SelectItem value="xai">xAI Grok</SelectItem>
-                <SelectItem value="openai">OpenAI GPT</SelectItem>
-              </SelectContent>
-            </Select>
+    <section className="glass-card flex flex-col gap-8 rounded-xl p-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 border-b border-border pb-4">
+        <FileText className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-semibold">Campaign Brief</h2>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        {/* Two-column brief grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {/* Left column — core identity */}
+          <div className="flex flex-col gap-6">
+            <Field label="Model Provider *">
+              <Select value={provider} onValueChange={v => setProvider(v ?? 'deepseek')}>
+                <SelectTrigger className="w-full"><SelectValue placeholder="Select model provider" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="deepseek">DeepSeek</SelectItem>
+                  <SelectItem value="google">Google Gemini</SelectItem>
+                  <SelectItem value="xai">xAI Grok</SelectItem>
+                  <SelectItem value="openai">OpenAI GPT</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field label="Brand *">
+              <Input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. Nike, Vinamilk" />
+            </Field>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Industry">
+                <Select value={industry} onValueChange={v => setIndustry(v ?? '')}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {INDUSTRIES.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <Field label="Target Niche">
+                <Select value={targetNiche} onValueChange={v => setTargetNiche(v ?? '')}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {NICHES.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Brand *</label>
-            <Input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. Nike, Vinamilk" />
-          </div>
+          {/* Right column — audience & format */}
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Platform">
+                <Select value={preferredPlatform} onValueChange={v => setPreferredPlatform(v ?? '')}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {PLATFORMS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Industry</label>
-            <Select value={industry} onValueChange={v => setIndustry(v ?? '')}>
-              <SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger>
-              <SelectContent>
-                {INDUSTRIES.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+              <Field label="Age Group">
+                <Select value={targetAgeGroup} onValueChange={v => setTargetAgeGroup(v ?? '')}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {AGE_GROUPS.map(a => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Target Niche</label>
-            <Select value={targetNiche} onValueChange={v => setTargetNiche(v ?? '')}>
-              <SelectTrigger><SelectValue placeholder="Select niche" /></SelectTrigger>
-              <SelectContent>
-                {NICHES.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+            <Field label="Content Format">
+              <div className="flex flex-wrap gap-2">
+                {CONTENT_FORMATS.map(cf => {
+                  const selected = contentFormat === cf.value
+                  return (
+                    <button
+                      key={cf.value}
+                      type="button"
+                      onClick={() => setContentFormat(selected ? '' : cf.value)}
+                      className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                        selected
+                          ? 'border-primary/50 bg-primary/20 font-semibold text-primary'
+                          : 'border-border bg-secondary text-muted-foreground hover:border-primary/30'
+                      }`}
+                    >
+                      {cf.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </Field>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Preferred Platform</label>
-            <Select value={preferredPlatform} onValueChange={v => setPreferredPlatform(v ?? '')}>
-              <SelectTrigger><SelectValue placeholder="Select platform" /></SelectTrigger>
-              <SelectContent>
-                {PLATFORMS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Field label={<>Description * <span className="font-normal lowercase opacity-60">(min 30 chars)</span></>}>
+              <Textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="Describe your campaign goals, target audience, key messages..."
+                rows={3}
+                className="resize-none"
+              />
+              <div className="flex items-center justify-between px-0.5">
+                <span className={`text-[11px] ${descOk ? 'text-muted-foreground' : 'text-muted-foreground/50'}`}>
+                  {description.length}/30 chars minimum
+                </span>
+                {descOk && <CheckCircle2 className="h-3.5 w-3.5 text-good" />}
+              </div>
+            </Field>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Target Age Group</label>
-            <Select value={targetAgeGroup} onValueChange={v => setTargetAgeGroup(v ?? '')}>
-              <SelectTrigger><SelectValue placeholder="Select age group" /></SelectTrigger>
-              <SelectContent>
-                {AGE_GROUPS.map(a => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Content Format</label>
-            <Select value={contentFormat} onValueChange={v => setContentFormat(v ?? '')}>
-              <SelectTrigger><SelectValue placeholder="Select content format" /></SelectTrigger>
-              <SelectContent>
-                {CONTENT_FORMATS.map(cf => <SelectItem key={cf.value} value={cf.value}>{cf.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Budget: <span className="font-normal">{formatUSD(budgetUsd)}</span>
-            </label>
-            <Input
-              type="number"
-              value={budgetUsd}
-              min={1000}
-              max={500000}
-              step={1000}
-              onChange={e => setBudgetUsd(Number(e.target.value))}
-              className="mb-2"
-            />
+        {/* Slider controls */}
+        <div className="grid grid-cols-1 gap-8 border-t border-border pt-6 lg:grid-cols-3">
+          <SliderField label="Budget" display={`$${budgetK}K`}>
             <Slider
-              value={[budgetUsd]}
-              min={1000}
-              max={500000}
-              step={1000}
+              value={[budgetUsd]} min={1000} max={500000} step={1000}
               onValueChange={v => setBudgetUsd(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>$1K</span>
-              <span>$500K</span>
-            </div>
-          </div>
+            <SliderEnds left="$1K" right="$500K" />
+          </SliderField>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Timeline: <span className="font-normal">{timelineWeeks} weeks</span>
-            </label>
+          <SliderField label="Timeline" display={`${timelineWeeks} weeks`}>
             <Slider
-              value={[timelineWeeks]}
-              min={1}
-              max={12}
-              step={1}
+              value={[timelineWeeks]} min={1} max={12} step={1}
               onValueChange={v => setTimelineWeeks(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>1 week</span>
-              <span>12 weeks</span>
-            </div>
-          </div>
+            <SliderEnds left="1 week" right="12 weeks" />
+          </SliderField>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">
-              Description * <span className="text-muted-foreground font-normal">(min 30 chars)</span>
-            </label>
-            <Textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Describe your campaign goals, target audience, key messages..."
-              rows={4}
-            />
-            <p className={`text-xs ${description.length >= 30 ? 'text-muted-foreground' : 'text-gray-400'}`}>
-              {description.length}/30 chars minimum
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Top N results: <span className="font-normal">{topN}</span>
-            </label>
+          <SliderField label="KOL Count" display={`Top ${topN}`}>
             <Slider
-              value={[topN]}
-              min={3}
-              max={10}
-              step={1}
+              value={[topN]} min={3} max={10} step={1}
               onValueChange={v => setTopN(Array.isArray(v) ? (v as number[])[0] : (v as number))}
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>3</span>
-              <span>10</span>
-            </div>
-          </div>
+            <SliderEnds left="Min 3" right="Max 10" />
+          </SliderField>
+        </div>
 
-          <Button type="submit" disabled={!isValid} className="w-full">
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                Matching...
-              </span>
-            ) : (
-              'Find KOLs'
-            )}
-          </Button>
-
-          {error && (
-            <p className="text-sm text-red-600 border border-red-200 rounded p-2 bg-red-50">
-              {error}
-            </p>
+        {/* CTA */}
+        <button
+          type="submit"
+          disabled={!isValid}
+          className={`flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 text-lg font-bold text-primary-foreground transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 ${isValid ? 'pulse-glow' : ''}`}
+        >
+          {loading ? (
+            <>
+              <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              Matching…
+            </>
+          ) : (
+            <>
+              <Search className="h-5 w-5" />
+              Find KOLs
+            </>
           )}
-        </form>
-      </CardContent>
-    </Card>
+        </button>
+
+        {error && (
+          <p className="rounded border border-destructive/30 bg-destructive/10 p-2 text-sm text-destructive">
+            {error}
+          </p>
+        )}
+      </form>
+    </section>
+  )
+}
+
+/** Labeled field — uppercase accent label above its control. */
+function Field({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-xs font-medium uppercase tracking-wider text-primary">{label}</label>
+      {children}
+    </div>
+  )
+}
+
+/** Slider field — label on the left, live value on the right. */
+function SliderField({ label, display, children }: { label: string; display: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-end justify-between">
+        <label className="text-xs font-medium uppercase tracking-wider text-primary">{label}</label>
+        <span className="font-mono text-lg font-semibold">{display}</span>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function SliderEnds({ left, right }: { left: string; right: string }) {
+  return (
+    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+      <span>{left}</span>
+      <span>{right}</span>
+    </div>
   )
 }

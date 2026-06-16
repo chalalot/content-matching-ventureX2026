@@ -11,7 +11,8 @@ from datetime import date
 from deepagents import create_deep_agent
 from langchain_core.messages import HumanMessage
 
-from llm import google_llm, xai_llm, openai_llm
+from config import settings
+from llm import google_llm, xai_llm, openai_llm, deepseek_llm
 from models import BriefRequest
 from tools import search_web
 
@@ -64,6 +65,10 @@ openai_agent = None
 if openai_llm:
     openai_agent = create_deep_agent(model=openai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
 
+deepseek_agent = None
+if deepseek_llm:
+    deepseek_agent = create_deep_agent(model=deepseek_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
+
 
 def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
     meta = candidate["metadata"]
@@ -95,6 +100,11 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
                 raise ValueError("xAI API key is not configured on the server.")
             agent = xai_agent
             provider_name = "xAI (Grok)"
+        elif brief.provider == "deepseek":
+            if not deepseek_agent:
+                raise ValueError("DeepSeek API key is not configured on the server.")
+            agent = deepseek_agent
+            provider_name = "DeepSeek"
         else:
             if not google_agent:
                 raise ValueError("Google API key is not configured on the server.")
@@ -127,9 +137,9 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(_invoke)
         try:
-            return future.result(timeout=25)
+            return future.result(timeout=settings.explanation_timeout)
         except concurrent.futures.TimeoutError:
-            return f"[timeout] Agent did not finish in 25s for {meta['name']}"
+            return f"[timeout] Agent did not finish in {settings.explanation_timeout}s for {meta['name']}"
 
 
 

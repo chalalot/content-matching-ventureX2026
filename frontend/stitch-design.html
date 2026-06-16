@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Engine | Match Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --primary: #ffb3b6;
+            --secondary: #affffb;
+            --accent-cyan: #25F4EE;
+            --accent-purple: #B69BFF;
+            --accent-green: #37D399;
+            --tiktok-red: #FE2C55;
+        }
+        body {
+            background-color: #08090a;
+            color: #fcdbdb;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(18, 19, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            backdrop-filter: blur(20px);
+        }
+        .glow-cyan { box-shadow: 0 0 20px rgba(37, 244, 238, 0.15); border: 1px solid rgba(37, 244, 238, 0.3); }
+        .glow-cyan:hover { box-shadow: 0 0 25px rgba(37, 244, 238, 0.4); border-color: rgba(37, 244, 238, 0.6); }
+        
+        .glow-purple { box-shadow: 0 0 20px rgba(182, 155, 255, 0.15); border: 1px solid rgba(182, 155, 255, 0.3); }
+        .glow-purple:hover { box-shadow: 0 0 25px rgba(182, 155, 255, 0.4); border-color: rgba(182, 155, 255, 0.6); }
+        
+        .glow-green { box-shadow: 0 0 20px rgba(55, 211, 153, 0.15); border: 1px solid rgba(55, 211, 153, 0.3); }
+        .glow-green:hover { box-shadow: 0 0 25px rgba(55, 211, 153, 0.4); border-color: rgba(55, 211, 153, 0.6); }
+        
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-stagger > * {
+            animation: slideInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+        .animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+        .animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+        .animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+        .animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+        .animate-stagger > *:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .ambient-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-status {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
+        }
+        .status-pulse {
+            animation: pulse-status 2s infinite ease-in-out;
+        }
+
+        @keyframes scroll-list {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        .scrolling-list {
+            animation: scroll-list 15s linear infinite;
+        }
+        
+        .glitch-effect {
+            position: relative;
+        }
+        .glitch-effect::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255,0,0,0.1) 2px,
+                rgba(255,0,0,0.1) 4px
+            );
+            pointer-events: none;
+            opacity: 0.5;
+            z-index: 10;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent-green) }
+        }
+        .typing-text {
+            overflow: hidden;
+            border-right: .15em solid var(--accent-green);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+            max-width: fit-content;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        #shader-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+            border-radius: 0.75rem;
+        }
+
+        /* Funnel Animation */
+        @keyframes funnel-in {
+            0% { transform: translateX(-50px) scale(1); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(50px) scale(0.8); opacity: 0; }
+        }
+        .funnel-item {
+            animation: funnel-in 3s infinite ease-in-out;
+        }
+        .funnel-item:nth-child(odd) { animation-delay: 0.5s; }
+        .funnel-item:nth-child(even) { animation-delay: 1.5s; }
+        .funnel-item:nth-child(3n) { animation-delay: 2.5s; }
+
+        /* Scanning Progress Bar */
+        @keyframes scan-progress {
+            0% { width: 0%; background-position: 0 0; }
+            100% { width: 100%; background-position: 50px 50px; }
+        }
+        .scan-bar {
+            background-image: repeating-linear-gradient(
+                -45deg,
+                rgba(255,255,255,0.2),
+                rgba(255,255,255,0.2) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            background-size: 50px 50px;
+            animation: scan-progress 2s linear infinite;
+        }
+
+        /* Number Counter Animation (Simulated) */
+        @keyframes count-up {
+            from { content: "0"; }
+            to { content: attr(data-target); }
+        }
+        .counter::after {
+            content: attr(data-target);
+            animation: count-up 2s ease-out forwards;
+        }
+
+        /* Typing Effect Multi-line */
+        .typing-multiline {
+            display: inline-block;
+            overflow: hidden;
+            white-space: pre-wrap;
+            animation: typing 4s steps(60, end) forwards;
+            width: 0;
+        }
+        
+        @keyframes status-fade {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .status-indicator {
+            animation: status-fade 2s infinite;
+        }
+        .status-indicator:nth-child(2) { animation-delay: 0.5s; }
+        .status-indicator:nth-child(3) { animation-delay: 1s; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#003735",
+                      "on-tertiary-container": "#311073",
+                      "tertiary-fixed": "#e9ddff",
+                      "on-primary": "#680019",
+                      "on-surface": "#fcdbdb",
+                      "on-secondary-container": "#006764",
+                      "on-surface-variant": "#e6bcbd",
+                      "secondary-container": "#05ece7",
+                      "primary-fixed-dim": "#ffb3b6",
+                      "on-background": "#fcdbdb",
+                      "primary": "#ffb3b6",
+                      "outline": "#ad8889",
+                      "inverse-primary": "#be0036",
+                      "error": "#ffb4ab",
+                      "surface-bright": "#493434",
+                      "primary-fixed": "#ffdada",
+                      "outline-variant": "#5d3f40",
+                      "surface-variant": "#442f30",
+                      "inverse-on-surface": "#3f2b2c",
+                      "surface-tint": "#ffb3b6",
+                      "on-primary-fixed": "#40000c",
+                      "on-tertiary-fixed-variant": "#4f3592",
+                      "on-tertiary": "#381a7a",
+                      "inverse-surface": "#fcdbdb",
+                      "surface-container-lowest": "#190a0b",
+                      "on-secondary-fixed": "#00201f",
+                      "tertiary-fixed-dim": "#cfbcff",
+                      "surface-container": "#2d1b1b",
+                      "primary-container": "#ff5168",
+                      "tertiary": "#cfbcff",
+                      "secondary-fixed": "#35fbf5",
+                      "on-secondary-fixed-variant": "#00504d",
+                      "surface-container-highest": "#442f30",
+                      "on-primary-fixed-variant": "#920027",
+                      "surface-container-low": "#281718",
+                      "tertiary-container": "#9b81e2",
+                      "surface": "#1f0f10",
+                      "on-tertiary-fixed": "#22005d",
+                      "surface-dim": "#1f0f10",
+                      "on-error": "#690005",
+                      "secondary": "#affffb",
+                      "on-error-container": "#ffdad6",
+                      "error-container": "#93000a",
+                      "background": "#1f0f10",
+                      "on-primary-container": "#5b0015",
+                      "secondary-fixed-dim": "#00ddd8",
+                      "surface-container-high": "#382526"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "xs": "4px",
+                      "xl": "40px",
+                      "margin": "24px",
+                      "gutter": "20px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "data-sm": ["JetBrains Mono"],
+                      "headline-lg": ["Inter"],
+                      "data-lg": ["JetBrains Mono"],
+                      "body-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "data-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "data-lg": ["18px", {"lineHeight": "1", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/70 backdrop-blur-xl border-b border-outline-variant/30 docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-margin py-md">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-black tracking-tighter text-primary">Kinetic Engine</span>
+<nav class="hidden md:flex items-center gap-lg ml-xl">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Match Engine</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Campaigns</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95 duration-150">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95 duration-150">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+</div>
+<button class="bg-primary-container text-on-primary-container px-md py-sm rounded-lg font-bold text-body-sm active:scale-95 transition-transform duration-150">
+                Create Brief
+            </button>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQOD18PSSBj8l2na_e4EpXNIAXtXzAe4cWR0hSoo9twdk831nkuznKtBTLHu7mYzEOLc2ZLrmdvJhhDbEUQ6BxObF37uTlCq6SK7Vqa8kyy0_pOHtIfRWPYWkz7BRlsGnccPBT82TiuBoAlIggJ7St79sfVRx4ACKvY-6hADAaDDwwavx3LHOS58g5QfmeoDJilRL91Ve76LsX7WQmd-l_CUpA59oE6kqb9iDCc7kcPByG7F7fJpzcuYuAEaq8w__oJth1CGTFbUk"/>
+</div>
+</header>
+<div class="flex h-[calc(100vh-64px)] overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface-container border-r border-outline-variant/20 hidden md:flex flex-col h-full w-64 py-lg">
+<div class="px-lg mb-xl">
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-primary status-pulse" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-headline-sm font-headline-sm text-on-surface">Active Match</span>
+</div>
+<p class="text-body-sm text-on-surface-variant">Processing 1.2M nodes</p>
+</div>
+<nav class="flex-grow flex flex-col gap-xs">
+<a class="bg-secondary-container/20 text-secondary border-r-4 border-secondary flex items-center gap-md px-lg py-md hover:bg-surface-container-highest transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">filter_list</span>
+<span class="text-body-sm font-body-sm">Pipeline</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-md px-lg py-md hover:bg-surface-container-highest transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-body-sm font-body-sm">Audience</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-md px-lg py-md hover:bg-surface-container-highest transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-body-sm font-body-sm">Performance</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-md px-lg py-md hover:bg-surface-container-highest transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-body-sm font-body-sm">Budget</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-md px-lg py-md hover:bg-surface-container-highest transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">ios_share</span>
+<span class="text-body-sm font-body-sm">Export</span>
+</a>
+</nav>
+<div class="px-lg mt-auto flex flex-col gap-xs pt-lg border-t border-outline-variant/10">
+<button class="bg-secondary text-on-secondary px-md py-md rounded-xl font-bold text-body-sm mb-lg active:scale-95 transition-transform">
+                    Sync Data
+                </button>
+<a class="text-on-surface-variant flex items-center gap-md py-sm hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-body-sm">Documentation</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-md py-sm hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="text-body-sm">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow overflow-y-auto bg-background p-margin">
+<div class="flex flex-col gap-xl max-w-7xl mx-auto w-full">
+<!-- Brief Form Column -->
+<div class="w-full flex flex-col gap-lg animate-stagger">
+<div class="glass-card rounded-xl p-lg sticky top-0 bg-[#121314]">
+<h2 class="font-headline-lg text-headline-lg mb-md text-primary">KolPipelineView</h2>
+<div class="space-y-md">
+<div>
+<label class="text-body-sm font-bold text-on-surface-variant mb-xs block">Campaign Objective</label>
+<input class="w-full bg-[#000000] border-outline-variant/30 rounded-xl px-md py-sm focus:border-[#25F4EE] outline-none text-on-surface" type="text" value="Gen-Z Fashion Launch"/>
+</div>
+<div>
+<label class="text-body-sm font-bold text-on-surface-variant mb-xs block">Budget Range</label>
+<div class="flex items-center gap-sm">
+<span class="text-data-sm text-secondary">$10k</span>
+<input class="flex-grow accent-primary" type="range"/>
+<span class="text-data-sm text-secondary">$50k</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div>
+<label class="text-body-sm font-bold text-on-surface-variant mb-xs block">Primary Platform</label>
+<select class="w-full bg-[#000000] border-outline-variant/30 rounded-xl px-md py-sm text-on-surface">
+<option>TikTok</option>
+<option>Instagram</option>
+</select>
+</div>
+<div>
+<label class="text-body-sm font-bold text-on-surface-variant mb-xs block">Engagement Threshold</label>
+<select class="w-full bg-[#000000] border-outline-variant/30 rounded-xl px-md py-sm text-on-surface">
+<option>4.5% +</option>
+<option>3.0% +</option>
+</select>
+</div>
+</div>
+<button class="w-full bg-[#FE2C55] text-white py-md rounded-xl font-extrabold tracking-wide uppercase text-body-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(254,44,85,0.3)]">
+                                Refresh Match Engine
+                            </button>
+</div>
+<div class="mt-xl pt-lg border-t border-outline-variant/20">
+<h3 class="text-body-sm font-bold text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-accent-cyan text-sm">history</span> Recent Iterations
+                            </h3>
+<div class="space-y-sm">
+<div class="bg-surface-container-low p-sm rounded-lg flex justify-between items-center">
+<span class="text-body-sm">Streetwear Summer</span>
+<span class="text-data-sm text-accent-green">94% Fit</span>
+</div>
+<div class="bg-surface-container-low p-sm rounded-lg flex justify-between items-center opacity-60">
+<span class="text-body-sm">Global Beauty v2</span>
+<span class="text-data-sm text-on-surface-variant">88% Fit</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Results Column (Engine Hub) -->
+<div class="w-full flex flex-col relative rounded-2xl overflow-hidden p-6 min-h-[800px]">
+<canvas id="shader-canvas"></canvas>
+<!-- Status Header -->
+<div class="glass-card rounded-xl p-lg mb-lg relative z-10 ambient-float bg-[#121314]/80">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-data-sm font-data-sm text-accent-cyan mb-xs uppercase tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-accent-cyan status-pulse"></span> Engine Status
+                                </p>
+<h1 class="font-headline-lg text-headline-lg">Matching...</h1>
+<p class="font-data-sm text-data-sm text-on-surface-variant">1,240,432 candidates considered (1.2s)</p>
+</div>
+<div class="text-right">
+<span class="text-display-lg font-display-lg text-primary">89.4%</span>
+<p class="text-body-sm text-on-surface-variant">Average Match Accuracy</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row w-full z-10 animate-stagger gap-lg relative">
+<!-- Connective background line -->
+<div class="absolute top-1/2 left-0 right-0 h-1 bg-outline-variant/20 -z-10 hidden lg:block"></div>
+<!-- Layer 1: Relevance (Funnel) -->
+<div class="flex-1 relative transition-all duration-300" style="animation-delay: 0.2s">
+<div class="glass-card rounded-xl overflow-hidden bg-[#121314]/80 border border-[#25F4EE]/30 h-full flex flex-col">
+<div class="p-md border-b border-[#25F4EE]/20 bg-gradient-to-r from-[#25F4EE]/10 to-transparent flex-shrink-0">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[#25F4EE] status-pulse">data_exploration</span>
+<h3 class="font-bold text-body-sm uppercase tracking-wider text-[#25F4EE]">L1: Filtering</h3>
+</div>
+</div>
+<div class="p-md flex-grow flex items-center justify-center relative overflow-hidden">
+<!-- Funnel Shape Background -->
+<div class="absolute inset-0 bg-gradient-to-b from-[#25F4EE]/5 to-transparent clip-path-polygon-[0_0,100%_0,80%_100%,20%_100%]"></div>
+<div class="relative w-full h-full flex flex-col justify-between items-center gap-sm">
+<!-- Staggered funnel items -->
+<div class="flex gap-2 w-full justify-center opacity-50">
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+</div>
+<div class="flex gap-2 w-3/4 justify-center opacity-70">
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+</div>
+<div class="flex gap-2 w-1/2 justify-center opacity-90">
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+<div class="w-8 h-2 bg-[#25F4EE] rounded funnel-item"></div>
+</div>
+<div class="w-16 h-4 bg-[#25F4EE] rounded-full shadow-[0_0_15px_rgba(37,244,238,0.8)] mt-auto z-10 flex items-center justify-center">
+<span class="text-[10px] text-background font-bold">824</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Layer 2: Scoring -->
+<div class="flex-1 relative transition-all duration-300" style="animation-delay: 0.4s">
+<div class="glass-card rounded-xl overflow-hidden bg-[#121314]/80 border border-[#B69BFF]/30 h-full flex flex-col">
+<div class="p-md border-b border-[#B69BFF]/20 bg-gradient-to-r from-[#B69BFF]/10 to-transparent flex-shrink-0">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[#B69BFF] status-pulse">leaderboard</span>
+<h3 class="font-bold text-body-sm uppercase tracking-wider text-[#B69BFF]">L2: Scoring</h3>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col justify-center space-y-md">
+<!-- Candidate 1 -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center text-data-sm">
+<span class="text-on-surface">Lana Creators</span>
+<span class="text-[#B69BFF] font-bold">0.<span class="counter" data-target="94">00</span></span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-[#B69BFF] scan-bar"></div>
+</div>
+</div>
+<!-- Candidate 2 -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center text-data-sm">
+<span class="text-on-surface">Urban Motion</span>
+<span class="text-[#B69BFF] font-bold">0.<span class="counter" data-target="88">00</span></span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-[#B69BFF] scan-bar" style="animation-delay: 0.5s"></div>
+</div>
+</div>
+<!-- Candidate 3 -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center text-data-sm">
+<span class="text-on-surface">Elena Rose</span>
+<span class="text-[#B69BFF] font-bold">0.<span class="counter" data-target="92">00</span></span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-[#B69BFF] scan-bar" style="animation-delay: 1s"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Layer 3: Explanation -->
+<div class="flex-1 relative transition-all duration-300" style="animation-delay: 0.6s">
+<div class="glass-card rounded-xl overflow-hidden bg-[#121314]/80 border border-[#37D399]/30 h-full flex flex-col">
+<div class="p-md border-b border-[#37D399]/20 bg-gradient-to-r from-[#37D399]/10 to-transparent flex-shrink-0">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[#37D399] status-pulse">psychology</span>
+<h3 class="font-bold text-body-sm uppercase tracking-wider text-[#37D399]">L3: AI Reasoning</h3>
+</div>
+</div>
+<div class="p-md flex-grow flex flex-col text-sm font-mono text-[#37D399]">
+<div class="mb-2 text-xs flex gap-2">
+<span class="status-indicator">[Cross-referencing niche data...]</span>
+</div>
+<div class="mb-2 text-xs flex gap-2">
+<span class="status-indicator">[Calculating brand fit...]</span>
+</div>
+<div class="mt-auto border-t border-[#37D399]/20 pt-2 relative">
+<span class="typing-text inline-block">&gt; Analyzing Lana Creators...</span>
+<br/>
+<span class="typing-multiline text-xs mt-1 text-on-surface-variant opacity-80" style="animation-delay: 4s;">
+"High visual congruence with Gen-Z streetwear aesthetic. Historically converts 2.4x better."
+</span>
+<span class="absolute bottom-2 right-2 w-2 h-4 bg-[#37D399] animate-pulse"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Shortlist Carousel -->
+<div class="mt-lg z-10 ambient-float" style="animation-delay: 0.8s">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-headline-md">Shortlisted Candidates</h3>
+<button class="text-secondary text-body-sm flex items-center gap-xs">View All <span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+<div class="flex gap-md overflow-x-auto pb-md scrollbar-hide">
+<!-- KOL Card 1 -->
+<div class="min-w-[280px] glass-card rounded-xl overflow-hidden group">
+<div class="h-48 relative">
+<img alt="Fashion Creator" class="w-full h-full object-cover" data-alt="A portrait of a trendy female fashion creator in her early 20s, wearing high-contrast neon streetwear. She stands against a blurred Tokyo neon cityscape at night, with a moody and cinematic lighting style. The color palette is dominated by deep blacks, vibrant magenta, and electric cyan to match the TikTok aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2lsVsB4kgn-AAJ68QH9QiMgvbtdhq4fyt_WuPOHlVLueLTfDt_WQuPruS02K-u52OtmF6FEK6TpmdWgEg3YmgWL_YWHNbFlcqSr8Jz9lihBABdtRbGLz0m4cuEA0mhFNygy7EOEYH62cZc1ocbpBrFAYEbCyc1u2IbK6aY5TCP2i8dFK8pf06tl4499Ss4RyZY_GuqDTXeKX3gHl87tLvHzqo48lvlosn0qyKUCbV8Wr6wFP_j8ma1Md4SLHeIxEroW3PUWscGX4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#121314] to-transparent"></div>
+<div class="absolute top-sm right-sm bg-[#FE2C55] text-white px-sm py-xs rounded text-data-sm font-black">98% FIT</div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-bold text-body-md">Sarah Jenkins</h4>
+<p class="text-data-sm text-on-surface-variant">@sarah.style • 1.2M</p>
+</div>
+<div class="flex gap-xs">
+<div class="w-8 h-8 rounded-full border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+</div>
+</div>
+<!-- Radar Sim-Chart -->
+<div class="flex items-center gap-md bg-surface-container/50 p-sm rounded-lg">
+<div class="w-12 h-12 rounded-full border-2 border-dashed border-accent-cyan flex items-center justify-center relative">
+<div class="absolute inset-0 bg-accent-cyan/10 rounded-full scale-75"></div>
+<span class="material-symbols-outlined text-accent-cyan text-sm">radar</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between text-data-sm mb-xs">
+<span>Tone</span>
+<span class="text-accent-cyan">9/10</span>
+</div>
+<div class="flex justify-between text-data-sm">
+<span>Aesthetic</span>
+<span class="text-accent-cyan">10/10</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- KOL Card 2 -->
+<div class="min-w-[280px] glass-card rounded-xl overflow-hidden group">
+<div class="h-48 relative">
+<img alt="Lifestyle Creator" class="w-full h-full object-cover" data-alt="A close-up high-fashion portrait of a young male influencer with a minimalist and sharp aesthetic. He is lit with a cool blue key light and a subtle purple rim light, creating a high-tech studio look. The background is a clean obsidian texture with soft digital bokeh, embodying a premium and data-driven luxury brand feeling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3BI_CIiM3lzW2cN4umY-U7a7Ux5IiDZcBq-w5EknYAml4Z8itQR9dn3xVMPG_frJU77zldzTcGtV4qvFVJrzbOkGNFOCUZbxavDEAqqp2-9oOYnbqsT1mtTKN0oBT9Q6BPGUAlI9DNNXKo7CLSWBvjJX9p6vOWVX5zQYb663A9nEvV1cFe-aGscpkMf0a6H_id-zdzTamFc1F7bA1H-bGl8JJBpIwCTI2Uhv9xSeXQFo3yIipGC5SWZEeAgKUnuGLfMUcSH1G5yI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#121314] to-transparent"></div>
+<div class="absolute top-sm right-sm bg-[#FE2C55] text-white px-sm py-xs rounded text-data-sm font-black">94% FIT</div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-bold text-body-md">Marcus Vibe</h4>
+<p class="text-data-sm text-on-surface-variant">@marcus.v • 850k</p>
+</div>
+<div class="flex gap-xs">
+<div class="w-8 h-8 rounded-full border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md bg-surface-container/50 p-sm rounded-lg">
+<div class="w-12 h-12 rounded-full border-2 border-dashed border-accent-purple flex items-center justify-center relative">
+<div class="absolute inset-0 bg-accent-purple/10 rounded-full scale-75"></div>
+<span class="material-symbols-outlined text-accent-purple text-sm">radar</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between text-data-sm mb-xs">
+<span>Tone</span>
+<span class="text-accent-purple">8/10</span>
+</div>
+<div class="flex justify-between text-data-sm">
+<span>Aesthetic</span>
+<span class="text-accent-purple">9/10</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- KOL Card 3 -->
+<div class="min-w-[280px] glass-card rounded-xl overflow-hidden group">
+<div class="h-48 relative">
+<img alt="Content Creator" class="w-full h-full object-cover" data-alt="A cinematic medium shot of a female content creator in a high-tech home studio with RGB strip lighting in the background. The mood is energetic and professional, with a focus on vibrant colors like mint green and soft pink. The overall style is sharp, clean, and modern, suitable for a cutting-edge influencer analytics platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOSCrjzomScs4Qc-z8fDmo17D1tdEyOwwPaPsh89KKSs-5W2-pQN8ehRTRn26FSam9yAcHtLS-oL7h2soAhSNC8bZ5SMCxh1lIry2PPKyfXe3WJ7iQ4RR0GznjyIh1SCFDT4C4ZmfR89_kZA6sKJAHYjKP1cD7WF7nLiQW-p_kXFb_HjsTZTDVe8fSTREIDmkyFcGXqnr4ZFaW-_iZKesGvZQA5hBXTjZpq3Xvmlzyx5203BcmBSlBnzMKN9CTvJco1qHGns8YpFw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#121314] to-transparent"></div>
+<div class="absolute top-sm right-sm bg-[#FE2C55] text-white px-sm py-xs rounded text-data-sm font-black">92% FIT</div>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-bold text-body-md">Elena Rose</h4>
+<p class="text-data-sm text-on-surface-variant">@elena_creates • 2.1M</p>
+</div>
+<div class="flex gap-xs">
+<div class="w-8 h-8 rounded-full border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md bg-surface-container/50 p-sm rounded-lg">
+<div class="w-12 h-12 rounded-full border-2 border-dashed border-accent-green flex items-center justify-center relative">
+<div class="absolute inset-0 bg-accent-green/10 rounded-full scale-75"></div>
+<span class="material-symbols-outlined text-accent-green text-sm">radar</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between text-data-sm mb-xs">
+<span>Tone</span>
+<span class="text-accent-green">7/10</span>
+</div>
+<div class="flex justify-between text-data-sm">
+<span>Aesthetic</span>
+<span class="text-accent-green">9/10</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<style>
+    @keyframes fade-in {
+        to { opacity: 1; }
+    }
+</style>
+<script>
+        // Micro-interactions and staggering entrance
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-stagger');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-stagger').forEach(el => observer.observe(el));
+
+            // WebGL Shader Background setup
+            const canvas = document.getElementById('shader-canvas');
+            if (canvas) {
+                const gl = canvas.getContext('webgl');
+                if (!gl) {
+                    console.error('WebGL not supported');
+                    return;
+                }
+
+                // Resize canvas to match display size
+                const resizeCanvas = () => {
+                    const displayWidth  = canvas.clientWidth;
+                    const displayHeight = canvas.clientHeight;
+                    if (canvas.width  !== displayWidth || canvas.height !== displayHeight) {
+                        canvas.width  = displayWidth;
+                        canvas.height = displayHeight;
+                        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+                    }
+                };
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+
+                // Shader sources
+                const vertexShaderSource = `
+                    attribute vec4 a_position;
+                    varying vec2 v_texCoord;
+                    void main() {
+                        gl_Position = a_position;
+                        v_texCoord = a_position.xy * 0.5 + 0.5;
+                    }
+                `;
+
+                const fragmentShaderSource = `
+                    precision highp float;
+                    uniform float u_time;
+                    uniform vec2 u_resolution;
+
+                    varying vec2 v_texCoord;
+
+                    void main() {
+                        vec2 uv = v_texCoord;
+                        
+                        // Create a flowing "pulse" effect that moves from top to bottom
+                        float speed = 0.5;
+                        float frequency = 10.0;
+                        float flow = sin(uv.y * frequency - u_time * speed) * 0.5 + 0.5;
+                        
+                        // Background color based on Kinetic Engine (Dark Red/Burgundy)
+                        vec3 baseColor = vec3(0.12, 0.06, 0.06); // #1f0f10
+                        
+                        // Accent colors for the layers
+                        vec3 l1Color = vec3(0.145, 0.957, 0.933); // Cyan #25F4EE
+                        vec3 l2Color = vec3(0.714, 0.608, 1.0);   // Purple #B69BFF
+                        vec3 l3Color = vec3(0.216, 0.827, 0.6);   // Green #37D399
+                        
+                        // Blend accents based on Y position to represent the pipeline stages
+                        vec3 gradient;
+                        if (uv.y > 0.66) {
+                            gradient = mix(baseColor, l1Color, flow * 0.1);
+                        } else if (uv.y > 0.33) {
+                            gradient = mix(baseColor, l2Color, flow * 0.1);
+                        } else {
+                            gradient = mix(baseColor, l3Color, flow * 0.1);
+                        }
+                        
+                        // Add vertical "scanlines" or data particles
+                        float scanline = sin(uv.x * 200.0) * 0.02;
+                        gradient += scanline * flow;
+
+                        gl_FragColor = vec4(gradient, 1.0);
+                    }
+                `;
+
+                // Compile shader function
+                const createShader = (gl, type, source) => {
+                    const shader = gl.createShader(type);
+                    gl.shaderSource(shader, source);
+                    gl.compileShader(shader);
+                    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                        console.error('Error compiling shader:', gl.getShaderInfoLog(shader));
+                        gl.deleteShader(shader);
+                        return null;
+                    }
+                    return shader;
+                };
+
+                const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+                const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+                // Create program
+                const program = gl.createProgram();
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                gl.linkProgram(program);
+
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error('Error linking program:', gl.getProgramInfoLog(program));
+                    return;
+                }
+
+                gl.useProgram(program);
+
+                // Setup buffers
+                const positionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                const positions = [
+                    -1.0, -1.0,
+                     1.0, -1.0,
+                    -1.0,  1.0,
+                    -1.0,  1.0,
+                     1.0, -1.0,
+                     1.0,  1.0,
+                ];
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+                const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+                gl.enableVertexAttribArray(positionAttributeLocation);
+                gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+                // Uniform locations
+                const timeLocation = gl.getUniformLocation(program, "u_time");
+                const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+
+                // Render loop
+                const render = (time) => {
+                    resizeCanvas();
+                    gl.uniform1f(timeLocation, time * 0.001);
+                    gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                    requestAnimationFrame(render);
+                };
+                requestAnimationFrame(render);
+            }
+        });
+    </script>
+</body></html>

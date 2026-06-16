@@ -36,6 +36,19 @@ if settings.openai_api_key and settings.openai_api_key != "your_openai_api_key_h
         max_retries=settings.max_retries,
     )
 
+# DeepSeek is OpenAI-API-compatible, so reuse ChatOpenAI with DeepSeek's base_url.
+deepseek_llm = None
+if settings.deepseek_api_key and settings.deepseek_api_key != "your_deepseek_api_key_here":
+    deepseek_llm = ChatOpenAI(
+        model=settings.deepseek_model,
+        api_key=settings.deepseek_api_key,
+        base_url=settings.deepseek_base_url,
+        temperature=settings.temperature,
+        max_tokens=settings.max_tokens,
+        timeout=settings.timeout,
+        max_retries=settings.max_retries,
+    )
+
 # Backward compatibility alias
 llm = google_llm
 

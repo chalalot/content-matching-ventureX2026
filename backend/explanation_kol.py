@@ -2,19 +2,17 @@ import concurrent.futures
 from datetime import date
 
 from deepagents import create_deep_agent
-from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 
-from llm import google_llm, xai_llm, openai_llm
-from models import KolBriefRequest
+from config import settings
+from llm import google_llm, xai_llm, openai_llm, deepseek_llm
+from models import KolBriefRequest, KolExplanation
 from tools import search_web
 
-class CastingReport(BaseModel):
-    brief_summary: str = Field(description="2-3 sentence summary of why the candidate fits the brief.")
-    why_good: str = Field(description="Detail explanation of strengths/alignment.")
-    why_not_good: str = Field(description="Detailed explanation of potential risks or limitations.")
-    recent_dramas: str = Field(description="Recent scandals or controversies, or 'None' if none found.")
-    recommendations: str = Field(description="Actionable advice for the campaign team.")
+# The deep agent produces this structured report (researched via web search). It
+# may come back partly in English (search results are English) — a second hidden
+# translation pass normalizes everything to Vietnamese before it reaches the FE.
+CastingReport = KolExplanation
 
 SYSTEM_PROMPT = """
 You are a KOL partnership advisor at a Vietnamese marketing agency.
@@ -27,6 +25,12 @@ Use a diverse set of queries:
 Pay attention to current date vs. search result dates — old scandals may be less relevant.
 Produce a structured report assessing why the KOL fits (or doesn't fit) this campaign.
 Reference their follower count, engagement, niche, past brand deals, and your research.
+
+Output rules:
+- brief_summary: 2-3 sentences.
+- why_good / why_not_good / recommendations: each a list of short one-sentence bullets (aim 2-5 items).
+- recent_dramas: a list of concrete scandal/controversy flags; return an EMPTY list if none found.
+Write in Vietnamese where you can, but it's fine if some bullets are in English — they will be translated afterwards.
 """
 
 USER_PROMPT = """
@@ -75,14 +79,78 @@ if xai_llm:
 openai_agent = None
 if openai_llm:
     openai_agent = create_deep_agent(
-        model=openai_llm, 
-        tools=[search_web], 
+        model=openai_llm,
+        tools=[search_web],
+        system_prompt=SYSTEM_PROMPT,
+        response_format=CastingReport
+    )
+
+deepseek_agent = None
+if deepseek_llm:
+    deepseek_agent = create_deep_agent(
+        model=deepseek_llm,
+        tools=[search_web],
         system_prompt=SYSTEM_PROMPT,
         response_format=CastingReport
     )
 
 
-def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> str:
+# Map provider -> raw chat model (used for the translation pass, no web search).
+_LLMS = {"openai": openai_llm, "xai": xai_llm, "deepseek": deepseek_llm, "google": google_llm}
+
+
+def _agent_for(provider: str):
+    if provider == "openai":
+        if not openai_agent:
+            raise ValueError("OpenAI API key is not configured on the server.")
+        return openai_agent
+    if provider == "xai":
+        if not xai_agent:
+            raise ValueError("xAI API key is not configured on the server.")
+        return xai_agent
+    if provider == "deepseek":
+        if not deepseek_agent:
+            raise ValueError("DeepSeek API key is not configured on the server.")
+        return deepseek_agent
+    if not google_agent:
+        raise ValueError("Google API key is not configured on the server.")
+    return google_agent
+
+
+def _translate_to_vietnamese(report: KolExplanation, provider: str) -> KolExplanation:
+    """Hidden second pass: force the whole structured report into natural Vietnamese.
+    No web search — just a structured-output LLM call, so it's fast.
+
+    Best-effort: if structured translation fails (e.g. provider quirks), we return
+    the untranslated report rather than blanking the whole explanation."""
+    base = _LLMS.get(provider) or google_llm
+
+    # DeepSeek (and other OpenAI-compatible endpoints) reject the default
+    # json_schema response_format — force the function-calling method instead.
+    if provider in ("deepseek", "openai", "xai"):
+        translator = base.with_structured_output(KolExplanation, method="function_calling")
+    else:
+        translator = base.with_structured_output(KolExplanation)
+
+    prompt = (
+        "Dịch toàn bộ báo cáo sau sang tiếng Việt tự nhiên, gãy gọn. "
+        "Giữ NGUYÊN cấu trúc và số lượng phần tử của mỗi danh sách. "
+        "Giữ nguyên tên riêng, tên thương hiệu, số liệu, ngày tháng. "
+        "Không thêm/bớt ý, không bình luận. Trả về đúng schema.\n\n"
+        f"{report.model_dump_json()}"
+    )
+    try:
+        return translator.invoke(prompt)
+    except Exception as e:
+        print(f"[translate] fallback to untranslated report: {str(e)[:160]}")
+        return report
+
+
+def _error_explanation(message: str) -> KolExplanation:
+    return KolExplanation(brief_summary=message)
+
+
+def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> KolExplanation:
     meta = candidate["metadata"]
     prompt = USER_PROMPT.format(
         today=date.today(),
@@ -106,48 +174,27 @@ def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> str:
         bio=meta.get("bio", ""),
     )
 
-    def _invoke() -> str:
-        if brief.provider == "openai":
-            if not openai_agent:
-                raise ValueError("OpenAI API key is not configured on the server.")
-            agent = openai_agent
-        elif brief.provider == "xai":
-            if not xai_agent:
-                raise ValueError("xAI API key is not configured on the server.")
-            agent = xai_agent
-        else:
-            if not google_agent:
-                raise ValueError("Google API key is not configured on the server.")
-            agent = google_agent
-
+    def _invoke() -> KolExplanation:
+        agent = _agent_for(brief.provider)
         response = agent.invoke({"messages": HumanMessage(content=prompt)})
 
-        # Extract structured response according to the deepagents guide
-        report: CastingReport = response.get("structured_response")
+        report: KolExplanation = response.get("structured_response")
         if not report:
             raise ValueError("Failed to retrieve structured response from the agent.")
 
-        # Convert the structured Pydantic object back into a clean Markdown string
-        markdown_output = f"""## Executive Summary
-{report.brief_summary}
-
-### Strengths & Alignment
-{report.why_good}
-
-### Risks & Limitations
-{report.why_not_good}
-
-### Background Check (Scandals & Controversies)
-{report.recent_dramas}
-
-### Strategic Recommendations
-{report.recommendations}"""
-        
-        return markdown_output
+        # Hidden layer: translate the researched report fully into Vietnamese.
+        return _translate_to_vietnamese(report, brief.provider)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(_invoke)
         try:
-            return future.result(timeout=25)
+            return future.result(timeout=settings.explanation_timeout)
         except concurrent.futures.TimeoutError:
-            return f"[timeout] Agent did not finish in 25s for {meta['stage_name']}"
+            return _error_explanation(
+                f"[AI không kịp hoàn tất trong {settings.explanation_timeout}s cho {meta['stage_name']}.]"
+            )
+        except Exception as e:
+            msg = str(e)
+            if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
+                return _error_explanation("[Không tạo được giải thích AI — đã vượt hạn mức API.]")
+            return _error_explanation(f"[Không tạo được giải thích AI: {msg[:120]}]")
