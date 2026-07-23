@@ -7,7 +7,7 @@ from deepagents import create_deep_agent
 from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 
-from llm import google_llm, xai_llm, openai_llm
+from llm import xai_llm, openai_llm
 from models import KolBriefRequest, KolExplanation, Source
 from tools import search_web
 
@@ -21,8 +21,8 @@ class _AgentReport(BaseModel):
     why_not_good: list[str] = Field(description="2-5 short bullets on risks or limitations.")
     recent_dramas: list[str] = Field(description="Recent scandals/controversies found; empty list if none.")
     recommendations: list[str] = Field(description="1-3 concrete, actionable next steps for the campaign team.")
-    # Flat list[str] (NOT a nested model) — Gemini structured output rejects the
-    # $ref/$defs that nested Pydantic models generate. Parsed into Source objects later.
+    # Flat list[str] (NOT a nested model) — some providers reject the $ref/$defs
+    # that nested Pydantic models generate. Parsed into Source objects later.
     sources: list[str] = Field(description="Key web sources used, each as 'Title - https://url'.")
     reasoning_log: str = Field(description="Short summary of the search queries you ran and what you found.")
 
@@ -72,10 +72,6 @@ KOL Profile:
 - Score breakdown: {score_breakdown}
 - Bio: {bio}
 """
-
-google_agent = create_deep_agent(
-    model=google_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT, response_format=_AgentReport
-)
 
 xai_agent = None
 if xai_llm:
@@ -194,18 +190,14 @@ def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> KolExpl
     )
 
     def _invoke() -> KolExplanation:
-        if brief.provider == "openai":
-            if not openai_agent:
-                raise ValueError("OpenAI API key is not configured on the server.")
-            agent = openai_agent
-        elif brief.provider == "xai":
+        if brief.provider == "xai":
             if not xai_agent:
                 raise ValueError("xAI API key is not configured on the server.")
             agent = xai_agent
         else:
-            if not google_agent:
-                raise ValueError("Google API key is not configured on the server.")
-            agent = google_agent
+            if not openai_agent:
+                raise ValueError("OpenAI API key is not configured on the server.")
+            agent = openai_agent
 
         response = agent.invoke({"messages": HumanMessage(content=prompt)})
         report = response.get("structured_response") if isinstance(response, dict) else None

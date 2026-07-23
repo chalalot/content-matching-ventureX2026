@@ -58,7 +58,7 @@ interface KolBriefFormProps {
 }
 
 export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormProps) {
-  const [provider, setProvider] = useState('google')
+  const [provider, setProvider] = useState('openai')
   const [brand, setBrand] = useState('')
   const [industry, setIndustry] = useState('')
   const [targetNiche, setTargetNiche] = useState('')
@@ -135,12 +135,11 @@ export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormP
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium">Model Provider *</label>
-            <Select value={provider} onValueChange={v => setProvider(v ?? 'google')}>
+            <Select value={provider} onValueChange={v => setProvider(v ?? 'openai')}>
               <SelectTrigger><SelectValue placeholder="Select model provider" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="google">Google Gemini</SelectItem>
-                <SelectItem value="xai">xAI Grok</SelectItem>
                 <SelectItem value="openai">OpenAI GPT</SelectItem>
+                <SelectItem value="xai">xAI Grok</SelectItem>
               </SelectContent>
             </Select>
           </div>

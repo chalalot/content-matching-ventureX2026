@@ -12,7 +12,7 @@ class BriefRequest(BaseModel):
     timeline_weeks: int
     description: str
     top_n: int = 5
-    provider: str = "google"
+    provider: str = "openai"
 
 
 class ScoreBreakdown(BaseModel):
@@ -58,7 +58,7 @@ class KolBriefRequest(BaseModel):
     timeline_weeks: int
     description: str
     top_n: int = 5
-    provider: str = "google"
+    provider: str = "openai"
 
 
 class KolScoreBreakdown(BaseModel):

@@ -7,7 +7,7 @@ pydantic-settings==2.3.0
 python-dotenv==1.0.0
 langchain
 langchain-core
-langchain-google-genai
+langchain-openai
 deepagents
 requests
 langchain-xai
