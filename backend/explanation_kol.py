@@ -1,36 +1,51 @@
 import concurrent.futures
+import re
+import traceback
 from datetime import date
 
 from deepagents import create_deep_agent
+from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 
 from config import settings
-from llm import google_llm, xai_llm, openai_llm, deepseek_llm
-from models import KolBriefRequest, KolExplanation
+from llm import xai_llm, openai_llm, deepseek_llm
+from models import KolBriefRequest, KolExplanation, Source
 from tools import search_web
 
-# The deep agent produces this structured report (researched via web search). It
-# may come back partly in English (search results are English) — a second hidden
-# translation pass normalizes everything to Vietnamese before it reaches the FE.
-CastingReport = KolExplanation
+
+# What the agent is asked to return (structured). The full KolExplanation sent to the
+# frontend is assembled from this + the brief (fit_label, brief_recap, full_report_md).
+class _AgentReport(BaseModel):
+    fit_score: float = Field(description="Overall fit of this KOL to the brief, 0-10.")
+    headline: str = Field(description="One-line verdict, <= 15 words.")
+    why_good: list[str] = Field(description="2-5 short bullets on strengths / alignment.")
+    why_not_good: list[str] = Field(description="2-5 short bullets on risks or limitations.")
+    recent_dramas: list[str] = Field(description="Recent scandals/controversies found; empty list if none.")
+    recommendations: list[str] = Field(description="1-3 concrete, actionable next steps for the campaign team.")
+    # Flat list[str] (NOT a nested model) — some providers reject the $ref/$defs
+    # that nested Pydantic models generate. Parsed into Source objects later.
+    sources: list[str] = Field(description="Key web sources used, each as 'Title - https://url'.")
+    reasoning_log: str = Field(description="Short summary of the search queries you ran and what you found.")
+
 
 SYSTEM_PROMPT = """
 You are a KOL partnership advisor at a Vietnamese marketing agency.
-Given the campaign brief and KOL profile, use the websearch tool to research if the KOL is a good fit.
-Use a diverse set of queries:
+Given the campaign brief and KOL profile, use the websearch tool to research whether the KOL fits.
+Use a diverse set of queries, e.g.:
 - "Scandals involve {kol_name}"
 - "{kol_name} Vietnam audience demographic"
 - "{kol_name} brand collaboration results"
 - "{kol_name} {niche} content"
-Pay attention to current date vs. search result dates — old scandals may be less relevant.
-Produce a structured report assessing why the KOL fits (or doesn't fit) this campaign.
-Reference their follower count, engagement, niche, past brand deals, and your research.
+Pay attention to current date vs. search-result dates — old scandals may be less relevant.
 
-Output rules:
-- brief_summary: 2-3 sentences.
-- why_good / why_not_good / recommendations: each a list of short one-sentence bullets (aim 2-5 items).
-- recent_dramas: a list of concrete scandal/controversy flags; return an EMPTY list if none found.
-Write in Vietnamese where you can, but it's fine if some bullets are in English — they will be translated afterwards.
+Return a STRUCTURED assessment:
+- fit_score: 0-10 overall fit (be honest; reserve 8+ for strong fits).
+- headline: one punchy line.
+- why_good / why_not_good: short, specific bullets (reference followers, engagement, niche, past deals, your research).
+- recent_dramas: real recent controversies only; empty list if none found.
+- recommendations: concrete next steps.
+- sources: the actual web pages you used (title + url).
+- reasoning_log: one short paragraph naming the queries you ran and what they showed.
 """
 
 USER_PROMPT = """
@@ -59,51 +74,26 @@ KOL Profile:
 - Bio: {bio}
 """
 
-# Pass response_format=CastingReport to the deep agents
-google_agent = create_deep_agent(
-    model=google_llm, 
-    tools=[search_web], 
-    system_prompt=SYSTEM_PROMPT,
-    response_format=CastingReport
-)
-
 xai_agent = None
 if xai_llm:
     xai_agent = create_deep_agent(
-        model=xai_llm, 
-        tools=[search_web], 
-        system_prompt=SYSTEM_PROMPT,
-        response_format=CastingReport
+        model=xai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT, response_format=_AgentReport
     )
 
 openai_agent = None
 if openai_llm:
     openai_agent = create_deep_agent(
-        model=openai_llm,
-        tools=[search_web],
-        system_prompt=SYSTEM_PROMPT,
-        response_format=CastingReport
+        model=openai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT, response_format=_AgentReport
     )
 
 deepseek_agent = None
 if deepseek_llm:
     deepseek_agent = create_deep_agent(
-        model=deepseek_llm,
-        tools=[search_web],
-        system_prompt=SYSTEM_PROMPT,
-        response_format=CastingReport
+        model=deepseek_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT, response_format=_AgentReport
     )
 
 
-# Map provider -> raw chat model (used for the translation pass, no web search).
-_LLMS = {"openai": openai_llm, "xai": xai_llm, "deepseek": deepseek_llm, "google": google_llm}
-
-
 def _agent_for(provider: str):
-    if provider == "openai":
-        if not openai_agent:
-            raise ValueError("OpenAI API key is not configured on the server.")
-        return openai_agent
     if provider == "xai":
         if not xai_agent:
             raise ValueError("xAI API key is not configured on the server.")
@@ -112,45 +102,91 @@ def _agent_for(provider: str):
         if not deepseek_agent:
             raise ValueError("DeepSeek API key is not configured on the server.")
         return deepseek_agent
-    if not google_agent:
-        raise ValueError("Google API key is not configured on the server.")
-    return google_agent
+    if not openai_agent:
+        raise ValueError("OpenAI API key is not configured on the server.")
+    return openai_agent
 
 
-def _translate_to_vietnamese(report: KolExplanation, provider: str) -> KolExplanation:
-    """Hidden second pass: force the whole structured report into natural Vietnamese.
-    No web search — just a structured-output LLM call, so it's fast.
+def _fit_label(score: float) -> str:
+    if score >= 7.5:
+        return "Strong fit"
+    if score >= 5.0:
+        return "Partial fit"
+    return "Weak fit"
 
-    Best-effort: if structured translation fails (e.g. provider quirks), we return
-    the untranslated report rather than blanking the whole explanation."""
-    base = _LLMS.get(provider) or google_llm
 
-    # DeepSeek (and other OpenAI-compatible endpoints) reject the default
-    # json_schema response_format — force the function-calling method instead.
-    if provider in ("deepseek", "openai", "xai"):
-        translator = base.with_structured_output(KolExplanation, method="function_calling")
-    else:
-        translator = base.with_structured_output(KolExplanation)
+def _brief_recap(brief: KolBriefRequest) -> str:
+    ctx = " · ".join(p for p in (brief.content_format, brief.target_niche, brief.preferred_platform) if p)
+    return f"{brief.brand}: {ctx}" if ctx else brief.brand
 
-    prompt = (
-        "Dịch toàn bộ báo cáo sau sang tiếng Việt tự nhiên, gãy gọn. "
-        "Giữ NGUYÊN cấu trúc và số lượng phần tử của mỗi danh sách. "
-        "Giữ nguyên tên riêng, tên thương hiệu, số liệu, ngày tháng. "
-        "Không thêm/bớt ý, không bình luận. Trả về đúng schema.\n\n"
-        f"{report.model_dump_json()}"
+
+def _build_report_md(report: _AgentReport) -> str:
+    def bullets(items: list[str]) -> str:
+        return "\n".join(f"- {x}" for x in items) if items else "_None_"
+
+    dramas = "\n".join(f"- {x}" for x in report.recent_dramas) if report.recent_dramas else "_No red flags found._"
+    return (
+        f"## {report.headline}\n\n"
+        f"**Fit score:** {report.fit_score:.1f}/10\n\n"
+        f"### Strengths\n{bullets(report.why_good)}\n\n"
+        f"### Risks & limitations\n{bullets(report.why_not_good)}\n\n"
+        f"### Background check\n{dramas}\n\n"
+        f"### Recommendations\n{bullets(report.recommendations)}"
     )
-    try:
-        return translator.invoke(prompt)
-    except Exception as e:
-        print(f"[translate] fallback to untranslated report: {str(e)[:160]}")
-        return report
 
 
-def _error_explanation(message: str) -> KolExplanation:
-    return KolExplanation(brief_summary=message)
+_URL_RE = re.compile(r"https?://\S+")
+
+
+def _parse_sources(items: list[str]) -> list[Source]:
+    """Turn flat 'Title - https://url' strings into Source objects (URL extracted)."""
+    out: list[Source] = []
+    for s in items or []:
+        m = _URL_RE.search(s)
+        if not m:
+            continue
+        url = m.group(0).rstrip(").,]")
+        title = s[: m.start()].strip(" -—|:") or url
+        out.append(Source(title=title, url=url))
+    return out
+
+
+def _assemble(brief: KolBriefRequest, report: _AgentReport) -> KolExplanation:
+    score = max(0.0, min(10.0, float(report.fit_score)))
+    return KolExplanation(
+        fit_score=round(score, 1),
+        fit_label=_fit_label(score),
+        headline=report.headline,
+        brief_recap=_brief_recap(brief),
+        why_good=report.why_good,
+        why_not_good=report.why_not_good,
+        recent_dramas=report.recent_dramas,
+        recommendations=report.recommendations,
+        full_report_md=_build_report_md(report),
+        reasoning_log=report.reasoning_log,
+        sources=_parse_sources(report.sources),
+    )
+
+
+def _error_explanation(brief: KolBriefRequest, message: str) -> KolExplanation:
+    return KolExplanation(
+        fit_score=0.0,
+        fit_label="Unavailable",
+        headline=message,
+        brief_recap=_brief_recap(brief),
+        why_good=[],
+        why_not_good=[],
+        recent_dramas=[],
+        recommendations=[],
+        full_report_md=f"_{message}_",
+        reasoning_log="",
+        sources=[],
+    )
 
 
 def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> KolExplanation:
+    """Always returns a KolExplanation — on timeout/quota/any error it returns a
+    graceful 'Unavailable' explanation rather than raising, so the engine never breaks."""
     meta = candidate["metadata"]
     prompt = USER_PROMPT.format(
         today=date.today(),
@@ -177,24 +213,19 @@ def generate_kol_explanation(brief: KolBriefRequest, candidate: dict) -> KolExpl
     def _invoke() -> KolExplanation:
         agent = _agent_for(brief.provider)
         response = agent.invoke({"messages": HumanMessage(content=prompt)})
-
-        report: KolExplanation = response.get("structured_response")
+        report = response.get("structured_response") if isinstance(response, dict) else None
         if not report:
-            raise ValueError("Failed to retrieve structured response from the agent.")
+            raise ValueError("Agent did not return a structured response.")
+        return _assemble(brief, report)
 
-        # Hidden layer: translate the researched report fully into Vietnamese.
-        return _translate_to_vietnamese(report, brief.provider)
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(_invoke)
-        try:
-            return future.result(timeout=settings.explanation_timeout)
-        except concurrent.futures.TimeoutError:
-            return _error_explanation(
-                f"[AI không kịp hoàn tất trong {settings.explanation_timeout}s cho {meta['stage_name']}.]"
-            )
-        except Exception as e:
-            msg = str(e)
-            if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
-                return _error_explanation("[Không tạo được giải thích AI — đã vượt hạn mức API.]")
-            return _error_explanation(f"[Không tạo được giải thích AI: {msg[:120]}]")
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            return executor.submit(_invoke).result(timeout=settings.explanation_timeout)
+    except concurrent.futures.TimeoutError:
+        return _error_explanation(brief, f"AI research timed out for {meta.get('stage_name', 'this KOL')}.")
+    except Exception as e:
+        traceback.print_exc()  # full error to the backend console for debugging
+        msg = str(e)
+        if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
+            return _error_explanation(brief, "AI explanation unavailable — API quota exceeded.")
+        return _error_explanation(brief, f"AI explanation unavailable: {msg[:160]}")

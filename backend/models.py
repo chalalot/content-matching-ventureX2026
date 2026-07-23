@@ -12,7 +12,7 @@ class BriefRequest(BaseModel):
     timeline_weeks: int
     description: str
     top_n: int = 5
-    provider: str = "google"
+    provider: str = "openai"
 
 
 class ScoreBreakdown(BaseModel):
@@ -58,7 +58,7 @@ class KolBriefRequest(BaseModel):
     timeline_weeks: int
     description: str
     top_n: int = 5
-    provider: str = "google"
+    provider: str = "openai"
 
 
 class KolScoreBreakdown(BaseModel):
@@ -71,15 +71,23 @@ class KolScoreBreakdown(BaseModel):
     availability: float     # 0–5 pts
 
 
+class Source(BaseModel):
+    title: str
+    url: str
+
+
 class KolExplanation(BaseModel):
-    """Layer-3 report, fully in Vietnamese. Each list item is one short bullet so
-    the frontend can render discrete cards (exec summary, strengths, risks,
-    background-check flags, recommendations) like result-stitch.html."""
-    brief_summary: str = Field(description="2-3 câu tóm tắt vì sao KOL này hợp (hoặc không) với chiến dịch.")
-    why_good: list[str] = Field(default_factory=list, description="Các điểm mạnh / phù hợp, mỗi ý 1 câu ngắn.")
-    why_not_good: list[str] = Field(default_factory=list, description="Các rủi ro / hạn chế, mỗi ý 1 câu ngắn.")
-    recent_dramas: list[str] = Field(default_factory=list, description="Scandal/lùm xùm gần đây; để rỗng nếu không có.")
-    recommendations: list[str] = Field(default_factory=list, description="Đề xuất hành động cụ thể cho team chiến dịch.")
+    fit_score: float            # 0–10, LLM-judged (distinct from score 0–100)
+    fit_label: str              # "Strong fit" | "Partial fit" | "Weak fit"
+    headline: str               # one-line verdict
+    brief_recap: str            # one-line brief context
+    why_good: list[str]
+    why_not_good: list[str]
+    recent_dramas: list[str]    # [] when no real risk
+    recommendations: list[str]
+    full_report_md: str
+    reasoning_log: str
+    sources: list[Source] = []
 
 
 class KolCandidateResult(BaseModel):

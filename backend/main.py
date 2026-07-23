@@ -116,7 +116,7 @@ def match_kol(brief: KolBriefRequest):
             meta = c["metadata"]
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
-            explanation = generate_kol_explanation(brief, c)
+            explanation = generate_kol_explanation(brief, c)  # returns KolExplanation (never raises)
             shortlist.append(KolCandidateResult(
                 rank=i + 1,
                 kol_id=c["id"],
@@ -191,8 +191,8 @@ async def websocket_match_kol(websocket: WebSocket):
             platforms_raw = meta.get("platforms", "")
             platforms = platforms_raw.split(",") if isinstance(platforms_raw, str) else platforms_raw
             
-            # generate_kol_explanation is blocking (LLM call), so run it in a thread.
-            # It handles its own errors/timeout and always returns a KolExplanation.
+            # generate_kol_explanation is blocking (LLM call) and returns a KolExplanation
+            # (never raises), so run it in a thread to keep the event loop free.
             explanation = await asyncio.to_thread(generate_kol_explanation, brief, c)
 
             candidate_result = KolCandidateResult(

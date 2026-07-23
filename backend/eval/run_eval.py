@@ -42,10 +42,9 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 os.chdir(BACKEND_DIR)
 sys.path.insert(0, str(BACKEND_DIR))
 
-# config.Settings marks google_api_key / websearch_api_key as required at import
-# time. The eval never uses them, so provide harmless dummies if they are absent
-# (backend/.env still supplies any real values it has).
-os.environ.setdefault("GOOGLE_API_KEY", "eval-dummy")
+# config.Settings marks websearch_api_key as required at import time. The eval
+# never uses it, so provide a harmless dummy if absent (backend/.env still
+# supplies the real value if it has one).
 os.environ.setdefault("WEBSEARCH_API_KEY", "eval-dummy")
 os.environ["ANONYMIZED_TELEMETRY"] = "FALSE"
 

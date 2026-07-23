@@ -14,7 +14,6 @@ from pathlib import Path
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 os.chdir(BACKEND_DIR)
 sys.path.insert(0, str(BACKEND_DIR))
-os.environ.setdefault("GOOGLE_API_KEY", "eval-dummy")
 os.environ.setdefault("WEBSEARCH_API_KEY", "eval-dummy")
 os.environ["ANONYMIZED_TELEMETRY"] = "FALSE"
 

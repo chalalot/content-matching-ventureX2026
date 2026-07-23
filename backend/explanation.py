@@ -2,7 +2,7 @@
 Owner: Đức — Layer 3
 Input:  one ranked candidate + BriefRequest
 Output: 2–3 sentence explanation string in Vietnamese
-Uses Gemini + Exa web search via deepagents
+Uses OpenAI/xAI + Exa web search via deepagents
 """
 
 import concurrent.futures
@@ -12,7 +12,7 @@ from deepagents import create_deep_agent
 from langchain_core.messages import HumanMessage
 
 from config import settings
-from llm import google_llm, xai_llm, openai_llm, deepseek_llm
+from llm import xai_llm, openai_llm, deepseek_llm
 from models import BriefRequest
 from tools import search_web
 
@@ -55,8 +55,6 @@ Director Profile:
 """
 
 
-google_agent = create_deep_agent(model=google_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
-
 xai_agent = None
 if xai_llm:
     xai_agent = create_deep_agent(model=xai_llm, tools=[search_web], system_prompt=SYSTEM_PROMPT)
@@ -90,12 +88,7 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
     )
 
     def _invoke():
-        if brief.provider == "openai":
-            if not openai_agent:
-                raise ValueError("OpenAI API key is not configured on the server.")
-            agent = openai_agent
-            provider_name = "OpenAI"
-        elif brief.provider == "xai":
+        if brief.provider == "xai":
             if not xai_agent:
                 raise ValueError("xAI API key is not configured on the server.")
             agent = xai_agent
@@ -106,10 +99,10 @@ def generate_explanation(brief: BriefRequest, candidate: dict) -> str:
             agent = deepseek_agent
             provider_name = "DeepSeek"
         else:
-            if not google_agent:
-                raise ValueError("Google API key is not configured on the server.")
-            agent = google_agent
-            provider_name = "Google GenAI"
+            if not openai_agent:
+                raise ValueError("OpenAI API key is not configured on the server.")
+            agent = openai_agent
+            provider_name = "OpenAI"
 
         print(f"Attempting explanation generation using {provider_name}...")
         response = agent.invoke({"messages": HumanMessage(content=prompt)})

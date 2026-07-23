@@ -145,7 +145,6 @@ export default function KolBriefForm({ onSubmit, loading, error }: KolBriefFormP
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select model provider" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="deepseek">DeepSeek</SelectItem>
-                  <SelectItem value="google">Google Gemini</SelectItem>
                   <SelectItem value="xai">xAI Grok</SelectItem>
                   <SelectItem value="openai">OpenAI GPT</SelectItem>
                 </SelectContent>

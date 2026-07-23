@@ -222,16 +222,25 @@ export interface KolScoreBreakdown {
   availability: number
 }
 
-// Layer 3 structured explanation — mirrors backend KolExplanation (models.py).
-// Fully in Vietnamese (a hidden translation pass runs server-side). Lists hold
-// short one-sentence bullets so the card can render discrete sections.
+// Layer 3 structured explanation (v2) — mirrors backend KolExplanation
+
+export interface Source {
+  title: string
+  url: string
+}
 
 export interface KolExplanation {
-  brief_summary: string          // exec summary, 2–3 sentences
-  why_good: string[]             // strengths / alignment bullets
-  why_not_good: string[]         // risks / limitations bullets
-  recent_dramas: string[]        // background-check flags; [] = no red flag
-  recommendations: string[]      // concrete actions for the campaign team
+  fit_score: number              // 0–10, LLM-judged (distinct from score 0–100)
+  fit_label: string              // "Strong fit" | "Partial fit" | "Weak fit"
+  headline: string               // 1-line verdict
+  brief_recap: string            // 1-line brief context
+  why_good: string[]             // 2–5 bullets, each ≤ 1 sentence
+  why_not_good: string[]         // 2–5 bullets
+  recent_dramas: string[]        // [] when no real risk → FE shows "no red flag"
+  recommendations: string[]      // 1–3 concrete actions
+  full_report_md: string         // long markdown report (expand)
+  reasoning_log: string          // agent process log: queries + sources (expand)
+  sources: Source[]              // citations from web search
 }
 
 export interface KolCandidateResult {

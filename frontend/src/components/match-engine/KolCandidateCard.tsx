@@ -1,12 +1,13 @@
 'use client'
 
-import type { KolCandidateResult, KolExplanation, KolScoreBreakdown } from '@/lib/data/types'
+import { useState } from 'react'
+import type { KolCandidateResult, KolScoreBreakdown, KolExplanation } from '@/lib/data/types'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { formatNumber } from '@/lib/utils/formatters'
-import { Terminal, ThumbsUp, ThumbsDown, ShieldAlert, ShieldCheck, Gavel, ArrowRight } from 'lucide-react'
+import { Check, AlertTriangle, ShieldAlert, ShieldCheck, Lightbulb, ChevronDown, ExternalLink } from 'lucide-react'
 
 interface KolCandidateCardProps {
   candidate: KolCandidateResult
@@ -29,26 +30,14 @@ const PLATFORM_ICONS: Record<string, string> = {
   FACEBOOK: 'FB',
 }
 
-// Verdict badge derived from the match score (≥70 strong · 50–69 consider · <50 mismatch).
-function getVerdict(score: number) {
-  if (score >= 70) return { label: 'STRONG FIT', sub: 'NÊN HỢP TÁC', cls: 'bg-[#25F4EE] text-black' }
-  if (score >= 50) return { label: 'CONSIDER', sub: 'CÂN NHẮC', cls: 'bg-amber-400 text-black' }
-  return { label: 'MISMATCH', sub: 'KHÔNG NÊN', cls: 'bg-[#FE2C55] text-white' }
+// fit_label → semantic color tokens (defined in globals.css)
+const FIT_TIER: Record<string, { text: string; bg: string; border: string }> = {
+  'Strong fit':  { text: 'text-good', bg: 'bg-good-bg', border: 'border-good-border' },
+  'Partial fit': { text: 'text-warn', bg: 'bg-warn-bg', border: 'border-warn-border' },
+  'Weak fit':    { text: 'text-risk', bg: 'bg-risk-bg', border: 'border-risk-border' },
 }
-
-// Stale localStorage may still hold a plain-string explanation — normalize either way.
-function normalizeExplanation(exp: unknown): KolExplanation {
-  if (exp && typeof exp === 'object') {
-    const e = exp as Partial<KolExplanation>
-    return {
-      brief_summary: e.brief_summary ?? '',
-      why_good: e.why_good ?? [],
-      why_not_good: e.why_not_good ?? [],
-      recent_dramas: e.recent_dramas ?? [],
-      recommendations: e.recommendations ?? [],
-    }
-  }
-  return { brief_summary: typeof exp === 'string' ? exp : '', why_good: [], why_not_good: [], recent_dramas: [], recommendations: [] }
+function fitTier(label: string) {
+  return FIT_TIER[label] ?? { text: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border' }
 }
 
 function ScoreCircle({ score }: { score: number }) {
@@ -61,6 +50,8 @@ function ScoreCircle({ score }: { score: number }) {
 }
 
 function KolScoreRadar({ breakdown }: { breakdown: KolScoreBreakdown }) {
+  // Normalize each dimension to % of its own max so the polygon shape reflects
+  // how well-matched each dimension is (a full heptagon = perfect on all 7).
   const data = (Object.entries(SCORE_LABELS) as [keyof KolScoreBreakdown, [string, number]][]).map(
     ([key, [label, max]]) => ({
       dim: label,
@@ -76,45 +67,151 @@ function KolScoreRadar({ breakdown }: { breakdown: KolScoreBreakdown }) {
           <Radar dataKey="pct" stroke="#FE2C55" fill="#FE2C55" fillOpacity={0.3} />
         </RadarChart>
       </ResponsiveContainer>
-      <p className="text-center text-[11px] text-muted-foreground">Độ phù hợp theo từng tiêu chí (% của điểm tối đa)</p>
+      <p className="text-center text-[11px] text-muted-foreground">Fit by dimension (% of each max)</p>
     </div>
   )
 }
 
-// A titled section that renders a list of one-line bullets.
-function BulletSection({
-  title,
-  icon,
-  accent,
-  items,
-}: {
-  title: string
-  icon: React.ReactNode
-  accent: string
-  items: string[]
-}) {
-  if (!items.length) return null
+function parseBoldText(text: string) {
+  return text.split('**').map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="font-semibold text-foreground">{part}</strong> : part
+  )
+}
+
+function renderMarkdown(content: string) {
+  if (!content) return null
   return (
-    <div className="flex flex-col gap-2">
-      <h4 className="flex items-center gap-2 text-sm font-bold text-foreground">
-        <span className={accent}>{icon}</span>
-        {title}
-      </h4>
-      <ul className="flex flex-col gap-1.5 pl-1">
-        {items.map((t, i) => (
-          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-            <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${accent.replace('text-', 'bg-')}`} />
-            <span>{t}</span>
-          </li>
+    <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+      {content.split('\n').map((line, i) => {
+        const t = line.trim()
+        if (!t) return null
+        if (t.startsWith('## ')) return <h4 key={i} className="text-sm font-bold text-foreground mt-4 mb-2">{parseBoldText(t.slice(3))}</h4>
+        if (t.startsWith('### ')) return <h5 key={i} className="text-xs font-bold text-foreground mt-3 mb-1">{parseBoldText(t.slice(4))}</h5>
+        if (t.startsWith('- ') || t.startsWith('* ')) return <ul key={i} className="list-disc pl-4 my-1"><li className="text-sm">{parseBoldText(t.slice(2))}</li></ul>
+        return <p key={i} className="my-1">{parseBoldText(t)}</p>
+      })}
+    </div>
+  )
+}
+
+function BulletBox({ title, items, icon, tone }: {
+  title: string
+  items: string[]
+  icon: React.ReactNode
+  tone: { text: string; bg: string; border: string }
+}) {
+  if (!items?.length) return null
+  return (
+    <div className={`rounded-lg border ${tone.border} ${tone.bg} p-3`}>
+      <div className={`mb-1.5 flex items-center gap-1.5 text-xs font-semibold ${tone.text}`}>
+        {icon} {title}
+      </div>
+      <ul className="flex flex-col gap-1">
+        {items.map((x, i) => (
+          <li key={i} className="text-xs leading-snug text-foreground/90">{x}</li>
         ))}
       </ul>
     </div>
   )
 }
 
+const GOOD = { text: 'text-good', bg: 'bg-good-bg', border: 'border-good-border' }
+const WARN = { text: 'text-warn', bg: 'bg-warn-bg', border: 'border-warn-border' }
+const RISK = { text: 'text-risk', bg: 'bg-risk-bg', border: 'border-risk-border' }
+const INFO = { text: 'text-info', bg: 'bg-info-bg', border: 'border-info-border' }
+
+function ExplanationView({ ex }: { ex: KolExplanation }) {
+  const [open, setOpen] = useState(false)
+  const tier = fitTier(ex.fit_label)
+  const dramas = ex.recent_dramas ?? []
+  const sources = ex.sources ?? []
+  const hasDetail = !!ex.full_report_md || sources.length > 0 || !!ex.reasoning_log
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Verdict */}
+      <div className={`rounded-lg border ${tier.border} ${tier.bg} p-3`}>
+        <div className="flex items-center gap-2">
+          <span className={`rounded-full bg-background/40 px-2 py-0.5 text-xs font-bold ${tier.text}`}>{ex.fit_label}</span>
+          {ex.fit_score > 0 && <span className={`font-mono text-sm font-bold ${tier.text}`}>{ex.fit_score.toFixed(1)}/10</span>}
+        </div>
+        {ex.headline && <p className="mt-1.5 text-sm font-medium">{ex.headline}</p>}
+        {ex.brief_recap && <p className="mt-0.5 text-[11px] text-muted-foreground">{ex.brief_recap}</p>}
+      </div>
+
+      {/* Why it fits / Watch-outs */}
+      {(ex.why_good?.length || ex.why_not_good?.length) ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <BulletBox title="Why it fits" items={ex.why_good ?? []} icon={<Check className="h-3.5 w-3.5" />} tone={GOOD} />
+          <BulletBox title="Watch-outs" items={ex.why_not_good ?? []} icon={<AlertTriangle className="h-3.5 w-3.5" />} tone={WARN} />
+        </div>
+      ) : null}
+
+      {/* Red flags */}
+      {dramas.length > 0 ? (
+        <BulletBox title="Recent red flags" items={dramas} icon={<ShieldAlert className="h-3.5 w-3.5" />} tone={RISK} />
+      ) : (
+        <div className="flex items-center gap-1.5 rounded-lg border border-good-border bg-good-bg p-2.5 text-xs font-medium text-good">
+          <ShieldCheck className="h-3.5 w-3.5" /> No recent red flags found
+        </div>
+      )}
+
+      {/* Recommendations */}
+      <BulletBox title="Recommendations" items={ex.recommendations ?? []} icon={<Lightbulb className="h-3.5 w-3.5" />} tone={INFO} />
+
+      {/* Expandable: full report + sources + research log */}
+      {hasDetail && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setOpen(o => !o)}
+            className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+            {open ? 'Hide' : 'Show'} full report &amp; sources
+          </button>
+          {open && (
+            <div className="mt-2 flex flex-col gap-3">
+              {ex.full_report_md && renderMarkdown(ex.full_report_md)}
+              {sources.length > 0 && (
+                <div>
+                  <p className="mb-1 text-xs font-semibold">Sources</p>
+                  <ul className="flex flex-col gap-1">
+                    {sources.map((s, i) => (
+                      <li key={i}>
+                        <a
+                          href={s.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1 text-xs text-info hover:underline"
+                        >
+                          <ExternalLink className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{s.title || s.url}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {ex.reasoning_log && (
+                <div>
+                  <p className="mb-1 text-xs font-semibold">AI research log</p>
+                  <pre className="whitespace-pre-wrap rounded-md bg-muted/50 p-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
+                    {ex.reasoning_log}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
-  const verdict = getVerdict(candidate.score)
-  const exp = normalizeExplanation(candidate.explanation)
+  // explanation is a structured KolExplanation; tolerate a legacy string (old cached results).
+  const ex = candidate.explanation as KolExplanation | string | undefined
 
   return (
     <Card className="border border-border">
@@ -132,16 +229,11 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
               ))}
             </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <ScoreCircle score={candidate.score} />
-            <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider ${verdict.cls}`}>
-              {verdict.label}
-            </span>
-          </div>
+          <ScoreCircle score={candidate.score} />
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
             <p className="text-muted-foreground">Followers</p>
@@ -157,74 +249,7 @@ export default function KolCandidateCard({ candidate }: KolCandidateCardProps) {
 
         <Separator />
 
-        {/* Exec summary — "terminal" style block */}
-        {exp.brief_summary && (
-          <div className="rounded-lg border border-border border-l-4 border-l-[#25F4EE] bg-muted/40 p-3">
-            <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground">
-              <Terminal className="h-3.5 w-3.5 text-[#25F4EE]" />
-              TÓM TẮT ĐÁNH GIÁ
-            </p>
-            <p className="text-sm leading-relaxed text-foreground">{exp.brief_summary}</p>
-          </div>
-        )}
-
-        <BulletSection
-          title="Điểm mạnh & phù hợp"
-          icon={<ThumbsUp className="h-4 w-4" />}
-          accent="text-[#25F4EE]"
-          items={exp.why_good}
-        />
-
-        <BulletSection
-          title="Rủi ro & hạn chế"
-          icon={<ThumbsDown className="h-4 w-4" />}
-          accent="text-amber-500"
-          items={exp.why_not_good}
-        />
-
-        {/* Background check / risk radar */}
-        <div className="flex flex-col gap-2">
-          <h4 className="flex items-center gap-2 text-sm font-bold text-foreground">
-            <ShieldAlert className="h-4 w-4 text-[#FE2C55]" />
-            Kiểm tra rủi ro (scandal/lùm xùm)
-          </h4>
-          {exp.recent_dramas.length > 0 ? (
-            <div className="flex flex-col gap-2 rounded-lg border border-[#FE2C55]/30 bg-[#FE2C55]/5 p-3">
-              {exp.recent_dramas.map((d, i) => (
-                <p key={i} className="flex items-start gap-2 text-sm text-foreground">
-                  <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#FE2C55]" />
-                  <span>{d}</span>
-                </p>
-              ))}
-            </div>
-          ) : (
-            <p className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 text-sm text-emerald-600">
-              <ShieldCheck className="h-4 w-4 shrink-0" />
-              Không phát hiện red flag đáng kể.
-            </p>
-          )}
-        </div>
-
-        {/* Strategic verdict + recommendations */}
-        {exp.recommendations.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <div className={`flex items-center justify-between px-3 py-2 ${verdict.cls}`}>
-              <span className="flex items-center gap-1.5 text-sm font-black tracking-tight">
-                <Gavel className="h-4 w-4" />
-                ĐỀ XUẤT CHIẾN LƯỢC
-              </span>
-              <span className="rounded bg-black/20 px-2 py-0.5 text-[10px] font-bold">{verdict.sub}</span>
-            </div>
-            <ul className="flex flex-col gap-2 p-3">
-              {exp.recommendations.map((r, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#25F4EE]" />
-                  <span>{r}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {ex && (typeof ex === 'string' ? renderMarkdown(ex) : <ExplanationView ex={ex} />)}
       </CardContent>
     </Card>
   )

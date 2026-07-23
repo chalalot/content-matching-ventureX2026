@@ -27,7 +27,7 @@ python eval/run_eval.py directors  # one set
 python eval/run_eval.py kols
 ```
 (The script self-locates the backend dir, so it also works from the repo root. If
-`GOOGLE_API_KEY` isn't set it injects a harmless dummy, since config requires it at import
+`WEBSEARCH_API_KEY` isn't set it injects a harmless dummy, since config requires it at import
 but the eval never uses it.)
 
 ## Metrics

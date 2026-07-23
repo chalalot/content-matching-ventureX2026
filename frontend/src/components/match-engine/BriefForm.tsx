@@ -146,9 +146,8 @@ export default function BriefForm({ onResult, onLoading }: BriefFormProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="deepseek">DeepSeek</SelectItem>
-                <SelectItem value="google">Google Gemini</SelectItem>
-                <SelectItem value="xai">xAI Grok</SelectItem>
                 <SelectItem value="openai">OpenAI GPT</SelectItem>
+                <SelectItem value="xai">xAI Grok</SelectItem>
               </SelectContent>
             </Select>
           </div>
